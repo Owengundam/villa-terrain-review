@@ -9,3 +9,7 @@ let on=v.edit(l,[false,false,false],z,0,true,[0],v.defaults);assert(on.valid&&!o
 const views={units:[u('rear',0,0),u('front',0,40)],conflicts:[],outside:[]};
 let bad=v.edit(views,[true,false],z.slice(0,2),1,true,[],{...v.defaults,height:100,clear:1,centralClear:1});assert(bad.rejected&&bad.message.includes('rear'));assert.deepEqual(bad.active,[true,false]);assert.deepEqual(bad.z,[0,0]);
 console.log('PASS safe restoration, manual exclusions, off mode, rejection rollback and view failure message');
+const reverse=v.edit(l,s.active,s.z,0,true,s.heldOff,v.defaults,s.undoPoint);assert(reverse.valid&&!reverse.rejected);assert.deepEqual(reverse.active,mask);assert.deepEqual(reverse.z,z);
+const fs=require('node:fs'),report=JSON.parse(fs.readFileSync('output/checks/image-flow-3d-20260915/report.json','utf8')),layout=report.layouts[3],initial=layout.units.map(u=>u.active),pads=layout.units.map(u=>u.z);
+for(const id of ['V001','V084']){const i=layout.units.findIndex(u=>u.id===id),off=v.edit(layout,initial,pads,i,true,[],report.rules.view3d),back=v.edit(layout,off.active,off.z,i,true,off.heldOff,report.rules.view3d,off.undoPoint);assert(back.valid&&!back.rejected);assert.deepEqual(back.active,initial);assert.deepEqual(back.z,pads);}
+console.log('PASS exact Staggered 3 V001 / V084 round trips');

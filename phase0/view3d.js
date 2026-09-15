@@ -44,8 +44,13 @@ const View3D=(()=>{
   let changed;do{changed=false;for(let i=0;i<active.length;i++)if(!active[i]){active[i]=true;const test=solve(l,active,state.z,r);if(test.valid){state=test;changed=true;}else active[i]=false;}}while(changed);
   state=inspect(l,active,state.z,r);return {active,...state};
  }
- function edit(l,current,seed,index,auto,heldOff=[],r=defaults){
+ function edit(l,current,seed,index,auto,heldOff=[],r=defaults,undoPoint=null){
   const active=current.slice(),off=new Set(heldOff),activating=!active[index];active[index]=activating;
+  // Reverse the latest automatic replacement exactly; do not overwrite later edits.
+  if(auto&&activating&&undoPoint?.index===index&&current.every((a,i)=>a===undoPoint.afterActive[i])&&seed.every((z,i)=>Math.abs(z-undoPoint.afterZ[i])<1e-8)){
+   const prior=inspect(l,undoPoint.active,undoPoint.z,r);
+   if(prior.valid){const removed=l.units.filter((u,i)=>current[i]&&!undoPoint.active[i]).map(u=>u.id);return {...prior,active:undoPoint.active.slice(),heldOff:undoPoint.heldOff.slice(),undoPoint:null,rejected:false,message:`${l.units[index].id} reactivated. Restored the previous verified plan and pad heights.`+(removed.length?' Automatic replacements returned to ghosts: '+removed.join(', ')+'.':'')};}
+  }
   let state=activating?solve(l,active,seed,r):inspect(l,active,seed.slice(),r);
   if(!state.valid){
    const reasons=[];const ids=state.viewBad.flatMap((bad,i)=>bad?[l.units[i].id]:[]);
@@ -53,7 +58,7 @@ const View3D=(()=>{
    if(state.conflicts.length)reasons.push('clearance / overlap requirements');
    if(state.outside.length)reasons.push('site boundary');
    if(state.padBad.some(Boolean))reasons.push('pad limits');
-   return {...inspect(l,current,seed.slice(),r),active:current.slice(),heldOff:[...off],rejected:true,message:`Cannot activate ${l.units[index].id}: this action would break ${reasons.join('; ')} under the current pad search. Previous plan kept.`};
+   return {...inspect(l,current,seed.slice(),r),active:current.slice(),heldOff:[...off],undoPoint,rejected:true,message:`Cannot activate ${l.units[index].id}: this action would break ${reasons.join('; ')} under the current pad search. Previous plan kept.`};
   }
   const restored=[];
   if(activating)off.delete(index);else{
@@ -63,7 +68,8 @@ const View3D=(()=>{
     if(candidate.valid){active[i]=true;state=candidate;restored.push(l.units[i].id);changed=true;}
    }}while(changed);}
   }
-  return {...state,active,heldOff:[...off],rejected:false,message:`${l.units[index].id} ${activating?'activated':'deactivated'}.`+(restored.length?' Auto-activated: '+restored.join(', ')+'.':!activating&&auto?' No other ghosts could be safely activated.':'')};
+  const nextUndo=!activating&&auto?{index,active:current.slice(),z:seed.slice(),heldOff:heldOff.slice(),afterActive:active.slice(),afterZ:state.z.slice()}:null;
+  return {...state,active,heldOff:[...off],undoPoint:nextUndo,rejected:false,message:`${l.units[index].id} ${activating?'activated':'deactivated'}.`+(restored.length?' Auto-activated: '+restored.join(', ')+'.':!activating&&auto?' No other ghosts could be safely activated.':'')};
  }
  return {defaults,settings,centralHalf,prepare,column,union,measure,inspect,solve,reduce,edit};
 })();
