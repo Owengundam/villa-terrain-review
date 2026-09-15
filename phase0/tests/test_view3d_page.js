@@ -13,3 +13,4 @@ const source=vm.runInContext('workerSource',context),messages=[],worker=vm.creat
 const layout=JSON.parse(vm.runInContext('JSON.stringify(data.layouts[0])',context)),rules=JSON.parse(vm.runInContext('JSON.stringify(data.rules.view3d)',context));
 worker.onmessage({data:{op:'fit',layout,active:layout.units.map(u=>u.active),seed:layout.units.map(u=>u.z),rules}});assert(messages.at(-1).result.valid);
 console.log('PASS generated page renders four layouts, rejects invalid settings and executes its actual worker fit');
+vm.runInContext("changes=[{index:0,id:data.layouts[index].units[0].id,type:'deactivated',automatic:true,padDelta:0}];draw();",context);assert(element('map').innerHTML.includes('data-change="deactivated"'));assert(element('map').innerHTML.includes('#d46a10'));assert(element('changes').innerHTML.includes('data-change-select="0"'));console.log('PASS affected-footprint highlighting and change navigation markup');

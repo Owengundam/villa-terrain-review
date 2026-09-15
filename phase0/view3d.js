@@ -44,32 +44,41 @@ const View3D=(()=>{
   let changed;do{changed=false;for(let i=0;i<active.length;i++)if(!active[i]){active[i]=true;const test=solve(l,active,state.z,r);if(test.valid){state=test;changed=true;}else active[i]=false;}}while(changed);
   state=inspect(l,active,state.z,r);return {active,...state};
  }
- function edit(l,current,seed,index,auto,heldOff=[],r=defaults,undoPoint=null){
+ function edit(l,current,seed,index,auto,heldOff=[],r=defaults){
   const active=current.slice(),off=new Set(heldOff),activating=!active[index];active[index]=activating;
-  // Reverse the latest automatic replacement exactly; do not overwrite later edits.
-  if(auto&&activating&&undoPoint?.index===index&&current.every((a,i)=>a===undoPoint.afterActive[i])&&seed.every((z,i)=>Math.abs(z-undoPoint.afterZ[i])<1e-8)){
-   const prior=inspect(l,undoPoint.active,undoPoint.z,r);
-   if(prior.valid){const removed=l.units.filter((u,i)=>current[i]&&!undoPoint.active[i]).map(u=>u.id);return {...prior,active:undoPoint.active.slice(),heldOff:undoPoint.heldOff.slice(),undoPoint:null,rejected:false,message:`${l.units[index].id} reactivated. Restored the previous verified plan and pad heights.`+(removed.length?' Automatic replacements returned to ghosts: '+removed.join(', ')+'.':'')};}
-  }
   let state=activating?solve(l,active,seed,r):inspect(l,active,seed.slice(),r);
+  if(auto&&activating){
+   // The clicked villa is protected; resolve conflicts by removing other villas.
+   while(!state.valid){
+    let victim=state.outside.find(i=>i!==index);
+    if(victim===undefined&&state.conflicts.length){const pair=state.conflicts[0];victim=pair.find(i=>i!==index);}
+    if(victim===undefined){const failed=state.viewBad.flatMap((bad,i)=>bad&&i!==index?[i]:[]);failed.sort((a,b)=>state.metrics[b].blocked+state.metrics[b].central-state.metrics[a].blocked-state.metrics[a].central);victim=failed[0];}
+    if(victim===undefined&&state.viewBad[index]){
+     const blockers=[...new Set(prepare(l)[index].flat().map(e=>e[0]).filter(j=>active[j]&&j!==index))];
+     let largest=-1;for(const j of blockers){const mask=active.map((_,k)=>k===j),m=measure(l,mask,state.z,r,index)[index],score=m.blocked+m.central;if(score>largest){largest=score;victim=j;}}
+    }
+    if(victim===undefined)throw Error('Selected villa has an intrinsic geometry or pad issue that removing neighbours cannot resolve.');
+    active[victim]=false;state=solve(l,active,state.z,r);
+   }
+  }
   if(!state.valid){
    const reasons=[];const ids=state.viewBad.flatMap((bad,i)=>bad?[l.units[i].id]:[]);
    if(ids.length)reasons.push('view requirements for '+ids.join(', '));
    if(state.conflicts.length)reasons.push('clearance / overlap requirements');
    if(state.outside.length)reasons.push('site boundary');
    if(state.padBad.some(Boolean))reasons.push('pad limits');
-   return {...inspect(l,current,seed.slice(),r),active:current.slice(),heldOff:[...off],undoPoint,rejected:true,message:`Cannot activate ${l.units[index].id}: this action would break ${reasons.join('; ')} under the current pad search. Previous plan kept.`};
+   return {...inspect(l,current,seed.slice(),r),active:current.slice(),heldOff:[...off],changes:[],rejected:true,message:`Cannot activate ${l.units[index].id}: this action would break ${reasons.join('; ')} under the current pad search. Previous plan kept.`};
   }
-  const restored=[];
   if(activating)off.delete(index);else{
    off.add(index);
    if(auto){let changed;do{changed=false;for(let i=0;i<active.length;i++)if(!active[i]&&!off.has(i)){
     const trial=active.slice();trial[i]=true;const candidate=solve(l,trial,state.z,r);
-    if(candidate.valid){active[i]=true;state=candidate;restored.push(l.units[i].id);changed=true;}
+    if(candidate.valid){active[i]=true;state=candidate;changed=true;}
    }}while(changed);}
   }
-  const nextUndo=!activating&&auto?{index,active:current.slice(),z:seed.slice(),heldOff:heldOff.slice(),afterActive:active.slice(),afterZ:state.z.slice()}:null;
-  return {...state,active,heldOff:[...off],undoPoint:nextUndo,rejected:false,message:`${l.units[index].id} ${activating?'activated':'deactivated'}.`+(restored.length?' Auto-activated: '+restored.join(', ')+'.':!activating&&auto?' No other ghosts could be safely activated.':'')};
+  const changes=l.units.flatMap((u,i)=>{const type=active[i]!==current[i]?(active[i]?'activated':'deactivated'):active[i]&&Math.abs(state.z[i]-seed[i])>1e-6?'pad-adjusted':null;return type?[{index:i,id:u.id,type,automatic:i!==index,padDelta:state.z[i]-seed[i]}]:[];});
+  const added=changes.filter(c=>c.automatic&&c.type==='activated').map(c=>c.id),removed=changes.filter(c=>c.automatic&&c.type==='deactivated').map(c=>c.id);
+  return {...state,active,heldOff:[...off],changes,rejected:false,message:`${l.units[index].id} ${activating?'activated':'deactivated'}.`+(added.length?' Auto-activated: '+added.join(', ')+'.':'')+(removed.length?' Auto-deactivated: '+removed.join(', ')+'.':'')+' All requirements pass.'};
  }
  return {defaults,settings,centralHalf,prepare,column,union,measure,inspect,solve,reduce,edit};
 })();
