@@ -1,0 +1,59 @@
+<div id="villa-elevations">
+  <h2>Villa elevations</h2>
+  <div class="viz-controls">
+    <label class="form-label">Layout <select class="form-select" data-layout></select></label>
+    <label class="form-label">Villa <select class="form-select" data-villa></select></label>
+    <label class="form-label">Relationship <select class="form-select" data-pair></select></label>
+  </div>
+  <p data-detail aria-live="polite" class="tabular-nums"></p>
+  <div class="elevation-grid">
+    <div><svg data-plan role="img" aria-label="Select a villa in the contour-aligned plan"></svg></div>
+    <div><svg data-section role="img" aria-label="Selected pair elevation comparison"></svg><p data-check aria-live="polite"></p></div>
+  </div>
+  <p class="text-small">Central cone: ±15° · Minimum clear view: 70% · Vertical clearance alternative: 5.25 m pad drop · Pad adjustment limit: ±3 m</p>
+</div>
+<style>
+#villa-elevations .elevation-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+#villa-elevations svg{display:block;width:100%}
+#villa-elevations svg text{fill:var(--foreground);font:12px system-ui}
+@media(max-width:700px){#villa-elevations .elevation-grid{grid-template-columns:1fr}}
+</style>
+<script>
+(()=>{
+const data=/*DATA*/[];
+const root=document.getElementById('villa-elevations'),ls=root.querySelector('[data-layout]'),vs=root.querySelector('[data-villa]'),rs=root.querySelector('[data-pair]'),plan=root.querySelector('[data-plan]'),section=root.querySelector('[data-section]');
+const fmt=x=>x.toFixed(2),center=p=>p.reduce((a,q)=>[a[0]+q[0]/p.length,a[1]+q[1]/p.length],[0,0]);
+function svg(parent,tag,attrs={},text){const n=document.createElementNS('http://www.w3.org/2000/svg',tag);Object.entries(attrs).forEach(([k,v])=>n.setAttribute(k,v));if(text!==undefined)n.textContent=text;parent.appendChild(n);return n;}
+function choice(select,value,text){const o=document.createElement('option');o.value=value;o.textContent=text;select.appendChild(o);}
+data.forEach((d,i)=>choice(ls,i,d.name+' · '+d.units.length+' villas'));
+function setVillas(){vs.replaceChildren();data[+ls.value].units.forEach((u,i)=>choice(vs,i,u.name));setPairs();}
+function setPairs(){const d=data[+ls.value],i=+vs.value;rs.replaceChildren();d.links.map((e,k)=>({e,k})).filter(x=>x.e.rear===i||x.e.front===i).sort((a,b)=>(d.z[a.e.rear]-d.z[a.e.front])-(d.z[b.e.rear]-d.z[b.e.front])).forEach(({e,k})=>choice(rs,k,d.units[e.rear].name+' → '+d.units[e.front].name));if(!rs.options.length)choice(rs,-1,'No view relationship');draw();}
+function draw(){
+const d=data[+ls.value];if(!d)return;const i=+vs.value,e=d.links[+rs.value];
+root.querySelector('[data-detail]').textContent=d.units[i].name+' · Pad '+fmt(d.z[i])+' m · Reference '+fmt(d.ref[i])+' m · Adjustment '+(d.z[i]>=d.ref[i]?'+':'')+fmt(d.z[i]-d.ref[i])+' m';
+if(d.clear_fraction)root.querySelector('[data-detail]').textContent+=' · Clear view '+(d.clear_fraction[i]*100).toFixed(1)+'%';
+plan.replaceChildren();section.replaceChildren();
+const w=Math.max(280,plan.parentElement.clientWidth),h=Math.min(590,w*1.15);plan.setAttribute('viewBox',`0 0 ${w} ${h}`);
+const xs=d.boundary.map(p=>p[0]),ys=d.boundary.map(p=>p[1]),xmin=Math.min(...xs),xmax=Math.max(...xs),ymin=Math.min(...ys),ymax=Math.max(...ys),s=Math.min((w-24)/(xmax-xmin),(h-24)/(ymax-ymin));
+const xy=p=>[(w-s*(xmax-xmin))/2+(p[0]-xmin)*s,h-(h-s*(ymax-ymin))/2-(p[1]-ymin)*s],points=p=>p.map(q=>xy(q).join(',')).join(' ');
+d.contours.forEach(c=>svg(plan,'polyline',{points:points(c.points),fill:'none',stroke:'var(--border)','stroke-width':.7}));
+svg(plan,'polygon',{points:points(d.boundary),fill:'none',stroke:'var(--foreground)'});
+const selected=d.units[i],v=selected.view,c=center(selected.points),f=Math.max(...selected.points.map(p=>(p[0]-c[0])*v[0]+(p[1]-c[1])*v[1])),o=[c[0]+v[0]*f,c[1]+v[1]*f],side=[v[1],-v[0]],cone=[o];for(const a of [-Math.PI/12,Math.PI/12])cone.push([o[0]+45*(v[0]*Math.cos(a)+side[0]*Math.sin(a)),o[1]+45*(v[1]*Math.cos(a)+side[1]*Math.sin(a))]);svg(plan,'polygon',{points:points(cone),fill:'var(--viz-series-3)','fill-opacity':.13,stroke:'var(--viz-series-3)','stroke-width':1});
+d.units.forEach((u,k)=>{const p=svg(plan,'polygon',{points:points(u.points),fill:'var(--viz-series-1)','fill-opacity':k===i?.6:.16,stroke:k===i?'var(--foreground)':'var(--border)','stroke-width':k===i?2:1,style:'cursor:pointer'});svg(p,'title',{},u.name+' · '+fmt(d.z[k])+' m');p.addEventListener('click',()=>{vs.value=k;setPairs();});const [x,y]=xy(center(u.points));if(w>420||k===i)svg(plan,'text',{x,y,'text-anchor':'middle','pointer-events':'none'},u.name);});
+const sw=Math.max(280,section.parentElement.clientWidth),sh=390;section.setAttribute('viewBox',`0 0 ${sw} ${sh}`);
+if(!e){root.querySelector('[data-check]').textContent='No vertical-clearance relationship needed for this villa. Central view is sufficiently open.';return;}
+const a=e.rear,b=e.front,pa=xy(center(d.units[a].points)),pb=xy(center(d.units[b].points));svg(plan,'line',{x1:pa[0],y1:pa[1],x2:pb[0],y2:pb[1],stroke:'var(--viz-series-1)','stroke-width':2,'stroke-dasharray':'4 3','pointer-events':'none'});
+const low=Math.min(d.z[a],d.z[b],d.ref[a],d.ref[b])-2,high=Math.max(d.z[a]+5,d.z[b]+5,d.ref[a],d.ref[b])+2,sy=z=>315-(z-low)/(high-low)*230;
+svg(section,'text',{x:12,y:24},'Selected elevation pair · schematic');
+[[a,sw*.27],[b,sw*.75]].forEach(([k,x])=>{
+svg(section,'rect',{x:x-24,y:sy(d.z[k]+5),width:48,height:sy(d.z[k])-sy(d.z[k]+5),fill:'var(--viz-series-1)','fill-opacity':.2,stroke:'var(--foreground)'});
+svg(section,'text',{x,y:sy(d.z[k]+5)-12,'text-anchor':'middle'},d.units[k].name);
+svg(section,'line',{x1:x-36,y1:sy(d.z[k]),x2:x+36,y2:sy(d.z[k]),stroke:'var(--foreground)','stroke-width':2});
+svg(section,'line',{x1:x-40,y1:sy(d.ref[k]),x2:x+40,y2:sy(d.ref[k]),stroke:'var(--viz-series-3)','stroke-dasharray':'4 3'});
+svg(section,'text',{x,y:340,'text-anchor':'middle'},'Pad '+fmt(d.z[k])+' m');svg(section,'text',{x,y:363,'text-anchor':'middle'},'Ref '+fmt(d.ref[k])+' m');
+});
+const drop=d.z[a]-d.z[b],pass=drop>=5.25-1e-5;root.querySelector('[data-check]').textContent=(pass?'PASS':'FAIL')+' · Pad drop '+fmt(drop)+' m · Required 5.25 m · '+d.units[a].name+' looks toward '+d.units[b].name;
+}
+ls.addEventListener('change',setVillas);vs.addEventListener('change',setPairs);rs.addEventListener('change',draw);new ResizeObserver(draw).observe(root);setVillas();
+})();
+</script>

@@ -1,0 +1,12 @@
+node_modules/
+__pycache__/
+*.pyc
+.env
+.env.*
+.openai/
+.sites-runtime/
+*.3dm
+*.rhp
+*.dll
+bin/
+obj/

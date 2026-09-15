@@ -1,0 +1,70 @@
+<div id="views-elevation-review">
+  <h2>Phase 2 · views and elevations</h2>
+  <div class="viz-controls">
+    <label class="form-label">Layout <select class="form-select" data-option></select></label>
+    <label class="form-label">State <select class="form-select" data-state><option value="best">Proposed</option><option value="initial">Original XY · fitted levels</option></select></label>
+    <label class="form-label">Building <select class="form-select" data-building></select></label>
+  </div>
+  <p data-status aria-live="polite"></p>
+  <div class="review-grid">
+    <div><svg data-map role="img" aria-label="Plan with building movements and selected view relationships"></svg></div>
+    <div><p data-detail aria-live="polite"></p><svg data-section role="img" aria-label="Schematic elevation relationship for the selected building"></svg><p class="text-small text-muted" data-limits></p></div>
+  </div>
+  <p class="text-small">Dashed outlines: starting footprints · Lines: selected view relationships · Red: insufficient elevation drop · Contours: synthetic reference terrain</p>
+</div>
+<style>
+#views-elevation-review .review-grid{display:grid;grid-template-columns:3fr 2fr;gap:20px;align-items:start}
+#views-elevation-review svg{width:100%;display:block;overflow:visible}
+#views-elevation-review svg text{fill:var(--foreground);font:12px system-ui}
+#views-elevation-review [data-map] polygon{cursor:pointer}
+@media(max-width:750px){#views-elevation-review .review-grid{grid-template-columns:1fr}}
+</style>
+<script>
+(()=>{
+const report=/*REPORT_DATA*/{};
+const root=document.getElementById('views-elevation-review');
+const option=root.querySelector('[data-option]'), stateSelect=root.querySelector('[data-state]'), building=root.querySelector('[data-building]');
+const map=root.querySelector('[data-map]'), section=root.querySelector('[data-section]');
+const NS='http://www.w3.org/2000/svg';
+function node(tag,attrs,parent,text){const e=document.createElementNS(NS,tag);for(const [k,v]of Object.entries(attrs||{}))e.setAttribute(k,v);if(text!==undefined)e.textContent=text;(parent||map).appendChild(e);return e;}
+function centre(ps){return ps.reduce((a,p)=>[a[0]+p[0]/ps.length,a[1]+p[1]/ps.length],[0,0]);}
+function fmt(x){return Number(x).toFixed(2);}
+report.studies.forEach((item,i)=>{const e=document.createElement('option');e.value=i;e.textContent=item.source.name.split(' /')[0]+' — '+item.result.status;option.appendChild(e);});
+function setBuildings(){const s=report.studies[+option.value];building.replaceChildren();s.source.units.forEach((u,i)=>{const o=document.createElement('option');o.value=i;o.textContent=u.name;building.appendChild(o);});const r=s.result.best;if(r){let worst=-1; r.links.forEach((e,k)=>{if(r.shortfalls[k]>worst){worst=r.shortfalls[k];building.value=e.rear;}});}draw();}
+function draw(){
+ const item=report.studies[+option.value];if(!item)return;const source=item.source,r=item.result;map.replaceChildren();section.replaceChildren();
+ const state=r[stateSelect.value];if(!state){root.querySelector('[data-status]').textContent='Input rejected: '+r.reason;return;}
+ const idx=+building.value, u=source.units[idx], selected=centre(state.polys[idx]);
+ const failed=state.links.filter(e=>state.z[e.rear]-state.z[e.front]<report.config.drop-1e-5);
+ root.querySelector('[data-status]').textContent=(stateSelect.value==='best'?r.status.toUpperCase():'STARTING REFERENCE')+' · '+failed.length+' / '+state.links.length+' height relationships below '+report.config.drop+' m · '+r.evaluations+' candidates tested';
+ const w=Math.max(280,map.parentElement.clientWidth),h=Math.min(630,w*1.1);map.setAttribute('viewBox',`0 0 ${w} ${h}`);
+ const xs=source.boundary.map(p=>p[0]),ys=source.boundary.map(p=>p[1]);const xmin=Math.min(...xs),xmax=Math.max(...xs),ymin=Math.min(...ys),ymax=Math.max(...ys);
+ const scale=Math.min((w-32)/(xmax-xmin),(h-32)/(ymax-ymin));const ox=(w-scale*(xmax-xmin))/2,oy=(h-scale*(ymax-ymin))/2;
+ const xy=p=>[ox+(p[0]-xmin)*scale,h-oy-(p[1]-ymin)*scale];const pts=ps=>ps.map(p=>xy(p).join(',')).join(' ');
+ node('title',{},map,source.name+' plan');
+ source.contours.forEach(c=>node('polyline',{points:pts(c.points),fill:'none',stroke:'var(--border)','stroke-width':.7},map));
+ node('polygon',{points:pts(source.boundary),fill:'none',stroke:'var(--foreground)','stroke-width':1.3},map);
+ const bad=new Set(failed.flatMap(e=>[e.rear,e.front]));
+ state.polys.forEach((p,i)=>{
+  node('polygon',{points:pts(source.units[i].points),fill:'none',stroke:'var(--muted-foreground)','stroke-width':.7,'stroke-dasharray':'3 3'},map);
+  const a=xy(centre(source.units[i].points)),b=xy(centre(p));node('line',{x1:a[0],y1:a[1],x2:b[0],y2:b[1],stroke:'var(--viz-series-3)','stroke-width':1.2},map);
+  const el=node('polygon',{points:pts(p),fill:bad.has(i)?'var(--viz-series-2)':'var(--viz-series-1)','fill-opacity':i===idx?.5:.18,stroke:i===idx?'var(--foreground)':'var(--border)','stroke-width':i===idx?2:1},map);
+  node('title',{},el,source.units[i].name+' · pad '+fmt(state.z[i])+' m');el.addEventListener('click',()=>{building.value=i;draw();});
+  if(w>470||i===idx)node('text',{x:b[0],y:b[1],'text-anchor':'middle','dominant-baseline':'middle','pointer-events':'none'},map,source.units[i].name);
+ });
+ const selectedLinks=state.links.filter(e=>e.rear===idx||e.front===idx);
+ selectedLinks.forEach(e=>{const a=xy(centre(state.polys[e.rear])),b=xy(centre(state.polys[e.front]));node('line',{x1:a[0],y1:a[1],x2:b[0],y2:b[1],stroke:state.z[e.rear]-state.z[e.front]<report.config.drop-1e-5?'var(--viz-series-2)':'var(--viz-series-1)','stroke-width':1.7,'stroke-dasharray':e.rear===idx?'none':'4 3','pointer-events':'none'},map);});
+ const move=Math.hypot(...state.moves[idx]);root.querySelector('[data-detail]').textContent=u.name+' · XY movement '+fmt(move)+' m · pad '+fmt(state.z[idx])+' m · terrain '+fmt(state.reference[idx])+' m · adjustment '+fmt(state.z[idx]-state.reference[idx])+' m';
+ root.querySelector('[data-limits]').textContent='Limits: '+report.config.max_move+' m XY; ±'+report.config.pad_limit+' m from contour-interpolated terrain. Orientations fixed. '+(r.reason||'Height and overlap/boundary checks passed; side-clearance cleanup remains Phase 3.');
+ const outgoing=state.links.filter(e=>e.rear===idx).sort((a,b)=>(state.z[a.rear]-state.z[a.front])-(state.z[b.rear]-state.z[b.front]));
+ const e=outgoing[0]||selectedLinks[0];const sw=Math.max(280,section.parentElement.clientWidth),sh=300;section.setAttribute('viewBox',`0 0 ${sw} ${sh}`);
+ if(!e){node('text',{x:10,y:35},section,'No tested view relationship for this building');return;}
+ const z1=state.z[e.rear],z2=state.z[e.front], min=Math.min(z1,z2)-2,max=Math.max(z1+5,z2+5)+2;const sy=z=>240-(z-min)/(max-min)*185;const x1=sw*.25,x2=sw*.73;
+ node('text',{x:10,y:20},section,'Most constrained selected relationship');
+ [[e.rear,x1,z1],[e.front,x2,z2]].forEach(([i,x,z])=>{node('rect',{x:x-25,y:sy(z+5),width:50,height:sy(z)-sy(z+5),fill:'var(--viz-series-1)','fill-opacity':.2,stroke:'var(--foreground)'},section);node('text',{x,y:sy(z+5)-10,'text-anchor':'middle'},section,source.units[i].name);node('text',{x,y:sy(z)+19,'text-anchor':'middle'},section,fmt(z)+' m');});
+ node('line',{x1:x1-30,y1:sy(z1),x2:x2+35,y2:sy(z1),stroke:'var(--muted-foreground)','stroke-dasharray':'4 3'},section);
+ node('text',{x:10,y:282},section,'Pad drop '+fmt(z1-z2)+' m / target '+report.config.drop+' m');
+}
+option.addEventListener('change',setBuildings);stateSelect.addEventListener('change',draw);building.addEventListener('change',draw);new ResizeObserver(draw).observe(root);setBuildings();
+})();
+</script>

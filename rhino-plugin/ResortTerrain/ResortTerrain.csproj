@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+ <PropertyGroup><TargetFramework>net8.0-windows</TargetFramework><EnableWindowsTargeting>true</EnableWindowsTargeting><GenerateAssemblyInfo>false</GenerateAssemblyInfo><GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute><OutputType>Library</OutputType><TargetExt>.rhp</TargetExt><AssemblyName>Field.ResortTerrain</AssemblyName><RhinoSystem Condition="'$(RhinoSystem)' == ''">C:\Program Files\Rhino 8\System</RhinoSystem></PropertyGroup>
+ <ItemGroup><Reference Include="RhinoCommon"><HintPath>$(RhinoSystem)\RhinoCommon.dll</HintPath><Private>false</Private></Reference><Reference Include="Eto"><HintPath>$(RhinoSystem)\Eto.dll</HintPath><Private>false</Private></Reference></ItemGroup>
+</Project>
+

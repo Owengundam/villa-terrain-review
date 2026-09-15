@@ -1,0 +1,121 @@
+<div id="villa-reduction">
+  <header class="studio-header"><div><span class="eyebrow">TERRAIN PLANNING</span><h1>Villa study</h1></div><div class="site-facts"><span>40,335 m² site</span><span>11 × 23 m villa</span></div></header>
+  <div class="studio-toolbar"><label class="form-label">Arrangement<select class="form-select" data-layout></select></label><div class="toolbar-actions"><button class="btn" type="button" data-reset>Restore plan</button><button class="btn btn-primary" type="button" data-export>Export active villas · PNG</button></div></div>
+  <div class="studio-workspace">
+    <section class="plan-panel"><div class="panel-heading"><h2>Site arrangement</h2><span class="small-note">Hover to identify · click to toggle</span></div><p data-status aria-live="polite"></p><div data-map></div><div class="plan-legend"><span><i class="legend-solid"></i>Active</span><span><i class="legend-ghost"></i>Inactive</span><span><i class="legend-conflict"></i>Conflict</span></div></section>
+    <aside class="review-panel"><div class="review-heading"><span class="eyebrow">VILLA INSPECTOR</span><div class="selection-controls"><label class="form-label">Selected villa<select class="form-select" data-unit></select></label><button class="btn" type="button" data-toggle>Deactivate villa</button></div><p data-detail aria-live="polite"></p></div>
+      <div class="review-content"><h2>Elevation comparisons</h2><p class="text-small">Selected villa against every unit in its cone. Ghosted units are excluded from checks. An active red villa remains active until you deactivate it; clicking a footprint toggles it.</p><div class="elevation-key"><span>Solid base: pad</span><span>Dotted: terrain</span><span>Red dashed: 5.25 m drop limit</span></div><div data-elevations></div><details class="cone-details"><summary>Cone measurements</summary><div data-blockers></div></details><p class="text-small">5 m buildings. Projected elevations collapse lateral offsets; these are not terrain sections.</p></div>
+    </aside>
+  </div>
+  <details class="rules-panel"><summary>Design rules &amp; terrain reference</summary><p>Orientation ±15° from contour normal, checked downhill across the footprint. Side clearance &gt;3 m. Central 30° view ≥70% clear, or a height drop ≥5.25 m. Automatic pads remain within ±1.5 m.</p><p>Live contour / spot-height source checked 15 Sep 2026. Image flow is rebuilt with coordinated villa movements and exact dimensions, then reduced for views. Inactive villas remain available as ghosts. Cones cover the full site. PNG exports include active villas only.</p></details>
+  <div data-hover role="tooltip" hidden></div>
+</div>
+<style>
+#villa-reduction{--background:#ffffff;--foreground:#172f3b;--muted-foreground:#586d78;--border:#d5dfe4;--green:#247b68;--red:#bf4148;color:var(--foreground);font:16px/1.5 system-ui,sans-serif;max-width:1560px;margin:auto;padding:28px;box-sizing:border-box}
+#villa-reduction *{box-sizing:border-box}
+#villa-reduction h1{font-size:30px;line-height:1.2;margin:5px 0 0;letter-spacing:-1px;font-weight:600}
+#villa-reduction h2{font-size:17px;margin:0;font-weight:600}
+#villa-reduction p{margin:10px 0}
+#villa-reduction .eyebrow{font-size:11px;font-weight:650;letter-spacing:1.8px;color:#617883}
+#villa-reduction .studio-header,#villa-reduction .studio-toolbar,#villa-reduction .panel-heading,#villa-reduction .toolbar-actions{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+#villa-reduction .site-facts{display:flex;gap:20px;color:#586d78;font-size:14px}
+#villa-reduction .studio-toolbar{margin:26px 0 20px}
+#villa-reduction .form-label{display:grid;gap:6px;color:#586d78;font-size:12px;font-weight:600}
+#villa-reduction .form-select{font:500 15px system-ui,sans-serif;color:#172f3b;background:#fff;border:1px solid #c9d6dd;border-radius:8px;min-height:42px;padding:9px 34px 9px 12px;max-width:100%;width:100%}
+#villa-reduction [data-layout]{min-width:240px}
+#villa-reduction .btn{font:500 14px system-ui,sans-serif;border:1px solid #c9d6dd;border-radius:8px;background:#fff;color:#274451;padding:12px 17px;cursor:pointer;min-height:42px}
+#villa-reduction .btn:hover{background:#edf3f5}
+#villa-reduction .btn-primary{background:#173e4e;color:white;border-color:#173e4e}
+#villa-reduction .btn-primary:hover{background:#225569}
+#villa-reduction .btn:disabled{opacity:.6;cursor:wait}
+#villa-reduction .studio-workspace{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(350px,1fr);gap:22px;align-items:start}
+#villa-reduction .plan-panel,#villa-reduction .review-panel{background:#fff;border:1px solid #dbe4e9;border-radius:14px;overflow:hidden;box-shadow:0 4px 20px #173e4e05}
+#villa-reduction .plan-panel{padding:20px}
+#villa-reduction .small-note{font-size:12px;color:#617883}
+#villa-reduction [data-status]{font-size:13px;padding:10px 12px;border-radius:7px;background:#f0f6f4;margin:14px 0 4px;overflow-wrap:anywhere}
+#villa-reduction [data-map] svg{display:block;width:100%;height:auto;max-height:76vh}
+#villa-reduction polygon[data-index]{cursor:pointer;transition:fill-opacity .12s}
+#villa-reduction polygon[data-index]:hover{fill-opacity:.5;stroke-width:2}
+#villa-reduction .plan-legend{display:flex;gap:20px;flex-wrap:wrap;padding-top:14px;border-top:1px solid #e6edf0;font-size:12px;color:#586d78}
+#villa-reduction .plan-legend span{display:flex;align-items:center;gap:7px}
+#villa-reduction .plan-legend i{display:inline-block;width:12px;height:12px;border-radius:2px}
+#villa-reduction .legend-solid{background:#c2dfd5;border:1px solid #247b68}
+#villa-reduction .legend-ghost{border:1px dashed #80929c}
+#villa-reduction .legend-conflict{background:#f7dce0;border:1px solid #bf4148}
+#villa-reduction .review-heading{padding:20px;border-bottom:1px solid #e2e9ed;background:#fafcfd}
+#villa-reduction .selection-controls{display:flex;gap:12px;align-items:end;margin-top:12px;flex-wrap:wrap}
+#villa-reduction .selection-controls label{flex:1;min-width:180px}
+#villa-reduction [data-detail]{font-size:13px;line-height:1.8;margin-top:16px;overflow-wrap:anywhere}
+#villa-reduction .review-content{padding:20px;max-height:76vh;overflow:auto}
+#villa-reduction .text-small{font-size:12px;color:#586d78}
+#villa-reduction .elevation-key{display:flex;gap:6px 14px;flex-wrap:wrap;font-size:11px;color:#586d78;margin:15px 0}
+#villa-reduction [data-elevations]{display:grid;grid-template-columns:minmax(0,1fr);gap:18px}
+#villa-reduction [data-elevations]>div{border:1px solid #e2e9ed;border-radius:8px;padding:10px;overflow:hidden}
+#villa-reduction [data-elevations] svg{display:block;width:100%;height:auto}
+#villa-reduction .table{width:100%;border-collapse:collapse;font-size:12px;margin-top:12px}
+#villa-reduction .table th,#villa-reduction .table td{text-align:left;padding:8px 4px;border-bottom:1px solid #e2e9ed}
+#villa-reduction summary{cursor:pointer;font-size:14px;font-weight:500}
+#villa-reduction .cone-details{margin-top:22px}
+#villa-reduction .rules-panel{margin:20px 0;color:#586d78;font-size:13px}
+#villa-reduction [data-hover]{position:fixed;z-index:1000;pointer-events:none;border-radius:6px;background:#172f3b;color:white;padding:7px 11px;font-size:13px;font-weight:600;box-shadow:0 3px 12px #172f3b30}
+@media(max-width:900px){#villa-reduction{padding:18px}#villa-reduction .studio-workspace{grid-template-columns:minmax(0,1fr)}#villa-reduction .review-content{max-height:none}#villa-reduction [data-map] svg{max-height:none}}
+@media(max-width:480px){#villa-reduction{padding:12px}#villa-reduction .site-facts{gap:12px;font-size:12px}#villa-reduction .plan-panel,#villa-reduction .review-heading,#villa-reduction .review-content{padding:14px}#villa-reduction .studio-toolbar{align-items:stretch}#villa-reduction .studio-toolbar>label,#villa-reduction .toolbar-actions{width:100%}#villa-reduction .toolbar-actions{gap:8px}#villa-reduction .toolbar-actions .btn{flex:1;padding:11px 8px}}
+</style>
+<script>
+/*__MODEL__*/
+/*__ELEVATIONS__*/
+/*__PRESENTATION__*/
+(() => {
+const data=/*__DATA__*/;
+const root=document.getElementById('villa-reduction'),pick=root.querySelector('[data-layout]'),unitPick=root.querySelector('[data-unit]'),map=root.querySelector('[data-map]');
+let index=0,selected=0,active=[],state,svg,hoverCleanups=[];
+const names={'free':'Free','parallel':'Parallel','staggered-2':'Staggered 2','staggered-3':'Staggered 3'};
+pick.innerHTML=data.layouts.map((l,i)=>`<option value="${i}">${names[l.name]}</option>`).join('');
+function colour(name){return getComputedStyle(root).getPropertyValue(name).trim();}
+function draw(){
+ hoverCleanups.forEach(hide=>hide());hoverCleanups=[];
+ const l=data.layouts[index],u=l.units[selected],W=Math.max(320,Math.round(map.clientWidth||700));
+ const extent=data.boundary.concat(l.units.flatMap(q=>q.points)),xs=extent.map(p=>p[0]),ys=extent.map(p=>p[1]),xmin=Math.min(...xs),xmax=Math.max(...xs),ymin=Math.min(...ys),ymax=Math.max(...ys),scale=(W-32)/(xmax-xmin),H=(ymax-ymin)*scale+110,radius=Math.hypot(xmax-xmin,ymax-ymin)*1.1;
+ const point=p=>[16+(p[0]-xmin)*scale,32+(ymax-p[1])*scale];
+ const points=ps=>ps.map(p=>point(p).join(',')).join(' ');
+ const fg=colour('--foreground'),muted=colour('--muted-foreground'),border=colour('--border'),green=colour('--green'),red=colour('--red'),bg=colour('--background');
+ const bad=new Set(state.conflicts.flat().concat(state.outside, state.viewBad.flatMap((v,i)=>v?[i]:[]), state.padBad.flatMap((v,i)=>v?[i]:[])));
+ let content=`<desc>${names[l.name]} villa arrangement. Click footprints to toggle active state. Inactive footprints remain dashed.</desc><rect width="${W}" height="${H}" fill="${bg}"/><text x="16" y="18" font-size="12" font-family="sans-serif" fill="${fg}">${names[l.name]} · ${active.filter(Boolean).length} / ${active.length} active · ${state.valid?'VALID':'CONFLICTS'}</text>`;
+ content+=`<defs><clipPath id="reduction-site-clip"><polygon points="${points(data.boundary)}"/></clipPath></defs><g clip-path="url(#reduction-site-clip)">`;
+ content+=data.contours.map(c=>`<polyline points="${points(c.points)}" fill="none" stroke="${border}" stroke-width="1"/>`).join('');
+ data.contours.filter(c=>c.points.length>40).forEach(c=>{const p=point(c.points[Math.floor(c.points.length*.65)]);content+=`<text x="${p[0]}" y="${p[1]}" font-size="11" font-family="sans-serif" fill="${muted}">${c.z.toFixed(0)}</text>`;});
+ // Show every failing cone plus the selected cone; selection remains available via the native picker.
+ l.units.forEach((q,i)=>{if(i!==selected&&!state.viewBad[i]&&!state.padBad[i])return;const o=[q.center[0]+q.view[0]*11.5,q.center[1]+q.view[1]*11.5],s=[q.view[1],-q.view[0]],fan=[o];for(let k=0;k<=20;k++){let a=-Math.PI/12+k*Math.PI/120;fan.push([o[0]+radius*(q.view[0]*Math.cos(a)+s[0]*Math.sin(a)),o[1]+radius*(q.view[1]*Math.cos(a)+s[1]*Math.sin(a))]);}const color=active[i]?(state.viewBad[i]||state.padBad[i]?red:green):muted;content+=`<polygon points="${points(fan)}" fill="${color}" fill-opacity="${i===selected?'.12':'.035'}" stroke="${color}" stroke-width="1" stroke-dasharray="${active[i]?'none':'4 3'}"/>`;});
+ content+='</g>';
+ content+=`<polygon points="${points(data.boundary)}" fill="none" stroke="${fg}" stroke-width="1.5"/>`;
+ // Ghosts first so an overlapping active unit remains clickable; the picker reaches either.
+ [...l.units.keys()].sort((a,b)=>Number(active[a])-Number(active[b])).forEach(i=>{const q=l.units[i],c=point(q.center),front=point([q.center[0]+q.view[0]*9,q.center[1]+q.view[1]*9]);content+=`<polygon data-index="${i}" points="${points(q.points)}" fill="${active[i]?(bad.has(i)?red:green):muted}" fill-opacity="${active[i]?'.28':'.07'}" stroke="${bad.has(i)?red:i===selected?fg:muted}" stroke-width="${i===selected?2.5:1}" stroke-dasharray="${active[i]?'none':'4 3'}"/><line x1="${c[0]}" y1="${c[1]}" x2="${front[0]}" y2="${front[1]}" stroke="${active[i]?fg:muted}" stroke-width="1" pointer-events="none"/>`;const s=[q.view[1],-q.view[0]],arrow=[[9,0],[6,1.3],[6,-1.3]].map(([a,b])=>[q.center[0]+q.view[0]*a+s[0]*b,q.center[1]+q.view[1]*a+s[1]*b]);content+=`<polygon points="${points(arrow)}" fill="${active[i]?fg:muted}" pointer-events="none"/>`;if(i===selected)content+=`<text x="${c[0]+8}" y="${c[1]-8}" font-size="12" font-family="sans-serif" fill="${fg}" pointer-events="none">${q.id}</text>`;});
+ const blockers=active[selected]?l.spans[selected].filter(([j])=>active[j]).map(([j,a,b])=>({j,width:(b-a)*180/Math.PI,drop:state.z[selected]-state.z[j],blocks:state.z[selected]-state.z[j]<5.25-1e-6})):[];
+ blockers.filter(b=>b.blocks).forEach(b=>{const a=point(u.center),c=point(l.units[b.j].center);content+=`<line x1="${a[0]}" y1="${a[1]}" x2="${c[0]}" y2="${c[1]}" stroke="${red}" stroke-width="1" stroke-dasharray="3 4" pointer-events="none"/><text x="${c[0]+8}" y="${c[1]-8}" fill="${fg}" font-family="sans-serif" font-size="12" pointer-events="none">${l.units[b.j].id}</text>`;});
+ content+=`<line x1="16" y1="${H-42}" x2="${16+20*scale}" y2="${H-42}" stroke="${fg}" stroke-width="2"/><text x="16" y="${H-50}" font-size="12" font-family="sans-serif" fill="${fg}">20 m</text>`;
+ content+=`<text x="16" y="${H-12}" font-size="12" font-family="sans-serif" fill="${fg}">Solid: active · Dashed: inactive · Red: conflict</text>`;
+ map.innerHTML=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Interactive villa arrangement">${content}</svg>`;svg=map.querySelector('svg');
+ map.querySelectorAll('[data-index]').forEach(p=>{const i=Number(p.dataset.index);p.setAttribute('aria-label',l.units[i].id);hoverCleanups.push(VillaPresentation.bindHover(p,l.units[i].id,root.querySelector('[data-hover]')));p.onclick=()=>{selected=i;toggle();};});
+ const count=active.filter(Boolean).length;root.querySelector('[data-status]').textContent=`${count} active · ${active.length-count} ghosted · ${state.valid?'All checks pass':`${state.viewBad.filter(Boolean).length} failing views; ${state.conflicts.length} clearance / overlap pairs; ${state.outside.length} outside site`}`;
+ root.querySelector('[data-status]').style.color=state.valid?fg:red;
+ root.querySelector('[data-detail]').textContent=`${u.id} · ${active[selected]?'Active':'Inactive — '+(u.reason==='retained'?'manual toggle':u.reason)} · orientation ${u.rotation.toFixed(1)}° · terrain falls ${u.downhill_drop.toFixed(2)} m rear → front · pad ${state.z[selected].toFixed(2)} m (${(state.z[selected]-u.reference).toFixed(2)} m from terrain)${active[selected]?' · clear view '+(100*(1-state.covered[selected]/(Math.PI/6))).toFixed(1)+'%':''}`;
+ root.querySelector('[data-blockers]').innerHTML=blockers.length?`<table class="table table-sm"><thead><tr><th>Within ${u.id}'s cone</th><th>Angular width</th><th>Pad drop</th><th>Result</th></tr></thead><tbody>${blockers.map(b=>`<tr><td>${l.units[b.j].id}</td><td>${b.width.toFixed(1)}°</td><td>${b.drop.toFixed(2)} m</td><td>${b.blocks?'Obstructs':'Height-clear'}</td></tr>`).join('')}</tbody></table><p class="text-small">Overlapping angular spans count once. A red cone means their combined obstruction exceeds 9° of the 30° cone.</p>`:'';
+ root.querySelector('[data-toggle]').textContent=active[selected]?'Deactivate '+u.id:'Activate '+u.id;
+ const elevations=root.querySelector('[data-elevations]');
+ elevations.innerHTML=ElevationDiagrams.render(l,active,state,selected,Math.max(280,elevations.clientWidth-22),{fg,muted,border,green,red,bg});
+ unitPick.innerHTML=l.units.map((q,i)=>`<option value="${i}" ${i===selected?'selected':''}>${q.id} — ${active[i]?'active':'inactive'}${state.viewBad[i]?' — view fails':''}</option>`).join('');
+}
+function reset(){const l=data.layouts[index];active=l.units.map(u=>u.active);selected=0;state=ReductionModel.inspect(l,active,l.units.map(u=>u.z));draw();}
+function toggle(){active[selected]=!active[selected];state=ReductionModel.solve(data.layouts[index],active,state.z);draw();}
+pick.onchange=()=>{index=Number(pick.value);reset();};unitPick.onchange=()=>{selected=Number(unitPick.value);draw();};root.querySelector('[data-toggle]').onclick=toggle;root.querySelector('[data-reset]').onclick=reset;
+root.querySelector('[data-export]').onclick=async()=>{
+ const button=root.querySelector('[data-export]');button.disabled=true;
+ try{const plan=VillaPresentation.exportPlan(data,data.layouts[index],active,state.valid),url=URL.createObjectURL(new Blob([plan.svg],{type:'image/svg+xml;charset=utf-8'})),im=new Image();
+ await new Promise((resolve,reject)=>{im.onload=resolve;im.onerror=reject;im.src=url;});
+ const canvas=document.createElement('canvas');canvas.width=plan.width;canvas.height=plan.height;canvas.getContext('2d').drawImage(im,0,0,canvas.width,canvas.height);URL.revokeObjectURL(url);
+ const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));if(!blob)throw new Error('PNG encoding failed');const link=document.createElement('a'),download=URL.createObjectURL(blob);link.href=download;link.download=data.layouts[index].name+'-'+active.filter(Boolean).length+'-villas.png';link.click();setTimeout(()=>URL.revokeObjectURL(download),2000);
+ }catch(error){root.querySelector('[data-status]').textContent='PNG export failed: '+String(error);}finally{button.disabled=false;}
+};
+reset();new ResizeObserver(()=>draw()).observe(map);
+})();
+</script>

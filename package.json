@@ -1,0 +1,14 @@
+{
+  "name": "villa-terrain-review",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Terrain-aware villa layout and 3D visibility planning",
+  "scripts": {
+    "build": "node phase0/analyse_3d.js --build-only",
+    "analyse": "node phase0/analyse_3d.js",
+    "test": "node phase0/tests/test_view3d.js && node phase0/tests/test_view3d_page.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
