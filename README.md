@@ -56,6 +56,6 @@ Buildings are solid vertical footprint extrusions. Roof slopes, trees, terrain o
 
 Auto mode (on by default) prioritizes the villa clicked for activation. It fits bounded pads, then automatically ghosts other failing villas or blockers until all requirements pass. The clicked villa remains active. Deactivation attempts repeated safe restoration of eligible ghosts. Manually deactivated villas remain excluded until explicitly activated or reset/recalculated.
 
-With Auto mode off, invalid activations are rejected and the previous plan/pads remain unchanged. The previous one-step snapshot restoration has been replaced by activation-priority conflict resolution.
+With Auto mode off, every manual activation and deactivation is accepted. Only the selected villa changes; other villas and pad heights remain unchanged. Violations are shown without blocking the action. The previous one-step snapshot restoration has been replaced by activation-priority conflict resolution.
 
 Each completed action highlights changed footprints and lists clickable change records: green + activated, orange - deactivated, blue vertical arrow pad-adjusted. Highlights persist through inspection until the next action. Auto mode uses a rounded, keyboard-accessible switch. This is a local search, not maximum-count optimization.

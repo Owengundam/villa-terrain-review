@@ -46,7 +46,7 @@ const View3D=(()=>{
  }
  function edit(l,current,seed,index,auto,heldOff=[],r=defaults){
   const active=current.slice(),off=new Set(heldOff),activating=!active[index];active[index]=activating;
-  let state=activating?solve(l,active,seed,r):inspect(l,active,seed.slice(),r);
+  let state=auto&&activating?solve(l,active,seed,r):inspect(l,active,seed.slice(),r);
   if(auto&&activating){
    // The clicked villa is protected; resolve conflicts by removing other villas.
    while(!state.valid){
@@ -61,14 +61,6 @@ const View3D=(()=>{
     active[victim]=false;state=solve(l,active,state.z,r);
    }
   }
-  if(!state.valid){
-   const reasons=[];const ids=state.viewBad.flatMap((bad,i)=>bad?[l.units[i].id]:[]);
-   if(ids.length)reasons.push('view requirements for '+ids.join(', '));
-   if(state.conflicts.length)reasons.push('clearance / overlap requirements');
-   if(state.outside.length)reasons.push('site boundary');
-   if(state.padBad.some(Boolean))reasons.push('pad limits');
-   return {...inspect(l,current,seed.slice(),r),active:current.slice(),heldOff:[...off],changes:[],rejected:true,message:`Cannot activate ${l.units[index].id}: this action would break ${reasons.join('; ')} under the current pad search. Previous plan kept.`};
-  }
   if(activating)off.delete(index);else{
    off.add(index);
    if(auto){let changed;do{changed=false;for(let i=0;i<active.length;i++)if(!active[i]&&!off.has(i)){
@@ -78,7 +70,7 @@ const View3D=(()=>{
   }
   const changes=l.units.flatMap((u,i)=>{const type=active[i]!==current[i]?(active[i]?'activated':'deactivated'):active[i]&&Math.abs(state.z[i]-seed[i])>1e-6?'pad-adjusted':null;return type?[{index:i,id:u.id,type,automatic:i!==index,padDelta:state.z[i]-seed[i]}]:[];});
   const added=changes.filter(c=>c.automatic&&c.type==='activated').map(c=>c.id),removed=changes.filter(c=>c.automatic&&c.type==='deactivated').map(c=>c.id);
-  return {...state,active,heldOff:[...off],changes,rejected:false,message:`${l.units[index].id} ${activating?'activated':'deactivated'}.`+(added.length?' Auto-activated: '+added.join(', ')+'.':'')+(removed.length?' Auto-deactivated: '+removed.join(', ')+'.':'')+' All requirements pass.'};
+  return {...state,active,heldOff:[...off],changes,rejected:false,message:`${l.units[index].id} ${activating?'activated':'deactivated'}.`+(added.length?' Auto-activated: '+added.join(', ')+'.':'')+(removed.length?' Auto-deactivated: '+removed.join(', ')+'.':'')+(state.valid?' All requirements pass.':' Conflicts shown on the plan; manual edit kept.')};
  }
  return {defaults,settings,centralHalf,prepare,column,union,measure,inspect,solve,reduce,edit};
 })();
