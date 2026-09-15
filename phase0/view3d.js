@@ -44,6 +44,27 @@ const View3D=(()=>{
   let changed;do{changed=false;for(let i=0;i<active.length;i++)if(!active[i]){active[i]=true;const test=solve(l,active,state.z,r);if(test.valid){state=test;changed=true;}else active[i]=false;}}while(changed);
   state=inspect(l,active,state.z,r);return {active,...state};
  }
- return {defaults,settings,centralHalf,prepare,column,union,measure,inspect,solve,reduce};
+ function edit(l,current,seed,index,auto,heldOff=[],r=defaults){
+  const active=current.slice(),off=new Set(heldOff),activating=!active[index];active[index]=activating;
+  let state=activating?solve(l,active,seed,r):inspect(l,active,seed.slice(),r);
+  if(!state.valid){
+   const reasons=[];const ids=state.viewBad.flatMap((bad,i)=>bad?[l.units[i].id]:[]);
+   if(ids.length)reasons.push('view requirements for '+ids.join(', '));
+   if(state.conflicts.length)reasons.push('clearance / overlap requirements');
+   if(state.outside.length)reasons.push('site boundary');
+   if(state.padBad.some(Boolean))reasons.push('pad limits');
+   return {...inspect(l,current,seed.slice(),r),active:current.slice(),heldOff:[...off],rejected:true,message:`Cannot activate ${l.units[index].id}: this action would break ${reasons.join('; ')} under the current pad search. Previous plan kept.`};
+  }
+  const restored=[];
+  if(activating)off.delete(index);else{
+   off.add(index);
+   if(auto){let changed;do{changed=false;for(let i=0;i<active.length;i++)if(!active[i]&&!off.has(i)){
+    const trial=active.slice();trial[i]=true;const candidate=solve(l,trial,state.z,r);
+    if(candidate.valid){active[i]=true;state=candidate;restored.push(l.units[i].id);changed=true;}
+   }}while(changed);}
+  }
+  return {...state,active,heldOff:[...off],rejected:false,message:`${l.units[index].id} ${activating?'activated':'deactivated'}.`+(restored.length?' Auto-activated: '+restored.join(', ')+'.':!activating&&auto?' No other ghosts could be safely activated.':'')};
+ }
+ return {defaults,settings,centralHalf,prepare,column,union,measure,inspect,solve,reduce,edit};
 })();
 if(typeof module!=='undefined')module.exports=View3D;

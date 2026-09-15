@@ -51,3 +51,7 @@ The Python/Rhino workflows are historical tooling and may require their original
 ## Model limits
 
 Buildings are solid vertical footprint extrusions. Roof slopes, trees, terrain occlusion and structural supports are not visibility blockers. Pad height is the floor reference; upper-floor eye height must include the floor offset. Clear area does not guarantee a continuous unobstructed opening. This is a design study, not regulatory verification.
+
+## Safe interactive editing
+
+Auto mode (on by default) tries to restore eligible ghosts after a deactivation, with bounded pad fitting and whole-layout validation. Manually deactivated villas remain excluded until explicitly activated or the plan is reset/recalculated. Invalid activations are rejected in both modes and retain the previous mask and pad heights. The message identifies failed requirements. Restoration is local search, not a maximum-count guarantee.
