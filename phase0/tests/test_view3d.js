@@ -14,6 +14,11 @@ assert.equal(v.centralHalf({...v.defaults,top:1}),1);
 assert.equal(v.centralHalf({...v.defaults,bottom:-1}),1);
 assert(Math.abs(metric({height:1},[0,0]).central-metric({height:1},[0,2]).central)<1e-10,'mirrored silhouettes above and below eye have equal central obstruction');
 assert.throws(()=>v.settings({bottom:1}));
+assert.equal(v.defaults.centralClear,.75);
+const limit=metric({height:1}).central;assert(limit>0&&limit<1);
+assert(v.inspect(l,[true,true],[0,0],{...v.defaults,height:1,clear:0,centralClear:1-limit}).viewBad[0],'exact central obstruction limit fails');
+assert(!v.inspect(l,[true,true],[0,0],{...v.defaults,height:1,clear:0,centralClear:1-limit-1e-4}).viewBad[0],'below central obstruction limit passes');
+assert(v.inspect(l,[true,false],[0,0],{...v.defaults,centralClear:1}).valid,'fully clear satisfies 100 percent setting');
 // Independent 3D ray / oriented box slab intersection; no angular-envelope code reused.
 function hit(o,d,u,pad,height){const side=[u.view[1],-u.view[0]],delta=[o[0]-u.center[0],o[1]-u.center[1]],p=[delta[0]*side[0]+delta[1]*side[1],delta[0]*u.view[0]+delta[1]*u.view[1],o[2]-pad],ray=[d[0]*side[0]+d[1]*side[1],d[0]*u.view[0]+d[1]*u.view[1],d[2]],low=[-5.5,-11.5,0],high=[5.5,11.5,height];let enter=1e-7,exit=Infinity;for(let a=0;a<3;a++){if(Math.abs(ray[a])<1e-12){if(p[a]<low[a]||p[a]>high[a])return false;}else{const x=(low[a]-p[a])/ray[a],y=(high[a]-p[a])/ray[a];enter=Math.max(enter,Math.min(x,y));exit=Math.min(exit,Math.max(x,y));}}return exit>=enter;}
 const report=JSON.parse(fs.readFileSync('output/checks/image-flow-3d-20260915/report.json','utf8'));let rays=0;

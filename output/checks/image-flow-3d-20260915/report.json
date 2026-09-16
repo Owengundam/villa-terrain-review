@@ -8769,7 +8769,7 @@
       "bottom": -10,
       "top": 5,
       "clear": 0.7,
-      "centralClear": 0.5,
+      "centralClear": 0.75,
       "pad": 1.5
     }
   },
@@ -8818,7 +8818,7 @@
           "reference": 1373.0985523317786,
           "active": true,
           "reason": "retained",
-          "z": 1374.5985523317786
+          "z": 1373.0985523317786
         },
         {
           "id": "V002",
@@ -8939,9 +8939,9 @@
           ],
           "movement": 0.38215080803305734,
           "reference": 1371.7164579732723,
-          "active": true,
-          "reason": "retained",
-          "z": 1370.2164579732723
+          "active": false,
+          "reason": "3D view obstruction",
+          "z": 1373.2164579732723
         },
         {
           "id": "V005",
@@ -9021,8 +9021,8 @@
           ],
           "movement": 0.360855145635801,
           "reference": 1370.0672703035254,
-          "active": false,
-          "reason": "3D view obstruction",
+          "active": true,
+          "reason": "retained",
           "z": 1370.0672703035254
         },
         {
@@ -9103,8 +9103,8 @@
           ],
           "movement": 0.9534987070858205,
           "reference": 1369.1362855983057,
-          "active": true,
-          "reason": "retained",
+          "active": false,
+          "reason": "3D view obstruction",
           "z": 1370.6362855983057
         },
         {
@@ -9146,7 +9146,7 @@
           "reference": 1370.1599656418036,
           "active": false,
           "reason": "3D view obstruction",
-          "z": 1371.1599656418036
+          "z": 1371.6599656418036
         },
         {
           "id": "V010",
@@ -9185,8 +9185,8 @@
           ],
           "movement": 0.2150469749432829,
           "reference": 1368.8751020943694,
-          "active": true,
-          "reason": "retained",
+          "active": false,
+          "reason": "3D view obstruction",
           "z": 1370.3751020943694
         },
         {
@@ -9226,9 +9226,9 @@
           ],
           "movement": 1.4868000060518511,
           "reference": 1369.7752977780324,
-          "active": false,
-          "reason": "3D view obstruction",
-          "z": 1369.2752977780324
+          "active": true,
+          "reason": "retained",
+          "z": 1368.2752977780324
         },
         {
           "id": "V012",
@@ -9474,7 +9474,7 @@
           "reference": 1369.2123344411111,
           "active": false,
           "reason": "3D view obstruction",
-          "z": 1369.2123344411111
+          "z": 1368.2123344411111
         },
         {
           "id": "V018",
@@ -9513,8 +9513,8 @@
           ],
           "movement": 0.4165931156225707,
           "reference": 1369.5781742259753,
-          "active": true,
-          "reason": "retained",
+          "active": false,
+          "reason": "3D view obstruction",
           "z": 1371.0781742259753
         },
         {
@@ -9597,7 +9597,7 @@
           "reference": 1367.339195824325,
           "active": false,
           "reason": "3D view obstruction",
-          "z": 1365.839195824325
+          "z": 1368.839195824325
         },
         {
           "id": "V021",
@@ -9677,8 +9677,8 @@
           ],
           "movement": 0.21964206920711848,
           "reference": 1368.6558035398223,
-          "active": true,
-          "reason": "retained",
+          "active": false,
+          "reason": "3D view obstruction",
           "z": 1368.1558035398223
         },
         {
@@ -9720,7 +9720,7 @@
           "reference": 1367.2672948739103,
           "active": false,
           "reason": "3D view obstruction",
-          "z": 1367.7672948739103
+          "z": 1368.7672948739103
         },
         {
           "id": "V024",
@@ -9802,7 +9802,7 @@
           "reference": 1368.5176552504463,
           "active": true,
           "reason": "retained",
-          "z": 1370.0176552504463
+          "z": 1367.0176552504463
         },
         {
           "id": "V026",
@@ -9925,7 +9925,7 @@
           "reference": 1366.80132303854,
           "active": true,
           "reason": "retained",
-          "z": 1366.30132303854
+          "z": 1365.30132303854
         },
         {
           "id": "V029",
@@ -9966,7 +9966,7 @@
           "reference": 1367.807426136936,
           "active": false,
           "reason": "3D view obstruction",
-          "z": 1369.307426136936
+          "z": 1368.807426136936
         },
         {
           "id": "V030",
@@ -10130,7 +10130,7 @@
           "reference": 1366.1247349001708,
           "active": false,
           "reason": "3D view obstruction",
-          "z": 1365.1247349001708
+          "z": 1364.6247349001708
         },
         {
           "id": "V034",
@@ -10540,7 +10540,7 @@
           "reference": 1364.73117089267,
           "active": true,
           "reason": "retained",
-          "z": 1364.73117089267
+          "z": 1363.23117089267
         }
       ],
       "spans": [
@@ -11972,11 +11972,11 @@
           "standard_geometry_passed": true
         },
         "visibility3dPassed": true,
-        "maximumBlocked": 0.27378352993822047,
-        "maximumCentralBlocked": 0.47015107162801506
+        "maximumBlocked": 0.28501304141248085,
+        "maximumCentralBlocked": 0.23503040143078566
       },
       "initial_count": 43,
-      "retained_count": 22,
+      "retained_count": 19,
       "original_image_count": 43
     },
     {
@@ -12021,7 +12021,7 @@
           "reference": 1373.3817398980386,
           "active": true,
           "reason": "retained",
-          "z": 1373.3817398980386
+          "z": 1374.8817398980386
         },
         {
           "id": "V002",
@@ -12185,7 +12185,7 @@
           "reference": 1371.6966091689087,
           "active": true,
           "reason": "retained",
-          "z": 1371.6966091689087
+          "z": 1373.1966091689087
         },
         {
           "id": "V006",
@@ -12347,8 +12347,8 @@
           ],
           "movement": 12.155600673738041,
           "reference": 1369.6568009600232,
-          "active": true,
-          "reason": "retained",
+          "active": false,
+          "reason": "3D view obstruction",
           "z": 1371.1568009600232
         },
         {
@@ -12677,7 +12677,7 @@
           "reference": 1369.2150692020277,
           "active": false,
           "reason": "3D view obstruction",
-          "z": 1370.7150692020277
+          "z": 1370.2150692020277
         },
         {
           "id": "V019",
@@ -12759,7 +12759,7 @@
           "reference": 1368.0519654470552,
           "active": false,
           "reason": "3D view obstruction",
-          "z": 1369.0519654470552
+          "z": 1369.5519654470552
         },
         {
           "id": "V021",
@@ -12962,8 +12962,8 @@
           ],
           "movement": 5.696360384139377,
           "reference": 1370.8788909694001,
-          "active": true,
-          "reason": "retained",
+          "active": false,
+          "reason": "3D view obstruction",
           "z": 1372.3788909694001
         },
         {
@@ -13126,8 +13126,8 @@
           ],
           "movement": 4.584161009234553,
           "reference": 1369.5791536903841,
-          "active": true,
-          "reason": "retained",
+          "active": false,
+          "reason": "3D view obstruction",
           "z": 1371.0791536903841
         },
         {
@@ -13167,8 +13167,8 @@
           ],
           "movement": 4.340932024431549,
           "reference": 1368.9955350334233,
-          "active": true,
-          "reason": "retained",
+          "active": false,
+          "reason": "3D view obstruction",
           "z": 1370.4955350334233
         },
         {
@@ -13292,7 +13292,7 @@
           "reference": 1366.2239773903798,
           "active": true,
           "reason": "retained",
-          "z": 1365.2239773903798
+          "z": 1364.7239773903798
         },
         {
           "id": "V034",
@@ -13454,9 +13454,9 @@
           ],
           "movement": 6.267351488943705,
           "reference": 1368.6604667923534,
-          "active": false,
-          "reason": "3D view obstruction",
-          "z": 1368.6604667923534
+          "active": true,
+          "reason": "retained",
+          "z": 1367.1604667923534
         },
         {
           "id": "V038",
@@ -13536,9 +13536,9 @@
           ],
           "movement": 17.137175283845863,
           "reference": 1368.920881430683,
-          "active": true,
-          "reason": "retained",
-          "z": 1367.420881430683
+          "active": false,
+          "reason": "3D view obstruction",
+          "z": 1367.920881430683
         },
         {
           "id": "V040",
@@ -13579,7 +13579,7 @@
           "reference": 1368.0316012779172,
           "active": false,
           "reason": "3D view obstruction",
-          "z": 1368.0316012779172
+          "z": 1369.5316012779172
         },
         {
           "id": "V041",
@@ -13702,7 +13702,7 @@
           "reference": 1367.9309508708302,
           "active": false,
           "reason": "3D view obstruction",
-          "z": 1367.9309508708302
+          "z": 1366.4309508708302
         },
         {
           "id": "V044",
@@ -13784,7 +13784,7 @@
           "reference": 1367.5032496010408,
           "active": false,
           "reason": "3D view obstruction",
-          "z": 1369.0032496010408
+          "z": 1366.0032496010408
         },
         {
           "id": "V047",
@@ -13823,9 +13823,9 @@
           ],
           "movement": 2.510024318883627,
           "reference": 1369.9550479416669,
-          "active": true,
-          "reason": "retained",
-          "z": 1369.9550479416669
+          "active": false,
+          "reason": "3D view obstruction",
+          "z": 1371.4550479416669
         },
         {
           "id": "V048",
@@ -13948,7 +13948,7 @@
           "reference": 1368.0208783103278,
           "active": false,
           "reason": "3D view obstruction",
-          "z": 1368.0208783103278
+          "z": 1369.5208783103278
         },
         {
           "id": "V052",
@@ -14071,7 +14071,7 @@
           "reference": 1368.2877082193431,
           "active": false,
           "reason": "3D view obstruction",
-          "z": 1369.2877082193431
+          "z": 1368.7877082193431
         },
         {
           "id": "V055",
@@ -14274,9 +14274,9 @@
           ],
           "movement": 12.755865759513306,
           "reference": 1366.5858579615322,
-          "active": false,
-          "reason": "3D view obstruction",
-          "z": 1368.0858579615322
+          "active": true,
+          "reason": "retained",
+          "z": 1365.0858579615322
         },
         {
           "id": "V060",
@@ -14481,7 +14481,7 @@
           "reference": 1367.9836493854632,
           "active": true,
           "reason": "retained",
-          "z": 1367.9836493854632
+          "z": 1367.4836493854632
         },
         {
           "id": "V065",
@@ -14563,7 +14563,7 @@
           "reference": 1367.1510420211948,
           "active": true,
           "reason": "retained",
-          "z": 1367.6510420211948
+          "z": 1368.1510420211948
         },
         {
           "id": "V067",
@@ -14645,7 +14645,7 @@
           "reference": 1365.771395514735,
           "active": true,
           "reason": "retained",
-          "z": 1364.271395514735
+          "z": 1365.771395514735
         },
         {
           "id": "V069",
@@ -14727,7 +14727,7 @@
           "reference": 1365.3285969576377,
           "active": true,
           "reason": "retained",
-          "z": 1363.8285969576377
+          "z": 1364.8285969576377
         },
         {
           "id": "V071",
@@ -14809,7 +14809,7 @@
           "reference": 1365.3111135533456,
           "active": true,
           "reason": "retained",
-          "z": 1365.3111135533456
+          "z": 1363.8111135533456
         },
         {
           "id": "V073",
@@ -18118,11 +18118,11 @@
           "standard_geometry_passed": true
         },
         "visibility3dPassed": true,
-        "maximumBlocked": 0.2998282308011302,
-        "maximumCentralBlocked": 0.45813178020987316
+        "maximumBlocked": 0.29940079361554317,
+        "maximumCentralBlocked": 0.24882672560960498
       },
       "initial_count": 70,
-      "retained_count": 29,
+      "retained_count": 25,
       "original_image_count": 74
     },
     {
@@ -18206,8 +18206,8 @@
           ],
           "movement": 6,
           "reference": 1373.522077119992,
-          "active": true,
-          "reason": "retained",
+          "active": false,
+          "reason": "3D view obstruction",
           "z": 1375.022077119992
         },
         {
@@ -18331,7 +18331,7 @@
           "reference": 1370.5922041827557,
           "active": true,
           "reason": "retained",
-          "z": 1370.5922041827557
+          "z": 1372.0922041827557
         },
         {
           "id": "V008",
@@ -18411,9 +18411,9 @@
           ],
           "movement": 23.40939982143925,
           "reference": 1369.487140433364,
-          "active": true,
-          "reason": "retained",
-          "z": 1368.487140433364
+          "active": false,
+          "reason": "3D view obstruction",
+          "z": 1367.987140433364
         },
         {
           "id": "V012",
@@ -18536,7 +18536,7 @@
           "reference": 1369.0235376391036,
           "active": false,
           "reason": "3D view obstruction",
-          "z": 1370.5235376391036
+          "z": 1367.5235376391036
         },
         {
           "id": "V017",
@@ -18616,9 +18616,9 @@
           ],
           "movement": 18.34652301964824,
           "reference": 1371.9775017139243,
-          "active": false,
-          "reason": "3D view obstruction",
-          "z": 1370.9775017139243
+          "active": true,
+          "reason": "retained",
+          "z": 1370.4775017139243
         },
         {
           "id": "V019",
@@ -18739,8 +18739,8 @@
           ],
           "movement": 20.8806130178211,
           "reference": 1369.3543385977707,
-          "active": true,
-          "reason": "retained",
+          "active": false,
+          "reason": "3D view obstruction",
           "z": 1370.8543385977707
         },
         {
@@ -18821,9 +18821,9 @@
           ],
           "movement": 25.059928172283335,
           "reference": 1369.5732366757425,
-          "active": true,
-          "reason": "retained",
-          "z": 1370.5732366757425
+          "active": false,
+          "reason": "3D view obstruction",
+          "z": 1371.0732366757425
         },
         {
           "id": "V026",
@@ -18862,9 +18862,9 @@
           ],
           "movement": 31.304951684997057,
           "reference": 1369.4912139894366,
-          "active": false,
-          "reason": "3D view obstruction",
-          "z": 1367.9912139894366
+          "active": true,
+          "reason": "retained",
+          "z": 1369.4912139894366
         },
         {
           "id": "V027",
@@ -19028,7 +19028,7 @@
           "reference": 1369.118588283076,
           "active": false,
           "reason": "3D view obstruction",
-          "z": 1370.618588283076
+          "z": 1367.618588283076
         },
         {
           "id": "V032",
@@ -19067,9 +19067,9 @@
           ],
           "movement": 9.93021195929963,
           "reference": 1369.319407375404,
-          "active": false,
-          "reason": "3D view obstruction",
-          "z": 1370.819407375404
+          "active": true,
+          "reason": "retained",
+          "z": 1369.819407375404
         },
         {
           "id": "V033",
@@ -19192,7 +19192,7 @@
           "reference": 1369.8735942100338,
           "active": false,
           "reason": "3D view obstruction",
-          "z": 1369.8735942100338
+          "z": 1368.3735942100338
         },
         {
           "id": "V038",
@@ -19272,9 +19272,9 @@
           ],
           "movement": 17.08800749063506,
           "reference": 1369.616483877122,
-          "active": true,
-          "reason": "retained",
-          "z": 1371.116483877122
+          "active": false,
+          "reason": "3D view obstruction",
+          "z": 1368.116483877122
         },
         {
           "id": "V040",
@@ -19438,7 +19438,7 @@
           "reference": 1368.3946644324326,
           "active": true,
           "reason": "retained",
-          "z": 1368.3946644324326
+          "z": 1366.8946644324326
         },
         {
           "id": "V046",
@@ -19479,7 +19479,7 @@
           "reference": 1368.3418525434622,
           "active": false,
           "reason": "3D view obstruction",
-          "z": 1368.8418525434622
+          "z": 1366.8418525434622
         },
         {
           "id": "V047",
@@ -19600,8 +19600,8 @@
           ],
           "movement": 7.139880252285172,
           "reference": 1368.996739481805,
-          "active": true,
-          "reason": "retained",
+          "active": false,
+          "reason": "3D view obstruction",
           "z": 1367.496739481805
         },
         {
@@ -19643,7 +19643,7 @@
           "reference": 1366.991433575998,
           "active": true,
           "reason": "retained",
-          "z": 1366.991433575998
+          "z": 1365.991433575998
         },
         {
           "id": "V053",
@@ -19766,7 +19766,7 @@
           "reference": 1368.8596979443341,
           "active": false,
           "reason": "3D view obstruction",
-          "z": 1370.3596979443341
+          "z": 1368.8596979443341
         },
         {
           "id": "V057",
@@ -19848,7 +19848,7 @@
           "reference": 1367.345287174886,
           "active": false,
           "reason": "3D view obstruction",
-          "z": 1367.845287174886
+          "z": 1365.845287174886
         },
         {
           "id": "V059",
@@ -19889,7 +19889,7 @@
           "reference": 1366.7262550879796,
           "active": true,
           "reason": "retained",
-          "z": 1366.7262550879796
+          "z": 1365.2262550879796
         },
         {
           "id": "V062",
@@ -22758,10 +22758,10 @@
         },
         "visibility3dPassed": true,
         "maximumBlocked": 0.2996046303104686,
-        "maximumCentralBlocked": 0.4947280079899726
+        "maximumCentralBlocked": 0.24990284461054885
       },
       "initial_count": 56,
-      "retained_count": 23,
+      "retained_count": 20,
       "original_image_count": 87
     },
     {
@@ -23052,7 +23052,7 @@
           "reference": 1369.5107284206604,
           "active": false,
           "reason": "3D view obstruction",
-          "z": 1368.0107284206604
+          "z": 1370.5107284206604
         },
         {
           "id": "V010",
@@ -23214,9 +23214,9 @@
           ],
           "movement": 17.128991498868068,
           "reference": 1369.5437273352213,
-          "active": true,
-          "reason": "retained",
-          "z": 1369.0437273352213
+          "active": false,
+          "reason": "3D view obstruction",
+          "z": 1371.0437273352213
         },
         {
           "id": "V016",
@@ -23462,7 +23462,7 @@
           "reference": 1367.984974102833,
           "active": false,
           "reason": "3D view obstruction",
-          "z": 1366.484974102833
+          "z": 1367.984974102833
         },
         {
           "id": "V024",
@@ -23624,9 +23624,9 @@
           ],
           "movement": 10,
           "reference": 1369.6883436815194,
-          "active": true,
-          "reason": "retained",
-          "z": 1370.6883436815194
+          "active": false,
+          "reason": "3D view obstruction",
+          "z": 1371.1883436815194
         },
         {
           "id": "V029",
@@ -23788,8 +23788,8 @@
           ],
           "movement": 12,
           "reference": 1369.6997840956778,
-          "active": true,
-          "reason": "retained",
+          "active": false,
+          "reason": "3D view obstruction",
           "z": 1371.1997840956778
         },
         {
@@ -23913,7 +23913,7 @@
           "reference": 1367.5691032864836,
           "active": false,
           "reason": "3D view obstruction",
-          "z": 1368.0691032864836
+          "z": 1367.5691032864836
         },
         {
           "id": "V037",
@@ -24282,7 +24282,7 @@
           "reference": 1368.3945827625316,
           "active": false,
           "reason": "3D view obstruction",
-          "z": 1369.3945827625316
+          "z": 1369.8945827625316
         },
         {
           "id": "V053",
@@ -24323,7 +24323,7 @@
           "reference": 1367.5017894424022,
           "active": false,
           "reason": "3D view obstruction",
-          "z": 1367.5017894424022
+          "z": 1369.0017894424022
         },
         {
           "id": "V054",
@@ -24364,7 +24364,7 @@
           "reference": 1369.7889812387746,
           "active": false,
           "reason": "3D view obstruction",
-          "z": 1369.7889812387746
+          "z": 1370.7889812387746
         },
         {
           "id": "V056",
@@ -24444,8 +24444,8 @@
           ],
           "movement": 24.413111231467404,
           "reference": 1367.9320071852972,
-          "active": true,
-          "reason": "retained",
+          "active": false,
+          "reason": "3D view obstruction",
           "z": 1367.9320071852972
         },
         {
@@ -24528,7 +24528,7 @@
           "reference": 1368.1509912387562,
           "active": false,
           "reason": "3D view obstruction",
-          "z": 1367.6509912387562
+          "z": 1368.6509912387562
         },
         {
           "id": "V063",
@@ -24815,7 +24815,7 @@
           "reference": 1368.196315790592,
           "active": false,
           "reason": "3D view obstruction",
-          "z": 1369.196315790592
+          "z": 1369.696315790592
         },
         {
           "id": "V076",
@@ -25061,7 +25061,7 @@
           "reference": 1365.413820379167,
           "active": true,
           "reason": "retained",
-          "z": 1364.413820379167
+          "z": 1363.913820379167
         },
         {
           "id": "V084",
@@ -27393,11 +27393,11 @@
           "standard_geometry_passed": true
         },
         "visibility3dPassed": true,
-        "maximumBlocked": 0.2994453738014934,
-        "maximumCentralBlocked": 0.4977670363251699
+        "maximumBlocked": 0.2918468379080753,
+        "maximumCentralBlocked": 0.19713086173531574
       },
       "initial_count": 57,
-      "retained_count": 21,
+      "retained_count": 17,
       "original_image_count": 89
     }
   ]

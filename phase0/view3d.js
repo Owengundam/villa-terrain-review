@@ -2,7 +2,7 @@
    Each 0.25-degree column encloses the entire silhouette in that column.
    Union vertical intervals before counting area: never double-count overlaps. */
 const View3D=(()=>{
- const defaults={eye:1.5,height:5,bottom:-10,top:5,clear:.7,centralClear:.5,pad:1.5};
+ const defaults={eye:1.5,height:5,bottom:-10,top:5,clear:.7,centralClear:.75,pad:1.5};
  const rad=Math.PI/180,cache=new WeakMap();
  function settings(s={}){const r={...defaults,...s};if(!Object.values(r).every(Number.isFinite)||r.eye<.1||r.height<=0||r.bottom>=0||r.top<=0||r.bottom>=r.top||r.clear<0||r.clear>1||r.centralClear<0||r.centralClear>1||r.pad<0)throw Error('Invalid 3D view settings');return r;}
  function clip(poly,a,b){const out=[];for(let i=0;i<poly.length;i++){const p=poly[i],q=poly[(i+1)%poly.length],u=a*p[0]+b*p[1],v=a*q[0]+b*q[1];if(u>=-1e-10)out.push(p);if((u>0)!==(v>0)){const t=u/(u-v);out.push([p[0]+t*(q[0]-p[0]),p[1]+t*(q[1]-p[1])]);}}return out;}
@@ -25,9 +25,9 @@ const View3D=(()=>{
    if(selected===i)strips.push(intervals);
   });return {blocked:total/(30*(r.top-r.bottom)),central:central/(20*half),strips};
  });}
- function inspect(l,active,z,r){r=settings(r);const metrics=measure(l,active,z,r),viewBad=metrics.map((m,i)=>active[i]&&(m.blocked>1-r.clear+1e-9||m.central>1-r.centralClear+1e-9)),padBad=z.map((v,i)=>active[i]&&(!Number.isFinite(v)||Math.abs(v-l.units[i].reference)>r.pad+1e-7)),conflicts=l.conflicts.filter(([a,b])=>active[a]&&active[b]),outside=l.outside.filter(i=>active[i]);return {z,metrics,viewBad,padBad,conflicts,outside,valid:!viewBad.some(Boolean)&&!padBad.some(Boolean)&&!conflicts.length&&!outside.length};}
+ function inspect(l,active,z,r){r=settings(r);const metrics=measure(l,active,z,r),viewBad=metrics.map((m,i)=>active[i]&&(m.blocked>1-r.clear+1e-9||(r.centralClear===1?m.central>1e-9:m.central>=1-r.centralClear-1e-9))),padBad=z.map((v,i)=>active[i]&&(!Number.isFinite(v)||Math.abs(v-l.units[i].reference)>r.pad+1e-7)),conflicts=l.conflicts.filter(([a,b])=>active[a]&&active[b]),outside=l.outside.filter(i=>active[i]);return {z,metrics,viewBad,padBad,conflicts,outside,valid:!viewBad.some(Boolean)&&!padBad.some(Boolean)&&!conflicts.length&&!outside.length};}
  function solve(l,active,seed,r){r=settings(r);let z=l.units.map((u,i)=>Math.max(u.reference-r.pad,Math.min(u.reference+r.pad,seed?.[i]??u.reference))),state=inspect(l,active,z,r);
-  const rank=s=>s.metrics.reduce((n,m,i)=>n+(active[i]?Math.max(0,m.blocked-(1-r.clear))+Math.max(0,m.central-(1-r.centralClear)):0),0);
+  const rank=s=>s.metrics.reduce((n,m,i)=>n+(active[i]?Math.max(0,m.blocked-(1-r.clear))+Math.max(0,m.central-(1-r.centralClear)+1e-6):0),0);
   for(let pass=0;pass<6&&!state.valid;pass++){let best=state,bestRank=rank(state);
    const consider=q=>{const test=inspect(l,active,q,r);if(test.viewBad.some((b,i)=>b&&!state.viewBad[i]))return;const score=rank(test);if(score<bestRank-1e-8){best=test;bestRank=score;}};
    // Shared moves can clear a relationship that neither single move can clear.

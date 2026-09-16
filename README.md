@@ -25,11 +25,11 @@ npm run analyse
 - Pad adjustments: ±1.5 m from the terrain reference.
 - Default eye height: 1.5 m above pad; building extrusion: 5 m.
 - Overall view: ±15° horizontal, −10° to +5° vertical, at least 70% clear angular area.
-- Central view: ±5° horizontal and ±2.5° vertical, symmetric about the horizon, at least 50% clear. It shrinks symmetrically when required to fit the overall window.
+- Central view: ±5° horizontal and ±2.5° vertical, symmetric about the horizon, more than 75% clear (25% or more blockage fails). It shrinks symmetrically when required to fit the overall window.
 - Silhouette overlaps count once. Conservative 0.25° horizontal columns bound partial-height obstruction.
 - Local pad fitting, greedy deactivation and repeated restoration produce valid arrangements, not a proven maximum count.
 
-Current saved active counts: Free 22, Parallel 29, Staggered 2 23, Staggered 3 21. Tests include independent 3D ray/box comparisons and generated-viewer/worker checks.
+Current saved active counts: Free 19, Parallel 25, Staggered 2 20, Staggered 3 17. Tests include independent 3D ray/box comparisons and generated-viewer/worker checks.
 
 ## Source map
 
