@@ -44,5 +44,11 @@ assert(element('status').textContent==='Calculating 3D views…','recalculation 
 // layouts replaced in place: unit identities intact
 const ids=vm.runInContext("data.layouts[0].units.map(u=>u.id).join(',')",ctx);
 assert(ids.startsWith('V001'),'layout units preserved');
-console.log('PASS terrain panel opens, renders 18 lines within 10-point budget, drag + OK rebuilds terrain and starts full recalculation');
+// BUGFIX regression: OK must persist edited control lines into data.contours,
+// so reopening the panel keeps the edited terrain instead of resetting it
+const contoursAfter=vm.runInContext("JSON.stringify(data.contours[0].points)",ctx);
+vm.runInContext("terrainOpen()",ctx);
+const reopened=vm.runInContext("JSON.stringify(terrainLines[0].controls)",ctx);
+assert.equal(reopened,contoursAfter,'panel reopens with the edited terrain, not the original contours');
+console.log('PASS OK persists edited control lines; reopening the panel keeps the edited terrain');
 console.log('INFO villa V001 reference before drag:',beforeRef.toFixed(2),'after drag:',afterDrag.toFixed(2),'| action message:',element('action-message').textContent);

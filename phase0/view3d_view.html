@@ -109,6 +109,8 @@ $('terrainOk').onclick=()=>{
   if(ang>0.5)rotated++;
  }));
  data.layouts=nextLayouts;
+ // Persist the edited control lines so reopening the panel (or a second OK) keeps the edited terrain.
+ data.contours=data.contours.map((c,i)=>({...c,points:lines[i].controls.map(p=>p.slice())}));
  terrainClose();
  const l=data.layouts[index];
  active=l.units.map(()=>true);heldOff=[];changes=[];selected=0;
