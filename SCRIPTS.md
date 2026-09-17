@@ -10,6 +10,8 @@ Results and extraction overlays: [image reduction](output/checks/image-reduction
 
 `phase0/elevation_diagrams.js` adds live pairwise elevation comparisons for every villa in the selected cone, including inactive ghosts. Test with `node phase0/tests/test_elevation_diagrams.js`.
 
+`phase0/terrain_edit.js` adds the terrain editing panel: contour lines simplify to at most 10 draggable control points; OK rebuilds the pad-reference and downhill-view field (inverse-distance-squared) from the control lines and recalculates every arrangement. Test with `node phase0/tests/test_terrain_edit.js` and `node phase0/tests/test_terrain_panel.js`, then rebuild with `npm run build`.
+
 `phase0/villa_presentation.js` controls 200 ms hover labels and clean active-only plan exports. Test with `node phase0/tests/test_villa_presentation.js`. Use `python phase0/build_reduction_view.py --site-only` for the published viewer workflow, then copy the generated index into the existing Site checkout and republish that same Site.
 
 Only the tools below are retained. Historical experiment scripts and one-time source patchers were deleted on September 14, 2026. Models, images, reports and plugin source were retained.

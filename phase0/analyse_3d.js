@@ -10,7 +10,7 @@ if(!process.argv.includes('--build-only'))for(const l of report.layouts){
  console.log(l.name,l.retained_count,'/',l.units.length,'PASS',((Date.now()-start)/1000).toFixed(1)+'s');
 }
 fs.writeFileSync(path.join(out,'report.json'),JSON.stringify(report,null,2));
-const model=fs.readFileSync('phase0/view3d.js','utf8'),presentation=fs.readFileSync('phase0/villa_presentation.js','utf8');
+const model=fs.readFileSync('phase0/view3d.js','utf8'),presentation=fs.readFileSync('phase0/villa_presentation.js','utf8'),terrain=fs.readFileSync('phase0/terrain_edit.js','utf8').replace("if(typeof module!=='undefined')module.exports=TerrainEdit;","");
 const worker=model+`\nonmessage=e=>{try{const {op,layout,active,seed,rules,selected,auto,heldOff}=e.data;const result=op==='reduce'?View3D.reduce(layout,rules,(iteration,count)=>postMessage({progress:true,iteration,count})):op==='edit'?View3D.edit(layout,active,seed,selected,auto,heldOff,rules):View3D.solve(layout,active,seed,rules);postMessage({result});}catch(e){postMessage({error:String(e)});}};`;
-const html=fs.readFileSync('phase0/view3d_view.html','utf8').replace('/*__MODEL__*/',model).replace('/*__PRESENTATION__*/',presentation).replace('/*__DATA__*/',JSON.stringify(report)).replace('/*__WORKER__*/',JSON.stringify(worker));
+const html=fs.readFileSync('phase0/view3d_view.html','utf8').replace('/*__MODEL__*/',model).replace('/*__TERRAIN__*/',terrain).replace('/*__PRESENTATION__*/',presentation).replace('/*__DATA__*/',JSON.stringify(report)).replace('/*__WORKER__*/',JSON.stringify(worker));
 fs.writeFileSync(path.join(out,'index.html'),html);

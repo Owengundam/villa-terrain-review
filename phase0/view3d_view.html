@@ -2,15 +2,17 @@
 <style>
 *{box-sizing:border-box}body{margin:0;background:#f1f5f7;color:#173442;font:15px/1.5 system-ui,sans-serif}main{max-width:1560px;margin:auto;padding:28px}header{display:flex;justify-content:space-between;align-items:center}h1{margin:0;font-size:30px}h2{font-size:18px;margin:0 0 12px}small,.muted{color:#617782}button,input,select{font:inherit;border:1px solid #cad8df;border-radius:7px;padding:8px;background:white;color:inherit}button{cursor:pointer}button.primary{background:#194e65;color:white}button:disabled{opacity:.5;cursor:wait}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #75b4c8}label{display:flex;flex-direction:column;gap:4px;font-size:12px}input{width:100px}.toolbar,.settings{display:flex;flex-wrap:wrap;gap:14px;align-items:end;margin:20px 0}.settings{padding:18px;background:white;border:1px solid #dbe5e9;border-radius:12px}.grid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(350px,1fr);gap:22px}.panel{padding:20px;background:white;border:1px solid #dbe5e9;border-radius:14px;min-width:0}#map svg{width:100%;height:auto}#inspector{max-height:85vh;overflow:auto}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.row select{flex:1;min-width:100px}#hover{position:fixed;pointer-events:none;background:#173442;color:white;padding:5px 9px;border-radius:5px;z-index:10}.error{color:#b73c3c}.diagram{border-top:1px solid #e1e8eb;margin-top:18px;padding-top:12px}.diagram svg{width:100%;height:auto}summary{cursor:pointer}#status{min-height:24px}.legend{font-size:12px;color:#617782} @media(max-width:900px){main{padding:14px}.grid{grid-template-columns:1fr}#inspector{max-height:none}header{align-items:start;gap:12px}}
 .auto-switch{position:relative;display:flex;flex-direction:row;align-items:center;gap:10px;font-size:15px;cursor:pointer;min-height:44px}.auto-switch input{position:absolute;left:0;top:6px;width:52px;height:32px;opacity:0;margin:0;cursor:pointer}.switch-track{display:block;width:52px;height:32px;border-radius:20px;background:#c8cdd2;transition:background .18s;pointer-events:none}.switch-track:after{content:"";display:block;width:28px;height:28px;margin:2px;background:white;border-radius:50%;box-shadow:0 2px 4px #0003;transition:transform .18s}.auto-switch input:checked+.switch-track{background:#34c759}.auto-switch input:checked+.switch-track:after{transform:translateX(20px)}.auto-switch input:focus-visible+.switch-track{outline:3px solid #75b4c8;outline-offset:3px}.auto-switch input:disabled+.switch-track{opacity:.5}@media(prefers-reduced-motion:reduce){.switch-track,.switch-track:after{transition:none}}
+#terrainPanel{position:fixed;inset:0;background:#0f2a3666;display:flex;align-items:center;justify-content:center;z-index:20;padding:20px}#terrainPanel[hidden]{display:none}.terrain-box{background:white;border-radius:14px;max-width:1560px;width:100%;max-height:92vh;display:flex;flex-direction:column;padding:18px 20px;box-shadow:0 12px 40px #0005}.terrain-box .terrain-head{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:8px}.terrain-box .terrain-head h2{margin:0}.terrain-box .terrain-body{overflow:auto;min-height:0}#terrainSvg svg{width:100%;height:auto;display:block}.ctrl{cursor:grab}.ctrl:active{cursor:grabbing}.ctrl circle{stroke-width:2;stroke:white}.terrain-tip{position:fixed;pointer-events:none;background:#173442;color:white;padding:5px 9px;border-radius:5px;z-index:30}
 </style>
 <main><header><div><small>TERRAIN PLANNING · 3D VISIBILITY</small><h1>Villa study</h1></div><small>40,335 m² site<br>11 × 23 m villas</small></header>
-<div class="toolbar"><label>Arrangement<select id="layout"></select></label><label class="auto-switch"><input id="auto" type="checkbox" role="switch" checked><span class="switch-track" aria-hidden="true"></span><span>Auto mode</span></label><button id="restore">Restore saved plan</button><button id="export">Export active villas · PNG</button></div>
+<div class="toolbar"><label>Arrangement<select id="layout"></select></label><label class="auto-switch"><input id="auto" type="checkbox" role="switch" checked><span class="switch-track" aria-hidden="true"></span><span>Auto mode</span></label><button id="terrain">Edit terrain</button><button id="restore">Restore saved plan</button><button id="export">Export active villas · PNG</button></div>
 <div class="settings"><label>Eye above pad (m)<input id="eye" type="number" min="0.1" max="20" step="0.1"></label><label>Building height (m)<input id="height" type="number" min="0.1" max="30" step="0.1"></label><label>View bottom (°)<input id="bottom" type="number" min="-60" max="-0.1" step="1"></label><label>View top (°)<input id="top" type="number" min="0.1" max="60" step="1"></label><label>Overall clear (%)<input id="clear" type="number" min="0" max="100" step="1"></label><label>Central clear (%)<input id="centralClear" type="number" min="0" max="100" step="1"></label><button id="calculate" class="primary">Recalculate arrangement</button>
 <small>Apply these settings to the selected arrangement. Starts with all villas. Pads stay within ±1.5 m. Positions stay fixed.</small></div>
 <p id="action-message" role="alert"></p><p id="status" role="status" aria-live="polite"></p><div class="grid"><section class="panel"><h2>Site arrangement</h2><div id="map"></div><p class="legend"><span style="color:#13833d">● Activated (+)</span> · <span style="color:#d46a10">● Deactivated (−)</span> · <span style="color:#246ccc">● Pad adjusted (↕)</span> · Changes remain highlighted until the next action.</p><div id="changes" class="row" aria-live="polite"></div><p class="legend">Auto mode keeps the villa you activate and ghosts other villas as needed to satisfy the rules. Deactivation restores eligible ghosts. Manually deactivated villas stay off until explicitly activated or reset. With Auto mode off, all manual activations and deactivations are allowed; conflicts are shown without blocking the edit.<br>Hover for name · Click to toggle · Solid = active · Dashed = ghost · Red = active conflict</p></section>
 <section class="panel" id="inspector"><h2>Villa inspector</h2><div class="row"><select id="unit" aria-label="Selected villa"></select><button id="toggle"></button></div><p id="detail"></p><h2>View from the front façade</h2><div id="window"></div><p class="legend">Building silhouettes in angular coordinates. Dashed box: central view, symmetric about 0°. Ghosts do not obstruct. Partial-height obstruction counts proportionally.</p><div id="elevations"></div></section></div>
-<details class="panel" style="margin-top:22px"><summary>Calculation and assumptions</summary><p>Viewpoint: centre of the front façade, at pad level + eye height. Villas are solid vertical extrusions of their actual footprints. No fixed pad-drop threshold is used.</p><p>The horizontal window is ±15°. The central window is ±5° horizontally, from −2.5° to +2.5° vertically, centred on the 0° horizon. If the overall vertical window is narrower on either side, the central box shrinks equally on both sides to remain symmetric. The central requirement measures clear area, not a continuous opening. Default central blockage must be below 25%; exactly 25% fails.</p><p>Obstruction is measured as a fraction of horizontal-angle × vertical-angle area, with overlapping silhouettes counted once. Conservative 0.25° horizontal columns enclose each silhouette; narrow obstructions may be slightly overcounted. Pad fitting and removal use local search, not a maximum-count proof.</p><p>Defaults are study assumptions, not surveyed floor or roof heights. Eye height is measured from the pad; include any upper-floor offset here. Terrain, trees, windows and roof shape are not occluders in this building-only model. Terrain still supplies pad references and downhill orientation. Strict side clearance and existing geometry remain unchanged.</p></details><div id="hover" hidden></div></main>
+<details class="panel" style="margin-top:22px"><summary>Calculation and assumptions</summary><p>Viewpoint: centre of the front façade, at pad level + eye height. Villas are solid vertical extrusions of their actual footprints. No fixed pad-drop threshold is used.</p><p>The horizontal window is ±15°. The central window is ±5° horizontally, from −2.5° to +2.5° vertically, centred on the 0° horizon. If the overall vertical window is narrower on either side, the central box shrinks equally on both sides to remain symmetric. The central requirement measures clear area, not a continuous opening. Default central blockage must be below 25%; exactly 25% fails.</p><p>Obstruction is measured as a fraction of horizontal-angle × vertical-angle area, with overlapping silhouettes counted once. Conservative 0.25° horizontal columns enclose each silhouette; narrow obstructions may be slightly overcounted. Pad fitting and removal use local search, not a maximum-count proof.</p><p>Defaults are study assumptions, not surveyed floor or roof heights. Eye height is measured from the pad; include any upper-floor offset here. Terrain, trees, windows and roof shape are not occluders in this building-only model. Terrain still supplies pad references and downhill orientation. Strict side clearance and existing geometry remain unchanged.</p><p><strong>Terrain editing:</strong> each contour line is simplified to at most 10 control points, which you can drag in the terrain panel. OK rebuilds the terrain field from the control lines (inverse-distance-squared weighting), recalculates every pad reference and downhill view, and recomputes all arrangements from the current settings. Elevation labels stay fixed; dragging a line never changes its labelled height.</p></details><div id="terrainPanel" hidden><div class="terrain-box"><div class="terrain-head"><h2>Edit terrain</h2><small class="muted">Drag the round control points (max 10 per line). Lines keep their labelled elevation.</small><span style="flex:1"></span><button id="terrainReset">Reset lines</button><button id="terrainCancel">Cancel</button><button id="terrainOk" class="primary">OK — recalculate buildings</button></div><p id="terrainHint" class="legend">Selected line: none — click a line to select it. Drag points to reshape it.</p><div class="terrain-body"><div id="terrainSvg"></div></div></div></div><div id="terrainTip" class="terrain-tip" hidden></div><div id="hover" hidden></div></main>
 <script>/*__MODEL__*/
+/*__TERRAIN__*/
 /*__PRESENTATION__*/
 const data=/*__DATA__*/;
 const workerSource=/*__WORKER__*/;
@@ -49,6 +51,71 @@ function draw(){
  return `<div class="diagram"><strong>${u.id} → ${q.id}</strong> · ${active[j]?'active':'ghost, excluded'}<svg viewBox="0 0 440 190" role="img" aria-label="${u.id} and ${q.id} projected elevation"><rect x="55" y="${yy(state.z[selected]+rules.height)}" width="65" height="${yy(state.z[selected])-yy(state.z[selected]+rules.height)}" fill="#d5e7e2" stroke="#247b68"/><rect x="285" y="${yy(state.z[j]+rules.height)}" width="65" height="${yy(state.z[j])-yy(state.z[j]+rules.height)}" fill="${active[j]?'#ddcfb8':'#f1f3f4'}" stroke="#8e826c" stroke-dasharray="${active[j]?'':'4 3'}"/><circle cx="120" cy="${yy(eye)}" r="4" fill="#173442"/><line x1="120" y1="${yy(eye)}" x2="390" y2="${yy(eye)}" stroke="#173442" stroke-dasharray="3 3"/><text x="55" y="175" font-size="12">Eye ${eye.toFixed(2)} m · Front roof ${(state.z[j]+rules.height).toFixed(2)} m</text></svg><small>Pad ${state.z[j].toFixed(2)} m · Roof ${(state.z[j]+rules.height).toFixed(2)} m · Forward distance ${distance.toFixed(1)} m. Diagram is schematic; angular view above uses actual geometry.</small></div>`;}).join('');
 }
 $('layout').onchange=()=>{index=+$('layout').value;reset();};$('unit').onchange=()=>{selected=+$('unit').value;draw();};$('toggle').onclick=toggle;$('restore').onclick=reset;$('calculate').onclick=()=>{try{run('reduce',settings());}catch(e){$('status').textContent=e.message;}};
+/* Terrain editing panel: drag control points, OK rebuilds terrain and recalculates buildings */
+let terrainLines=null,terrainWorking=null,terrainSel=-1,terrainDrag=null;
+const terrainSvgScale={w:0,k:0,x0:0,y0:0,ymax:0};
+function terrainXY(p){return[20+(p[0]-terrainSvgScale.x0)*terrainSvgScale.k,20+(terrainSvgScale.ymax-p[1])*terrainSvgScale.k];}
+function terrainWorld(x,y){return[terrainSvgScale.x0+(x-20)/terrainSvgScale.k,terrainSvgScale.ymax-(y-20)/terrainSvgScale.k];}
+function terrainOpen(){terrainWorking=TerrainEdit.buildFromContours(data.contours);terrainSel=-1;terrainLines=terrainWorking;$('terrainPanel').hidden=false;terrainDraw();}
+function terrainClose(){terrainWorking=null;terrainDrag=null;$('terrainPanel').hidden=true;}
+function terrainReset(){terrainOpen();}
+function terrainDraw(){
+ const terrainPts=ps=>ps.map(p=>terrainXY(p).join(',')).join(' ');
+ const xs=data.boundary.map(p=>p[0]),ys=data.boundary.map(p=>p[1]),xmin=Math.min(...xs),ymax=Math.max(...ys),scale=1180/(Math.max(...xs)-xmin),H=(ymax-Math.min(...ys))*scale+80;
+ Object.assign(terrainSvgScale,{k:scale,x0:xmin,y0:Math.min(...ys),ymax});
+ let s=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1220 ${H}" role="img" aria-label="Terrain editor"><defs><clipPath id="terrainSite"><polygon points="${terrainPts(data.boundary)}"/></clipPath></defs><g clip-path="url(#terrainSite)">`;
+ for(let i=0;i<terrainLines.length;i++){
+  const line=terrainLines[i],sel=i===terrainSel,cs=line.controls.map(terrainXY);
+  s+=`<polyline data-tline="${i}" points="${cs.map(p=>p.join(',')).join(' ')}" fill="none" stroke="${sel?'#b3541e':'#9fb4bc'}" stroke-width="${sel?4:2}" stroke-linejoin="round" style="cursor:pointer"/>`;
+  cs.forEach((p,k)=>{s+=`<g class="ctrl" data-tline="${i}" data-tpt="${k}" transform="translate(${p[0]},${p[1]})"><circle r="${sel?9:7}" fill="${sel?'#b3541e':'#5f7680'}"/><text y="-13" text-anchor="middle" font-size="11" fill="#173442" pointer-events="none">${k+1}</text></g>`;});
+  const lp=cs[0];s+=`<text x="${lp[0]+14}" y="${lp[1]-8}" font-size="12" fill="#173442" pointer-events="none">z ${line.z} m</text>`;
+ }
+ s+='</g><polygon points="'+terrainPts(data.boundary)+'" fill="none" stroke="#173442"/></svg>';
+ $('terrainSvg').innerHTML=s;
+ $('terrainHint').textContent=terrainSel<0?`Selected line: none — click a line to select it. ${terrainLines.length} lines × ≤${TerrainEdit.MAX} points.`:`Line ${terrainSel+1} · z ${terrainLines[terrainSel].z} m · ${terrainLines[terrainSel].controls.length} control points — drag the circles. OK rebuilds pads and views from all lines.`;
+ $('terrainSvg').querySelectorAll('[data-tline]').forEach(el=>{
+  el.onclick=e=>{if(terrainDrag)return;terrainSel=+el.dataset.tline;terrainDraw();};
+ });
+ $('terrainSvg').querySelectorAll('g.ctrl').forEach(g=>{
+  const li=+g.dataset.tline,pi=+g.dataset.tpt;
+  g.onpointerdown=e=>{
+   e.preventDefault();e.stopPropagation();terrainSel=li;
+   const line=terrainLines[li];
+   terrainDrag={li,pi};
+   const move=ev=>{
+    const rect=$('terrainSvg').querySelector('svg').getBoundingClientRect(),vx=1220/rect.width;
+    const wx=terrainWorld((ev.clientX-rect.left)*vx,(ev.clientY-rect.top)*vx);
+    line.controls[pi][0]=wx[0];line.controls[pi][1]=wx[1];
+    terrainDraw();
+    const tip=$('terrainTip');tip.hidden=false;tip.textContent=`L${li+1} P${pi+1} · ${Math.round(wx[0])}, ${Math.round(wx[1])}`;tip.style.left=ev.clientX+14+'px';tip.style.top=ev.clientY+16+'px';
+   };
+   const up=()=>{terrainDrag=null;$('terrainTip').hidden=true;window.removeEventListener('pointermove',move);window.removeEventListener('pointerup',up);};
+   window.addEventListener('pointermove',move);window.addEventListener('pointerup',up);
+   terrainDraw();
+  };
+ });
+}
+$('terrain').onclick=()=>{if(!busy)terrainOpen();};
+$('terrainCancel').onclick=terrainClose;
+$('terrainReset').onclick=terrainReset;
+$('terrainOk').onclick=()=>{
+ if(busy)return;
+ const lines=JSON.parse(JSON.stringify(terrainLines));
+ const nextLayouts=TerrainEdit.apply(data,lines);
+ let maxShift=0,rotated=0;
+ data.layouts.forEach((l,li)=>l.units.forEach((u,i)=>{
+  maxShift=Math.max(maxShift,Math.abs(nextLayouts[li].units[i].reference-u.reference));
+  const v0=u.view,v1=nextLayouts[li].units[i].view,ang=Math.acos(Math.max(-1,Math.min(1,v0[0]*v1[0]+v0[1]*v1[1])))*180/Math.PI;
+  if(ang>0.5)rotated++;
+ }));
+ data.layouts=nextLayouts;
+ terrainClose();
+ const l=data.layouts[index];
+ active=l.units.map(()=>true);heldOff=[];changes=[];selected=0;
+ state=View3D.inspect(l,active,l.units.map(u=>u.reference),rules);
+ run('reduce',settings());
+ $('action-message').textContent=`Terrain updated: pads shifted up to ${maxShift.toFixed(1)} m, ${rotated} views re-aimed. Recalculating…`;
+};
 $('export').onclick=async()=>{try{const plan=VillaPresentation.exportPlan(data,data.layouts[index],active,state.valid),blob=new Blob([plan.svg.replace('</svg>',`<text x="80" y="76" font-size="16" font-family="Arial">3D view: eye ${rules.eye} m / buildings ${rules.height} m / vertical ${rules.bottom} to ${rules.top} degrees / clear ${rules.clear*100}% / central ${rules.centralClear*100}%</text></svg>`)],{type:'image/svg+xml'}),url=URL.createObjectURL(blob),im=new Image();await new Promise((resolve,reject)=>{im.onload=resolve;im.onerror=reject;im.src=url;});const c=document.createElement('canvas');c.width=plan.width;c.height=plan.height;c.getContext('2d').drawImage(im,0,0);URL.revokeObjectURL(url);const png=await new Promise(resolve=>c.toBlob(resolve,'image/png')),link=document.createElement('a'),out=URL.createObjectURL(png);link.href=out;link.download=data.layouts[index].name+'-3d-'+active.filter(Boolean).length+'.png';link.click();setTimeout(()=>URL.revokeObjectURL(out),1000);}catch(e){$('status').textContent='Export failed: '+e.message;}};
 reset();
 </script></html>

@@ -6,7 +6,7 @@
   "scripts": {
     "build": "node phase0/analyse_3d.js --build-only",
     "analyse": "node phase0/analyse_3d.js",
-    "test": "node phase0/tests/test_view3d.js && node phase0/tests/test_view3d_page.js && node phase0/tests/test_auto_mode.js"
+    "test": "node phase0/tests/test_view3d.js && node phase0/tests/test_view3d_page.js && node phase0/tests/test_auto_mode.js && node phase0/tests/test_terrain_edit.js && node phase0/tests/test_terrain_panel.js"
   },
   "engines": {
     "node": ">=18"
