@@ -11,19 +11,20 @@ const TerrainEdit=(()=>{
    if(idx>0){keep[idx]=true;stack.push([a,idx],[idx,b]);}}
   return pts.filter((_,i)=>keep[i]).map(p=>p.slice());}
  function simplify(points,max=MAX){
-  if(points.length<=max)return points.map(p=>p.slice());
+  const copy=points.map(p=>p.slice());      // never alias the caller's arrays
+  if(copy.length<=max)return copy;
   let lo=0,hi=0;
-  for(const p of points)hi=Math.max(hi,Math.hypot(p[0]-points[0][0],p[1]-points[0][1]));hi*=2;
+  for(const p of copy)hi=Math.max(hi,Math.hypot(p[0]-copy[0][0],p[1]-copy[0][1]));hi*=2;
   let best=null;
-  for(let it=0;it<48&&hi-lo>1e-4;it++){const mid=(lo+hi)/2,r=dp(points,mid);
+  for(let it=0;it<48&&hi-lo>1e-4;it++){const mid=(lo+hi)/2,r=dp(copy,mid);
    if(r.length<=max){best=r;hi=mid;}else lo=mid;}
   if(!best||best.length>max){
-   const step=(points.length-1)/(max-1);
-   best=Array.from({length:max},(_,k)=>points[Math.round(k*step)].slice());
-   best[0]=points[0].slice();best[max-1]=points[points.length-1].slice();
+   const step=(copy.length-1)/(max-1);
+   best=Array.from({length:max},(_,k)=>copy[Math.round(k*step)].slice());
+   best[0]=copy[0].slice();best[max-1]=copy[copy.length-1].slice();
   }
-  const out=[best[0]];
-  for(let k=1;k<best.length;k++)if(Math.hypot(best[k][0]-out[out.length-1][0],best[k][1]-out[out.length-1][1])>1e-9)out.push(best[k]);
+  const out=[best[0].slice()];
+  for(let k=1;k<best.length;k++)if(Math.hypot(best[k][0]-out[out.length-1][0],best[k][1]-out[out.length-1][1])>1e-9)out.push(best[k].slice());
   return out;}
  function buildFromContours(contours,max=MAX){
   return contours.map((c,i)=>({id:c.id||('L'+(i+1)),z:c.z,count:c.points.length,controls:simplify(c.points,max)}));}

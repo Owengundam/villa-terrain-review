@@ -53,12 +53,13 @@ function draw(){
 $('layout').onchange=()=>{index=+$('layout').value;reset();};$('unit').onchange=()=>{selected=+$('unit').value;draw();};$('toggle').onclick=toggle;$('restore').onclick=reset;$('calculate').onclick=()=>{try{run('reduce',settings());}catch(e){$('status').textContent=e.message;}};
 /* Terrain editing panel: drag control points, OK rebuilds terrain and recalculates buildings */
 let terrainLines=null,terrainWorking=null,terrainSel=-1,terrainDrag=null;
+const terrainOriginal=JSON.parse(JSON.stringify(data.contours)); // shipped contours, never mutated
 const terrainSvgScale={w:0,k:0,x0:0,y0:0,ymax:0};
 function terrainXY(p){return[20+(p[0]-terrainSvgScale.x0)*terrainSvgScale.k,20+(terrainSvgScale.ymax-p[1])*terrainSvgScale.k];}
 function terrainWorld(x,y){return[terrainSvgScale.x0+(x-20)/terrainSvgScale.k,terrainSvgScale.ymax-(y-20)/terrainSvgScale.k];}
 function terrainOpen(){terrainWorking=TerrainEdit.buildFromContours(data.contours);terrainSel=-1;terrainLines=terrainWorking;$('terrainPanel').hidden=false;terrainDraw();}
 function terrainClose(){terrainWorking=null;terrainDrag=null;$('terrainPanel').hidden=true;}
-function terrainReset(){terrainOpen();}
+function terrainReset(){terrainWorking=TerrainEdit.buildFromContours(terrainOriginal);terrainLines=terrainWorking;terrainSel=-1;terrainDraw();}
 function terrainDraw(){
  const terrainPts=ps=>ps.map(p=>terrainXY(p).join(',')).join(' ');
  const xs=data.boundary.map(p=>p[0]),ys=data.boundary.map(p=>p[1]),xmin=Math.min(...xs),ymax=Math.max(...ys),scale=1180/(Math.max(...xs)-xmin),H=(ymax-Math.min(...ys))*scale+80;

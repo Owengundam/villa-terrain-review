@@ -51,4 +51,15 @@ vm.runInContext("terrainOpen()",ctx);
 const reopened=vm.runInContext("JSON.stringify(terrainLines[0].controls)",ctx);
 assert.equal(reopened,contoursAfter,'panel reopens with the edited terrain, not the original contours');
 console.log('PASS OK persists edited control lines; reopening the panel keeps the edited terrain');
+// BUGFIX regression 2: Reset lines must restore the ORIGINAL shipped contours, even after OK
+vm.runInContext("terrainReset()",ctx);
+const resetControls=vm.runInContext("JSON.stringify(terrainLines[0].controls)",ctx);
+const originalControls=vm.runInContext("JSON.stringify(TerrainEdit.buildFromContours(terrainOriginal)[0].controls)",ctx);
+assert.equal(resetControls,originalControls,'Reset lines restores the original shipped terrain');
+// simulate the worker finishing OK1 so the busy guard does not swallow the second OK
+vm.runInContext("busy=false",ctx);
+vm.runInContext("$('terrainOk').onclick()",ctx);
+const contoursRestored=vm.runInContext("JSON.stringify(data.contours[0].points)===JSON.stringify(TerrainEdit.buildFromContours(terrainOriginal)[0].controls)",ctx);
+assert(contoursRestored,'OK after Reset recalculates on the original terrain');
+console.log('PASS Reset lines restores original contours and OK then recalculates on them');
 console.log('INFO villa V001 reference before drag:',beforeRef.toFixed(2),'after drag:',afterDrag.toFixed(2),'| action message:',element('action-message').textContent);
