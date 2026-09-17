@@ -1,0 +1,41 @@
+{
+ "01_GROUPED_A": {
+  "counts": [
+   24,
+   24,
+   22,
+   48,
+   26
+  ],
+  "off_datum": 0,
+  "violations": [],
+  "min_clearance": 3.001,
+  "outside": []
+ },
+ "02_FREE_G": {
+  "counts": [
+   24,
+   24,
+   22,
+   48,
+   26
+  ],
+  "off_datum": 0,
+  "violations": [],
+  "min_clearance": 3.002,
+  "outside": []
+ },
+ "03_FREE_I": {
+  "counts": [
+   24,
+   24,
+   22,
+   48,
+   26
+  ],
+  "off_datum": 0,
+  "violations": [],
+  "min_clearance": 3.002,
+  "outside": []
+ }
+}

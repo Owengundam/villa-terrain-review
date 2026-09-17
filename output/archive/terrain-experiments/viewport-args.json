@@ -1,0 +1,8 @@
+{
+  "width": 1280,
+  "height": 720,
+  "view": "perspective",
+  "displayMode": "Shaded",
+  "boxMin": {"x": -60, "y": -480, "z": -5},
+  "boxMax": {"x": 1010, "y": -110, "z": 55}
+}

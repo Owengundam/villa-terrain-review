@@ -1,0 +1,15 @@
+{
+  "passed": [
+    "Rhino extraction and dry run leave document unchanged",
+    "Apply moves blocks, meshes, arrows and labels; preserves IDs, attributes, orientation and Z",
+    "Second run is an unchanged zero-movement solution",
+    "Stale proposal refused",
+    "Unresolved layout refused without geometry changes",
+    "Read-back failure rolls all changed geometry back",
+    "User document on port 2000 remains unchanged throughout integration tests",
+    "Real 144-building proposal applies and verifies on a headless copy of the live document"
+  ],
+  "count": 8,
+  "live_source": "\\\\192.168.200.190\\03-AI\u7d20\u6750  projects\\Projects 2026\\\u5317\u4eac\u683c\u62c9\u65af\u5c0f\u9547\\whm\\Main Agent Workspace\\Planning Agent\\output\\resort planning.3dm",
+  "unchanged": true
+}

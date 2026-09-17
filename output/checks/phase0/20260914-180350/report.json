@@ -1,0 +1,28 @@
+{
+  "phase": 0,
+  "source": "output/checks/phase0/real-terrain-20260914-180335-reference.json",
+  "reference": "Live elevation labels interpolated by 8-neighbour inverse-distance squared weighting on a 4 m grid; label insertion anchors approximate spot XY. Orientation follows live tagged smoothed/inferred contours.",
+  "unit": {
+    "width": 11.0,
+    "depth": 23.0
+  },
+  "rules": {
+    "side_gap": 3.05,
+    "minimum_row_gap": 5.05,
+    "pad_limit": 3.0,
+    "drop": 5.25,
+    "orientation": "Main view perpendicular to nearest contour segment, facing downhill"
+  },
+  "strategies": [
+    {
+      "name": "Parallel rows",
+      "status": "no_feasible_layout_found",
+      "candidates_tested": 1008
+    },
+    {
+      "name": "Staggered rows",
+      "status": "no_feasible_layout_found",
+      "candidates_tested": 1008
+    }
+  ]
+}

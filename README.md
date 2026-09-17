@@ -1,61 +1,34 @@
-# Villa Terrain Review
+﻿# Planning Agent 鈥?project guide
 
-Terrain-aware villa layout reconstruction and interactive 3D building-visibility review.
+Start with [the browsable project catalog](PROJECT_GUIDE/index.html), the [experiment history](PROJECT_GUIDE/EXPERIMENTS.md), [maintained tools](SCRIPTS.md), or [decisions and continuation notes](PROJECT_GUIDE/DECISIONS_AND_HANDOFF.md).
 
-## Run the current viewer
+## Current work
 
-Requires Node.js 18+ to build and test; the generated viewer is a self-contained HTML file.
+- **Phase 0 villa generator:** [parallel and staggered arrangements](phase0/README.md), generated without an image template. Both alternatives pass the adopted clearance and elevation rules.
 
-```sh
-npm run build
-npm test
-```
+- **Current Phase 2:** [views and elevations](view_elevation/README.md), implemented and verified against a fresh September 14 export of the live model. [Review the proposed layouts](output/checks/view-elevation/20260914-152538/index.html). Sequence: orientation 鈫?views/elevations 鈫?clearance cleanup 鈫?terrain fitting. Proposals are not applied to the source model.
 
-Open `output/checks/image-flow-3d-20260915/index.html` in a browser. All calculations run locally in a browser worker; no API key is required. Change eye/building heights, view limits and clear-area thresholds, then select **Recalculate arrangement**. Footprint clicks toggle activation; ghost villas remain selectable. PNG export includes active villas only.
+- **Latest working model:** [resort planning.3dm](output/resort%20planning.3dm), last saved September 11, 2026 at 18:29 local time.
+- **Latest recorded diagnostics:** [Stage 2 final checks](output/checks/stage2/STAGE2v0_final_diagnostics_2026-09-11.json), from 17:39 that day. All three options have no recorded spacing violations or outside footprints. These checks precede the final save and are not full terrain/visibility validation.
+- **Next action:** check the latest saved model against visibility, spacing, terrain slope and pad contact together.
+- **Rhino plugin:** [instructions and limitations](rhino-plugin/ResortTerrain/README.md).
 
-To regenerate all four saved alternatives (takes several minutes depending on hardware):
+## How the workspace is organized
 
-```sh
-npm run analyse
-```
+The catalog groups every existing file by experiment and role. The output folder keeps the current model at its top level, with checks, previews, archived experiments and recovery material in subfolders. Obsolete experiment scripts were deleted; SCRIPTS.md lists the retained tools. PROJECT_GUIDE contains move and deletion records.
 
-## Current rules
-
-- Footprints: 11 × 23 m, with existing downhill orientation and strict 3 m side-clearance geometry.
-- Pad adjustments: ±1.5 m from the terrain reference.
-- Default eye height: 1.5 m above pad; building extrusion: 5 m.
-- Overall view: ±15° horizontal, −10° to +5° vertical, at least 70% clear angular area.
-- Central view: ±5° horizontal and ±2.5° vertical, symmetric about the horizon, more than 75% clear (25% or more blockage fails). It shrinks symmetrically when required to fit the overall window.
-- Silhouette overlaps count once. Conservative 0.25° horizontal columns bound partial-height obstruction.
-- Local pad fitting, greedy deactivation and repeated restoration produce valid arrangements, not a proven maximum count.
-
-Current saved active counts: Free 19, Parallel 25, Staggered 2 20, Staggered 3 17. Tests include independent 3D ray/box comparisons and generated-viewer/worker checks.
-
-## Source map
-
-| Path | Purpose |
+| Location | Purpose |
 |---|---|
-| `phase0/view3d.js` | Shared 3D visibility and pad/reduction solver |
-| `phase0/view3d_view.html` | Interactive viewer template |
-| `phase0/analyse_3d.js` | Recalculation and standalone viewer build |
-| `phase0/villa_presentation.js` | Hover labels and active-only plan export |
-| `phase0/tests/test_view3d*.js` | Current visibility and viewer tests |
-| `phase0/reconstruct_flow.py` | Coordinated image-flow geometry reconstruction |
-| `phase2/` | Geometry and clearance checking |
-| `view_elevation/` | Earlier elevation/terrain workflow and shared geometry helpers |
-| `rhino-plugin/ResortTerrain/` | Rhino plugin source and integration scripts |
-| `output/checks/` | Selected inputs and current reproducible results |
+| PROJECT_GUIDE | Experiment records, searchable catalog, inventory, decisions and continuation notes |
+| planning-iterations | Early campus concepts, image studies and Rhino reconstructions |
+| output | Current model and a short guide; supporting material is in subfolders |
+| rhino-plugin/ResortTerrain | Native Rhino plugin source, build, tests and documentation |
+| outputs/partial-edit | Separate image-alignment and partial-edit experiment |
 
-The Python/Rhino workflows are historical tooling and may require their original Rhino model, Windows fonts, additional experiment files, Python dependencies or a running Rhino connection. They are not needed to run the current 3D viewer. Large model binaries, raster renderings, caches, credentials and deployment configuration are excluded.
+The old filenames containing 鈥渃urrent鈥?or 鈥渇inal鈥?describe their own experiment, not necessarily today's working model. Dates are filesystem metadata unless a report explicitly states otherwise. This workspace has no Git history.
 
-## Model limits
+## Maintaining the record
 
-Buildings are solid vertical footprint extrusions. Roof slopes, trees, terrain occlusion and structural supports are not visibility blockers. Pad height is the floor reference; upper-floor eye height must include the floor offset. Clear area does not guarantee a continuous unobstructed opening. This is a design study, not regulatory verification.
+For new work, use `experiments/YYYY-MM-DD-short-name/` with `README.md`, `inputs/`, `scripts/`, `outputs/` and `checks/` as needed. Record the source model, purpose, changed rules, outputs, validation and next step using [the experiment template](PROJECT_GUIDE/EXPERIMENT_TEMPLATE.md). Preserve baseline models; make dated checkpoints before material changes.
 
-## Safe interactive editing
-
-Auto mode (on by default) prioritizes the villa clicked for activation. It fits bounded pads, then automatically ghosts other failing villas or blockers until all requirements pass. The clicked villa remains active. Deactivation attempts repeated safe restoration of eligible ghosts. Manually deactivated villas remain excluded until explicitly activated or reset/recalculated.
-
-With Auto mode off, every manual activation and deactivation is accepted. Only the selected villa changes; other villas and pad heights remain unchanged. Violations are shown without blocking the action. The previous one-step snapshot restoration has been replaced by activation-priority conflict resolution.
-
-Each completed action highlights changed footprints and lists clickable change records: green + activated, orange - deactivated, blue vertical arrow pad-adjusted. Highlights persist through inspection until the next action. Auto mode uses a rounded, keyboard-accessible switch. This is a local search, not maximum-count optimization.
+Run `organize-project.ps1` from the workspace root to refresh the catalog and inventories. For a new experiment, add its description and classification rule to the script first. The script recreates generated guide pages; keep new experiment notes in the experiment's own folder.

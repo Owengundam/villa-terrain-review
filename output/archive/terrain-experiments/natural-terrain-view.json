@@ -1,0 +1,16 @@
+{
+  "displayMode": "Arctic",
+  "boxMin": {
+    "z": 0,
+    "x": 3778,
+    "y": 1115
+  },
+  "view": "perspective",
+  "boxMax": {
+    "z": 52,
+    "x": 4022,
+    "y": 1403
+  },
+  "height": 720,
+  "width": 1280
+}

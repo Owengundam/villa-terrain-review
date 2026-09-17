@@ -1,0 +1,765 @@
+[
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\current-plan-renders\\A-grouped-current.png",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\previews\\current-plan-renders\\A-grouped-current.png",
+    "SHA256": "960C4CF7DC42B9B0766F349697AFBEB90E30562005DD41BA261DD522BF2F47C8",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\current-plan-renders",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\previews\\current-plan-renders"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\current-plan-renders\\G-free-current.png",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\previews\\current-plan-renders\\G-free-current.png",
+    "SHA256": "7C04DA03F58704B200A4169BA8871234795BF2CDBB271F1C10E7EEB8443DC70B",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\current-plan-renders",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\previews\\current-plan-renders"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\current-plan-renders\\I-free-current.png",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\previews\\current-plan-renders\\I-free-current.png",
+    "SHA256": "7D8ECE837FAD9A982881C20264BD29E315B54482699932545F02B1AB080C815F",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\current-plan-renders",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\previews\\current-plan-renders"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\current-plan-renders\\prompts.txt",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\previews\\current-plan-renders\\prompts.txt",
+    "SHA256": "B9E0EA0E3A8D51FE4FBD9326D5E2E59EEB81666038F85CA82DC20331DCF955BD",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\current-plan-renders",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\previews\\current-plan-renders"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\current-plan-renders\\rhino-A.jpg",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\previews\\current-plan-renders\\rhino-A.jpg",
+    "SHA256": "5FA657B044BF2CC595D643A3CAF1FA6C2FE3019877AC3733C0967A40A1C375D5",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\current-plan-renders",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\previews\\current-plan-renders"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\current-plan-renders\\rhino-G.jpg",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\previews\\current-plan-renders\\rhino-G.jpg",
+    "SHA256": "44C376E6ACEA91721A7C52CF5FD1A91FD03C074BCE3FEEFC9D0440434C62B712",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\current-plan-renders",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\previews\\current-plan-renders"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\current-plan-renders\\rhino-I.jpg",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\previews\\current-plan-renders\\rhino-I.jpg",
+    "SHA256": "0A13A001CF6B6B5BA19C98F64F4C3D73C1C4EB443AF6B3A16C1F862A3235E4EC",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\current-plan-renders",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\previews\\current-plan-renders"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\free-layout-reference\\G-woodland.png",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\free-layout-reference\\G-woodland.png",
+    "SHA256": "1E446555D95BAC2D533C7686188FC609DF0497B84419E4906456FB40DB9FA97F",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\free-layout-reference",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\free-layout-reference"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\free-layout-reference\\H-hillside.png",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\free-layout-reference\\H-hillside.png",
+    "SHA256": "7DDDE8699C745386C8EA9E9A7FF01705F31470875E1B94199A5936AD0360F435",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\free-layout-reference",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\free-layout-reference"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\free-layout-reference\\I-garden.png",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\free-layout-reference\\I-garden.png",
+    "SHA256": "59191DE5CF288EE901FB3B4D8B41FF2ACB1300FBF4C2DAA467C1A3BA21D5C31C",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\free-layout-reference",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\free-layout-reference"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\free-layout-reference\\prompts.txt",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\free-layout-reference\\prompts.txt",
+    "SHA256": "C7FAE7244382B6554F9532AC3595C91F3B31E4C8876F79C3BF21323A6F8B5158",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\free-layout-reference",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\free-layout-reference"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\free-layout-reference\\Thumbs.db",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\free-layout-reference\\Thumbs.db",
+    "SHA256": "A8854ADCF3C5853F2D7829AF2DEDCA9B2E88FF9B14B279D3BE455FEACB56887F",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\free-layout-reference",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\free-layout-reference"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\STAGE1_images_2026-09-11\\oblique_terrain_v2.jpg",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\staged-planning\\STAGE1_images_2026-09-11\\oblique_terrain_v2.jpg",
+    "SHA256": "32D7CFA58F3A84698F30E787CC155433F3FA4CC5544A07F4AE8EFB44C38A4521",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\STAGE1_images_2026-09-11",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\staged-planning\\STAGE1_images_2026-09-11"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\STAGE1_images_2026-09-11\\overall_3_options_v2.jpg",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\staged-planning\\STAGE1_images_2026-09-11\\overall_3_options_v2.jpg",
+    "SHA256": "7AED3A4332A6EB0513FB7B536E0A897726679F0F468345F426FE1687D1C915AD",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\STAGE1_images_2026-09-11",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\staged-planning\\STAGE1_images_2026-09-11"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\STAGE1_images_2026-09-11\\overall_3_options.jpg",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\staged-planning\\STAGE1_images_2026-09-11\\overall_3_options.jpg",
+    "SHA256": "41A8952EFBDD5E64DA4EE2AA53B110B2D1C21A09D815F4733294985EA3A3F31B",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\STAGE1_images_2026-09-11",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\staged-planning\\STAGE1_images_2026-09-11"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\STAGE1_images_2026-09-11\\plan_01_GROUPED_A.jpg",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\staged-planning\\STAGE1_images_2026-09-11\\plan_01_GROUPED_A.jpg",
+    "SHA256": "F0D4179C7ECC65904790717E5BF618C41048BEDCC886330C89BD025C2C7B2881",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\STAGE1_images_2026-09-11",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\staged-planning\\STAGE1_images_2026-09-11"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\STAGE1_images_2026-09-11\\plan_01_v2.jpg",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\staged-planning\\STAGE1_images_2026-09-11\\plan_01_v2.jpg",
+    "SHA256": "317323DD78690C14442F0850F9D9EBEF8513EDA5D7213CB3F55E0C9D6313955A",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\STAGE1_images_2026-09-11",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\staged-planning\\STAGE1_images_2026-09-11"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\STAGE1_images_2026-09-11\\plan_02_FREE_G.jpg",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\staged-planning\\STAGE1_images_2026-09-11\\plan_02_FREE_G.jpg",
+    "SHA256": "C1CD80248E870BF41D32E10AE36E2F8C194D069A11C34C87DDDEE0FE67E08A24",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\STAGE1_images_2026-09-11",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\staged-planning\\STAGE1_images_2026-09-11"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\STAGE1_images_2026-09-11\\plan_02_v2.jpg",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\staged-planning\\STAGE1_images_2026-09-11\\plan_02_v2.jpg",
+    "SHA256": "1E9E84173E8DDA691531024C2769ED4C21522B97A0DDA01D564BA68C61C8EF5E",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\STAGE1_images_2026-09-11",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\staged-planning\\STAGE1_images_2026-09-11"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\STAGE1_images_2026-09-11\\plan_03_FREE_I.jpg",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\staged-planning\\STAGE1_images_2026-09-11\\plan_03_FREE_I.jpg",
+    "SHA256": "C05E217D5363EAB95D4135144FC42A30DCEA346F4AD36E39EFEC43B353AA971E",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\STAGE1_images_2026-09-11",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\staged-planning\\STAGE1_images_2026-09-11"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\STAGE1_images_2026-09-11\\plan_03_v2.jpg",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\staged-planning\\STAGE1_images_2026-09-11\\plan_03_v2.jpg",
+    "SHA256": "AC154A90A9F19C2AEF24A55506272A0DE3C714BBC3DEC5BE0ED93B4248156794",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\STAGE1_images_2026-09-11",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\staged-planning\\STAGE1_images_2026-09-11"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\apply-natural-terrain.py",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\apply-natural-terrain.py",
+    "SHA256": "955854CE0528D284C8535671FF3D0EE2DA341FA4D125852C3DBA2D07F572D0B0",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\apply-natural-terrain.py",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\apply-natural-terrain.py"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\apply-visibility-v3.py",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\apply-visibility-v3.py",
+    "SHA256": "B9A86F989DACEFB7A515DA19721EFB3A24E99CFBE9BA74FA6A3329F78BD4E7A5",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\apply-visibility-v3.py",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\apply-visibility-v3.py"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\build-terrain-studies.py",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\build-terrain-studies.py",
+    "SHA256": "4A711E92F583B105588403BD0FD649236DDF5162BEC95B39B08CD7F838D71E6A",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\build-terrain-studies.py",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\build-terrain-studies.py"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\cancel-command.json",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\cancel-command.json",
+    "SHA256": "749632B1F50C1E1A12EB7D43838591B77085EAAD7FC1BC438E46C549751B91B8",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\cancel-command.json",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\cancel-command.json"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\capture-natural-terrain.py",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\capture-natural-terrain.py",
+    "SHA256": "85354BACF48C27D496C1F6F3DE146306CBF8F441CAD9C54FFD0E08E551CB0BBE",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\capture-natural-terrain.py",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\capture-natural-terrain.py"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\check-natural-visible.py",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\check-natural-visible.py",
+    "SHA256": "AF9821ACD1FFC35677FFE805429BC87E760115C1D0F7AE631623F6BD5E209756",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\check-natural-visible.py",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\check-natural-visible.py"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\check-v3-graph.py",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\check-v3-graph.py",
+    "SHA256": "00D7A87D4DD52126F658B8B97C7AB8EFBCAD73C1D2B07326809786F6C2CE8648",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\check-v3-graph.py",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\check-v3-graph.py"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\close-plugin-test-report.py",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\close-plugin-test-report.py",
+    "SHA256": "30AB3B39E2326A17012AA1A37F6F3231EF3CE8465BD98A885D9AEC9EEB8091BD",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\close-plugin-test-report.py",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\close-plugin-test-report.py"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\current-live-perspective.jpg",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\current-live-perspective.jpg",
+    "SHA256": "B95969E5005427EDE9989970BFD05C83314C88FA4B51065A65797DFCF1D054A6",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\current-live-perspective.jpg",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\current-live-perspective.jpg"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\current-plan-clearance-audit.md",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\current-plan-clearance-audit.md",
+    "SHA256": "2E2F05F15A0C98B599A4D4F2632CE6D8F6E61B73BC1779890159EF5F4284A001",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\current-plan-clearance-audit.md",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\current-plan-clearance-audit.md"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\current-plan-clearance-audit.py",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\current-plan-clearance-audit.py",
+    "SHA256": "F3CF53FBBA7225C2A7ECAFAF216A66211694D842DA396947B5A114D8D3580D7A",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\current-plan-clearance-audit.py",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\current-plan-clearance-audit.py"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\current-plan-visibility-audit-v2.py",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\current-plan-visibility-audit-v2.py",
+    "SHA256": "8F0E47552DEEFF4D8A55BA5716424DC4099AA6F62D89B14E0FC2F2AEFF34B8B0",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\current-plan-visibility-audit-v2.py",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\current-plan-visibility-audit-v2.py"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\current-plan-visibility-audit-v3.py",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\current-plan-visibility-audit-v3.py",
+    "SHA256": "FDD59D6472021839B9A54445DF73CBA396A19ABB870ECF0C6DEDC7BD594EA7D6",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\current-plan-visibility-audit-v3.py",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\current-plan-visibility-audit-v3.py"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\detail-rhino.py",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\detail-rhino.py",
+    "SHA256": "156CE3C2460F67A737E3C6EFBE651CE03F6389D292ACDFB232B3BE30479B7EFA",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\detail-rhino.py",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\detail-rhino.py"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\downhill-option-I.jpg",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\downhill-option-I.jpg",
+    "SHA256": "5BE795AC5DF7EA7B310916CF11921D08FD6701D495AA7B185652EDCAB4D200ED",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\downhill-option-I.jpg",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\downhill-option-I.jpg"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\export-natural-terrain.py",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\export-natural-terrain.py",
+    "SHA256": "DA37F91F10A2D1600947D24651203A01B76CEF84BA728A9AB24BE482608A1F85",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\export-natural-terrain.py",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\export-natural-terrain.py"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\finish-terrain-studies.py",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\finish-terrain-studies.py",
+    "SHA256": "EE49B32A98053C412EEB3DBAD8E229958137D35514B6FD81887391ABEC33A866",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\finish-terrain-studies.py",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\finish-terrain-studies.py"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\fit-v3-layout.py",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\fit-v3-layout.py",
+    "SHA256": "E4924B27FB3A8C7D70F02FAC0DCC4E0253619F861D3176F0A513E2ADD71BF9D2",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\fit-v3-layout.py",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\fit-v3-layout.py"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\inspect-3dm-offline.ps1",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\inspect-3dm-offline.ps1",
+    "SHA256": "516908DF603BCD69DDB284CA0D97D9E82C75D29FD9FDB6EBCF663EBC74C429BC",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\inspect-3dm-offline.ps1",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\inspect-3dm-offline.ps1"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\inspect-rhino.py",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\inspect-rhino.py",
+    "SHA256": "E24E925AE2F40B72A402F4742A5B2D7FE61A59242CDCCE27363A18D558481FC1",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\inspect-rhino.py",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\inspect-rhino.py"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\list-boundary-args.json",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\list-boundary-args.json",
+    "SHA256": "1B1783BAA7BEA3DF8184B20F9BD8114BFB2706FDC185F3BD5F366E3B5E38A706",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\list-boundary-args.json",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\list-boundary-args.json"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\list-terrain-args.json",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\list-terrain-args.json",
+    "SHA256": "347A5E13A70480CCA57EDBEEE61B4E01E4EBCB7B7612692DBDD4AA618C664D34",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\list-terrain-args.json",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\list-terrain-args.json"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\live-terrain-inspect.py",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\live-terrain-inspect.py",
+    "SHA256": "6203CA8339D6B097525425E215996CE39054123ABE56F6A912E26C086CC00E70",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\live-terrain-inspect.py",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\live-terrain-inspect.py"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\natural-terrain-input.json",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\natural-terrain-input.json",
+    "SHA256": "26A4B3D7CF13B3E03EC6306D561F3F224089178A28330C9BFEC59C8EC43D8578",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\natural-terrain-input.json",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\natural-terrain-input.json"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\natural-terrain-rhino-G.jpg",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\natural-terrain-rhino-G.jpg",
+    "SHA256": "6B039F1FA06BB592EEB3E8A13CAD6A6DE01D8E134D56515546A229DBA8B4AAFA",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\natural-terrain-rhino-G.jpg",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\natural-terrain-rhino-G.jpg"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\natural-terrain-rhino-G.png",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\natural-terrain-rhino-G.png",
+    "SHA256": "1FAE47DA621E905820C3F0BDC3DD448DE63F2869FECED502580CE3943BF24288",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\natural-terrain-rhino-G.png",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\natural-terrain-rhino-G.png"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\natural-terrain-solved.json",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\natural-terrain-solved.json",
+    "SHA256": "CC81EE61127161EC93D5A27388B9B8CA55D523B322C9BE8C2686D0F29FDC5B41",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\natural-terrain-solved.json",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\natural-terrain-solved.json"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\natural-terrain-surface-review.png",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\natural-terrain-surface-review.png",
+    "SHA256": "8E8E0BA1245C78D61849BA4227DA17D5EEF9858736B1F1AAE1616FED72E7E600",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\natural-terrain-surface-review.png",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\natural-terrain-surface-review.png"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\natural-terrain-validation.json",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\natural-terrain-validation.json",
+    "SHA256": "3B54BDA6C504383974BC14E11049D76A5739DD624E110F4EC79C18833A630330",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\natural-terrain-validation.json",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\natural-terrain-validation.json"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\natural-terrain-view.json",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\natural-terrain-view.json",
+    "SHA256": "AA8D4158C8F071D6A9BEF606374CC63E8EF2B101B8E6E08E10772CCC68F49080",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\natural-terrain-view.json",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\natural-terrain-view.json"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\orient-modules-downhill.py",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\orient-modules-downhill.py",
+    "SHA256": "18DBC2A229974955DE3FDE19EAD8E92C4F783DD5FC52F395505205CDB6E1F777",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\orient-modules-downhill.py",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\orient-modules-downhill.py"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\orient-modules.py",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\orient-modules.py",
+    "SHA256": "253025349B05FCFD79AD29DF7030F6C3222542BC81EE59C5355D5B3B74A8165B",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\orient-modules.py",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\orient-modules.py"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\port-2000-origin-square.jpg",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\port-2000-origin-square.jpg",
+    "SHA256": "51874C22CAC79E844F6973B19124D8E3CB9C62648C11FBB6B9AFCB21F087693D",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\port-2000-origin-square.jpg",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\port-2000-origin-square.jpg"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\prepare-v3-apply.py",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\prepare-v3-apply.py",
+    "SHA256": "94586BB0308305B31D2C3066E34CD3E365177A5A2E9F3CE2C1A34270976D2D10",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\prepare-v3-apply.py",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\prepare-v3-apply.py"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\probe-rhino.cs",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\probe-rhino.cs",
+    "SHA256": "F7A3F3C2344330971049E59B6B1773BEF11C72211DB11D2D2571A6A48832E86A",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\probe-rhino.cs",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\probe-rhino.cs"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\probe-rhino.py",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\probe-rhino.py",
+    "SHA256": "9002A0ABE190070F8E30D2F88A8AE935E7E3EE6430225F647035AEF0121B8E08",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\probe-rhino.py",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\probe-rhino.py"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\regrade-visibility-terrain.py",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\regrade-visibility-terrain.py",
+    "SHA256": "973161D95B62C62FF88CD7B56F090AE2679CD8469A802D7AC7CC77E64A7FEA2F",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\regrade-visibility-terrain.py",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\regrade-visibility-terrain.py"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\resort planning_BACKUP_2026-09-11_pre-stage1.3dm",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\_backups\\resort planning_BACKUP_2026-09-11_pre-stage1.3dm",
+    "SHA256": "5FC2A21B1BEB35CAF2CC8BF7E662AF89652177908FCF576F0563C4747B1090F7",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\resort planning_BACKUP_2026-09-11_pre-stage1.3dm",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\_backups\\resort planning_BACKUP_2026-09-11_pre-stage1.3dm"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\resort planning_STAGE1_ORIENTED_2026-09-11.3dm",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\staged-planning\\resort planning_STAGE1_ORIENTED_2026-09-11.3dm",
+    "SHA256": "581D56EF2C27E4C82BEC7740352D5D5E074F80A0D407AEAF3924651A53BB65D9",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\resort planning_STAGE1_ORIENTED_2026-09-11.3dm",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\staged-planning\\resort planning_STAGE1_ORIENTED_2026-09-11.3dm"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\resort planning_STAGE1B_ORIENTED_SKETCH_TERRAIN_2026-09-11.3dm",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\staged-planning\\resort planning_STAGE1B_ORIENTED_SKETCH_TERRAIN_2026-09-11.3dm",
+    "SHA256": "8D647CF1FBBEF5E12707B0C29378EE82C0315E8F264747B8FA2184849487A8EE",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\resort planning_STAGE1B_ORIENTED_SKETCH_TERRAIN_2026-09-11.3dm",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\staged-planning\\resort planning_STAGE1B_ORIENTED_SKETCH_TERRAIN_2026-09-11.3dm"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\resort planning.3dmbak",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\_backups\\resort planning.3dmbak",
+    "SHA256": "964B88B04921FF020128FBDC96C28D3D134299B31E8F67B3CFBBAA652C7304C6",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\resort planning.3dmbak",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\_backups\\resort planning.3dmbak"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\resort-plugin-check-command.json",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\resort-plugin-check-command.json",
+    "SHA256": "08EF2AEB9B1E56813C7EB1D7A522F42494ABB5FFE569AB159E083D5A9B4358F3",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\resort-plugin-check-command.json",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\resort-plugin-check-command.json"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\resort-plugin-commands.json",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\resort-plugin-commands.json",
+    "SHA256": "C26F584B922C142BE3ADC24032F42C1A0E107895535A477657092A1BBABA4E38",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\resort-plugin-commands.json",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\resort-plugin-commands.json"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\RHI3370.tmp",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\_backups\\RHI3370.tmp",
+    "SHA256": "84C1648A2C7E0012157001E4B60FBB5F42F13F1CC262B00AE90BAFA8D828B645",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\RHI3370.tmp",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\_backups\\RHI3370.tmp"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\RHI3FD1.tmp",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\_backups\\RHI3FD1.tmp",
+    "SHA256": "CCC05FA04E7098A697BD261D16A7335251961A2C9568795D25B04B91F5EE5DCD",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\RHI3FD1.tmp",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\_backups\\RHI3FD1.tmp"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\RHI87F7.tmp",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\_backups\\RHI87F7.tmp",
+    "SHA256": "C4B328204BD775901BF79E5FB85F09F707E465FD0CC67E028CCE7920E69AFBE5",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\RHI87F7.tmp",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\_backups\\RHI87F7.tmp"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\RHI941F.tmp",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\_backups\\RHI941F.tmp",
+    "SHA256": "0B5610AA7C40FFB79B8DA7B84AA969FF93CAC095DF46BD455CB405F9DC3598D4",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\RHI941F.tmp",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\_backups\\RHI941F.tmp"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\rhino-call.ps1",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\rhino-call.ps1",
+    "SHA256": "6C45F371EB665281D45F438AC3C2031438A74BC6C5BA7E4070E1F2C8696C2A80",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\rhino-call.ps1",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\rhino-call.ps1"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\rhino-probe-result.json",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\rhino-probe-result.json",
+    "SHA256": "13F6CF0F6B4B5336FD22A150851D9E9A1BA54484DFF80D7598DE7AB4259E7EDD",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\rhino-probe-result.json",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\rhino-probe-result.json"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\run-probe-command.json",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\run-probe-command.json",
+    "SHA256": "A3D21955161CEB2588D75A04F586A5A4EFE5949ABCA1C3FB34262F980F4762E6",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\run-probe-command.json",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\run-probe-command.json"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\selected-site.jpg",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\selected-site.jpg",
+    "SHA256": "976C7E97AA5416DB7368B6D2C06943174599958FB0A94A3BE867F574776D1E7A",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\selected-site.jpg",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\selected-site.jpg"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\site-before-terrain-studies.3dm",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\site-before-terrain-studies.3dm",
+    "SHA256": "0AA4DFE5643698A290B30B541126544967F29AA3853E7C21F507A95D4A054917",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\site-before-terrain-studies.3dm",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\site-before-terrain-studies.3dm"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\solve-natural-terrain.py",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\solve-natural-terrain.py",
+    "SHA256": "B26B5EAEA338229C59C7128F35F639E0E0C5DB08D3F583E01C028E37B0C3A36E",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\solve-natural-terrain.py",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\solve-natural-terrain.py"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\solve-v3-pad-levels.py",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\solve-v3-pad-levels.py",
+    "SHA256": "1D06B82A2888D272190DFBAD528A01F5F02366D18DC0421FEFEDA1ED82821E67",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\solve-v3-pad-levels.py",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\solve-v3-pad-levels.py"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\STAGE1_audit_snapshot_2026-09-11.json",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\staged-planning\\STAGE1_audit_snapshot_2026-09-11.json",
+    "SHA256": "20A8754FF4F07508272BF0ABD745ADC654315FFDAE95180F80D6D7BB5B7A3051",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\STAGE1_audit_snapshot_2026-09-11.json",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\staged-planning\\STAGE1_audit_snapshot_2026-09-11.json"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\STAGE1_diagnostics_2026-09-11.json",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\staged-planning\\STAGE1_diagnostics_2026-09-11.json",
+    "SHA256": "BD1661A17330C53E3851250CC68A2804A050FAE8DB43EB6CBF768731FAE409D0",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\STAGE1_diagnostics_2026-09-11.json",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\staged-planning\\STAGE1_diagnostics_2026-09-11.json"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\STAGE1_orientation_log_2026-09-11.json",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\staged-planning\\STAGE1_orientation_log_2026-09-11.json",
+    "SHA256": "66496CDB2F254555D6A04BA76B3EA8A6F3D8DE194D5F6CD4EE0CF77351C63AE7",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\STAGE1_orientation_log_2026-09-11.json",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\staged-planning\\STAGE1_orientation_log_2026-09-11.json"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\STAGE1_per_building_report_2026-09-11.csv",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\staged-planning\\STAGE1_per_building_report_2026-09-11.csv",
+    "SHA256": "083BA75BF3B5AEB9DC70038CBACBC228D0EAE810CE88ED08DCD0058F131F2E5E",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\STAGE1_per_building_report_2026-09-11.csv",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\staged-planning\\STAGE1_per_building_report_2026-09-11.csv"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\STAGE1B_diagnostics_2026-09-11.json",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\staged-planning\\STAGE1B_diagnostics_2026-09-11.json",
+    "SHA256": "97F853A34BB950231C814F786345041F27D25A5649E1C2792AF46CE6E07825E8",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\STAGE1B_diagnostics_2026-09-11.json",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\staged-planning\\STAGE1B_diagnostics_2026-09-11.json"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\STAGE1B_orientation_log_2026-09-11.json",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\staged-planning\\STAGE1B_orientation_log_2026-09-11.json",
+    "SHA256": "DCC9B8B4ECCFB071C8063E1980BE1D362E57AF172AB54CFFF76017DD9CE74CB3",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\STAGE1B_orientation_log_2026-09-11.json",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\staged-planning\\STAGE1B_orientation_log_2026-09-11.json"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\STAGE1B_per_building_report_2026-09-11.csv",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\staged-planning\\STAGE1B_per_building_report_2026-09-11.csv",
+    "SHA256": "6C5131FAF784047682F16C15C56BEE1FD892C3B3802263C352C3A5ED66E8EA68",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\STAGE1B_per_building_report_2026-09-11.csv",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\staged-planning\\STAGE1B_per_building_report_2026-09-11.csv"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\STAGE1B_terrain_field_2026-09-11.json",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\staged-planning\\STAGE1B_terrain_field_2026-09-11.json",
+    "SHA256": "43EC4E49F29AB631C63F23583FCD5F27012FC99B3D121006EF5191D4FEA9B26F",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\STAGE1B_terrain_field_2026-09-11.json",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\staged-planning\\STAGE1B_terrain_field_2026-09-11.json"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\STAGE2_orientation_log_40m_2026-09-11.json",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\checks\\stage2\\STAGE2_orientation_log_40m_2026-09-11.json",
+    "SHA256": "E60DFF1CEEFF8FC98150F56377CCC5E3BDF47BC0847FD0ABE03B91094CDB0D35",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\STAGE2_orientation_log_40m_2026-09-11.json",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\checks\\stage2\\STAGE2_orientation_log_40m_2026-09-11.json"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\STAGE2_terrain_field_40m_2026-09-11.json",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\checks\\stage2\\STAGE2_terrain_field_40m_2026-09-11.json",
+    "SHA256": "4A7F977A16EA447F3D95C29801A02787F59DD9B312DBC61E37381E45C002DC1C",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\STAGE2_terrain_field_40m_2026-09-11.json",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\checks\\stage2\\STAGE2_terrain_field_40m_2026-09-11.json"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\STAGE2v0_final_diagnostics_2026-09-11.json",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\checks\\stage2\\STAGE2v0_final_diagnostics_2026-09-11.json",
+    "SHA256": "4EE922472278971807FC4E882B68DF494F4CF5FAA25FD6C10DE5A9F16DB6968E",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\STAGE2v0_final_diagnostics_2026-09-11.json",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\checks\\stage2\\STAGE2v0_final_diagnostics_2026-09-11.json"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\STAGE2v0_per_building_report_2026-09-11.csv",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\checks\\stage2\\STAGE2v0_per_building_report_2026-09-11.csv",
+    "SHA256": "DE92629CEE6CA03F0C35B8A8523359F4C4327599A316C5F3EE8FF52479E8400D",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\STAGE2v0_per_building_report_2026-09-11.csv",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\checks\\stage2\\STAGE2v0_per_building_report_2026-09-11.csv"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\STAGE2v0_spacing_report_2026-09-11.json",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\checks\\stage2\\STAGE2v0_spacing_report_2026-09-11.json",
+    "SHA256": "0B5BABC5F656513BABB4C064EB06830DAA3C9ACA9090CF60B5AF66D6B0C15D10",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\STAGE2v0_spacing_report_2026-09-11.json",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\checks\\stage2\\STAGE2v0_spacing_report_2026-09-11.json"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\terrain-before-natural.jpg",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\terrain-before-natural.jpg",
+    "SHA256": "B95969E5005427EDE9989970BFD05C83314C88FA4B51065A65797DFCF1D054A6",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\terrain-before-natural.jpg",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\terrain-before-natural.jpg"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\terrain-perspective.jpg",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\terrain-perspective.jpg",
+    "SHA256": "F4833498C63F0B4AB888505FE34944834E555FF78B5E1F8AB87A982629853225",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\terrain-perspective.jpg",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\terrain-perspective.jpg"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\terrain-studies-notes.md",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\terrain-studies-notes.md",
+    "SHA256": "B5D997030AF0F653605AE8864D82964F651E7F7C95EBB1644D970C05C5B12847",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\terrain-studies-notes.md",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\terrain-studies-notes.md"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\three-resort-options-downhill.3dm",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\three-resort-options-downhill.3dm",
+    "SHA256": "A173C5B166C621335728BA0271AAB1F71914624E9AB8594EFAB6E0E7139B5BF6",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\three-resort-options-downhill.3dm",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\three-resort-options-downhill.3dm"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\three-resort-options-view-oriented.3dm",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\three-resort-options-view-oriented.3dm",
+    "SHA256": "165DAE008923A89F42F0F5065F177B894EED1CD2DE17EB6FF050963732AF6FC7",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\three-resort-options-view-oriented.3dm",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\three-resort-options-view-oriented.3dm"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\three-resort-terrain-options-visibility-regraded.3dm",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\three-resort-terrain-options-visibility-regraded.3dm",
+    "SHA256": "5CBB465FF7FEFDE9400A5F9CC7C8BD0D087535BC94788CC53A4944EAD898B9F0",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\three-resort-terrain-options-visibility-regraded.3dm",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\three-resort-terrain-options-visibility-regraded.3dm"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\three-resort-terrain-options.3dm",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\three-resort-terrain-options.3dm",
+    "SHA256": "DFB7EA7911C7B9B29E540A357C3B8F5E93610524F36E41D6E0E19D52BA684504",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\three-resort-terrain-options.3dm",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\three-resort-terrain-options.3dm"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\three-resort-terrain-options.3dmbak",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\_backups\\three-resort-terrain-options.3dmbak",
+    "SHA256": "242D37B00F657A2B1165159F25F42545A61842C0C80F194CFCDDCD4C5E1DA8DF",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\three-resort-terrain-options.3dmbak",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\_backups\\three-resort-terrain-options.3dmbak"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\three-terrain-top.jpg",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\three-terrain-top.jpg",
+    "SHA256": "99198083CE17DCBE1BF3D69BB7E26C8EA7FB81EC543ED4CB0EAA2D2C964397AA",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\three-terrain-top.jpg",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\three-terrain-top.jpg"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\verify-and-capture-v3.py",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\verify-and-capture-v3.py",
+    "SHA256": "38413F189FA4BF3914D61988B19125968D0964EA39D6653308654EC81E79A566",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\verify-and-capture-v3.py",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\verify-and-capture-v3.py"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\view-oriented-I.jpg",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\view-oriented-I.jpg",
+    "SHA256": "E529C0221EB1F3314FF7871E3D5724CDCC8DF394863EC5C5BF6839AF36F30951",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\view-oriented-I.jpg",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\view-oriented-I.jpg"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\viewport-args.json",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\viewport-args.json",
+    "SHA256": "102F3AFA16B6261930A31596B4D78B5A107B574559C1356BEECF34B4B46F46A1",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\viewport-args.json",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\viewport-args.json"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\visibility-audit-v2-report.md",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\visibility-audit-v2-report.md",
+    "SHA256": "6DD219DFC8FD393CBE3D59B5EDBB54C0EC01096BC3D0C3AE7831227E1ADE6030",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\visibility-audit-v2-report.md",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\visibility-audit-v2-report.md"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\visibility-regraded-G-perspective.jpg",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\visibility-regraded-G-perspective.jpg",
+    "SHA256": "3F82B7D374337384DC48C7BE9355BD57120427F4677315F21DC54AC78FEB7A3D",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\visibility-regraded-G-perspective.jpg",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\visibility-regraded-G-perspective.jpg"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\visibility-v3-adjustments.json",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\visibility-v3-adjustments.json",
+    "SHA256": "4E6EDB01A23CA1CC4F46A84D8DC4C236DFD1BB98F4476586DDF00639E702B99C",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\visibility-v3-adjustments.json",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\visibility-v3-adjustments.json"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\visibility-v3-audit.json",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\visibility-v3-audit.json",
+    "SHA256": "8594CF42EEF215C5267C501002ED5E6A273C052E01F4C7A6FDCF3DAA52DD07F0",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\visibility-v3-audit.json",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\visibility-v3-audit.json"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\visibility-v3-final-checks.json",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\visibility-v3-final-checks.json",
+    "SHA256": "3DFABB318B93FCB8790CCF1CAAFC0F6151B3B8C924B21733936F83BA450DFEE2",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\visibility-v3-final-checks.json",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\visibility-v3-final-checks.json"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\visibility-v3-layout-transforms.json",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\visibility-v3-layout-transforms.json",
+    "SHA256": "58A1CAEF4806B75736EEF77F8B259833A47AC74CD31ED11B4DA2A3B2FEFC694B",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\visibility-v3-layout-transforms.json",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\visibility-v3-layout-transforms.json"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\visibility-v3-option-I.jpg",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\visibility-v3-option-I.jpg",
+    "SHA256": "AA2649B0BAD7D9234DBC848BBF29AA6A2BD11EB64AD8B72A6FC0E06167FF83DA",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\visibility-v3-option-I.jpg",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\visibility-v3-option-I.jpg"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\visibility-v3-proposed-layout.json",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\visibility-v3-proposed-layout.json",
+    "SHA256": "982AE166E896F03DBB8B5EE49D0AF80D2BA99DB7D224EAFB89FFB30765634EA9",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\visibility-v3-proposed-layout.json",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\visibility-v3-proposed-layout.json"
+  },
+  {
+    "Old": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\visibility-v3-terrain-validation.json",
+    "New": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\visibility-v3-terrain-validation.json",
+    "SHA256": "D765604B8DA61C70955A0F823740776451CA4C9C27BAAA42414621F3B46A1337",
+    "ItemSource": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\visibility-v3-terrain-validation.json",
+    "ItemDestination": "\\\\192.168.200.190\\03-AI素材  projects\\Projects 2026\\北京格拉斯小镇\\whm\\Main Agent Workspace\\Planning Agent\\output\\archive\\terrain-experiments\\visibility-v3-terrain-validation.json"
+  }
+]

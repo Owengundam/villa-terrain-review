@@ -1,0 +1,31 @@
+{
+  "saved": "\\\\192.168.200.190\\03-AI\u7d20\u6750  projects\\Projects 2026\\\u5317\u4eac\u683c\u62c9\u65af\u5c0f\u9547\\whm\\Main Agent Workspace\\Planning Agent\\output\\three-resort-terrain-options.3dm",
+  "saved_v3_buildings": 72,
+  "checks": [
+    {
+      "option": "01_GROUPED_A",
+      "buildings": 24,
+      "relationships": 61,
+      "minimum_drop": 5.343905448913574,
+      "pad_contact_error": 0.007476186440994681,
+      "terrain_valid": true
+    },
+    {
+      "option": "02_FREE_G",
+      "buildings": 24,
+      "relationships": 49,
+      "minimum_drop": 5.348453521728516,
+      "pad_contact_error": 0.0006999017176223532,
+      "terrain_valid": true
+    },
+    {
+      "option": "03_FREE_I",
+      "buildings": 24,
+      "relationships": 51,
+      "minimum_drop": 5.25,
+      "pad_contact_error": 0.0008448830526930351,
+      "terrain_valid": true
+    }
+  ],
+  "preview": "\\\\192.168.200.190\\03-AI\u7d20\u6750  projects\\Projects 2026\\\u5317\u4eac\u683c\u62c9\u65af\u5c0f\u9547\\whm\\Main Agent Workspace\\Planning Agent\\output\\visibility-v3-option-I.jpg"
+}

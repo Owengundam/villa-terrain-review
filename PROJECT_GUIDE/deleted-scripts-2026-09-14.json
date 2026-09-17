@@ -1,0 +1,230 @@
+[
+  {
+    "Path": "output/archive/terrain-experiments/apply-natural-terrain.py",
+    "SHA256": "955854CE0528D284C8535671FF3D0EE2DA341FA4D125852C3DBA2D07F572D0B0",
+    "Reason": "Historical experiment or completed one-time migration/patch script",
+    "Date": "2026-09-14"
+  },
+  {
+    "Path": "output/archive/terrain-experiments/apply-visibility-v3.py",
+    "SHA256": "B9A86F989DACEFB7A515DA19721EFB3A24E99CFBE9BA74FA6A3329F78BD4E7A5",
+    "Reason": "Historical experiment or completed one-time migration/patch script",
+    "Date": "2026-09-14"
+  },
+  {
+    "Path": "output/archive/terrain-experiments/build-terrain-studies.py",
+    "SHA256": "4A711E92F583B105588403BD0FD649236DDF5162BEC95B39B08CD7F838D71E6A",
+    "Reason": "Historical experiment or completed one-time migration/patch script",
+    "Date": "2026-09-14"
+  },
+  {
+    "Path": "output/archive/terrain-experiments/capture-natural-terrain.py",
+    "SHA256": "85354BACF48C27D496C1F6F3DE146306CBF8F441CAD9C54FFD0E08E551CB0BBE",
+    "Reason": "Historical experiment or completed one-time migration/patch script",
+    "Date": "2026-09-14"
+  },
+  {
+    "Path": "output/archive/terrain-experiments/check-natural-visible.py",
+    "SHA256": "AF9821ACD1FFC35677FFE805429BC87E760115C1D0F7AE631623F6BD5E209756",
+    "Reason": "Historical experiment or completed one-time migration/patch script",
+    "Date": "2026-09-14"
+  },
+  {
+    "Path": "output/archive/terrain-experiments/check-v3-graph.py",
+    "SHA256": "00D7A87D4DD52126F658B8B97C7AB8EFBCAD73C1D2B07326809786F6C2CE8648",
+    "Reason": "Historical experiment or completed one-time migration/patch script",
+    "Date": "2026-09-14"
+  },
+  {
+    "Path": "output/archive/terrain-experiments/close-plugin-test-report.py",
+    "SHA256": "30AB3B39E2326A17012AA1A37F6F3231EF3CE8465BD98A885D9AEC9EEB8091BD",
+    "Reason": "Historical experiment or completed one-time migration/patch script",
+    "Date": "2026-09-14"
+  },
+  {
+    "Path": "output/archive/terrain-experiments/current-plan-clearance-audit.py",
+    "SHA256": "F3CF53FBBA7225C2A7ECAFAF216A66211694D842DA396947B5A114D8D3580D7A",
+    "Reason": "Historical experiment or completed one-time migration/patch script",
+    "Date": "2026-09-14"
+  },
+  {
+    "Path": "output/archive/terrain-experiments/current-plan-visibility-audit-v2.py",
+    "SHA256": "8F0E47552DEEFF4D8A55BA5716424DC4099AA6F62D89B14E0FC2F2AEFF34B8B0",
+    "Reason": "Historical experiment or completed one-time migration/patch script",
+    "Date": "2026-09-14"
+  },
+  {
+    "Path": "output/archive/terrain-experiments/current-plan-visibility-audit-v3.py",
+    "SHA256": "FDD59D6472021839B9A54445DF73CBA396A19ABB870ECF0C6DEDC7BD594EA7D6",
+    "Reason": "Historical experiment or completed one-time migration/patch script",
+    "Date": "2026-09-14"
+  },
+  {
+    "Path": "output/archive/terrain-experiments/detail-rhino.py",
+    "SHA256": "156CE3C2460F67A737E3C6EFBE651CE03F6389D292ACDFB232B3BE30479B7EFA",
+    "Reason": "Historical experiment or completed one-time migration/patch script",
+    "Date": "2026-09-14"
+  },
+  {
+    "Path": "output/archive/terrain-experiments/export-natural-terrain.py",
+    "SHA256": "DA37F91F10A2D1600947D24651203A01B76CEF84BA728A9AB24BE482608A1F85",
+    "Reason": "Historical experiment or completed one-time migration/patch script",
+    "Date": "2026-09-14"
+  },
+  {
+    "Path": "output/archive/terrain-experiments/finish-terrain-studies.py",
+    "SHA256": "EE49B32A98053C412EEB3DBAD8E229958137D35514B6FD81887391ABEC33A866",
+    "Reason": "Historical experiment or completed one-time migration/patch script",
+    "Date": "2026-09-14"
+  },
+  {
+    "Path": "output/archive/terrain-experiments/fit-v3-layout.py",
+    "SHA256": "E4924B27FB3A8C7D70F02FAC0DCC4E0253619F861D3176F0A513E2ADD71BF9D2",
+    "Reason": "Historical experiment or completed one-time migration/patch script",
+    "Date": "2026-09-14"
+  },
+  {
+    "Path": "output/archive/terrain-experiments/inspect-3dm-offline.ps1",
+    "SHA256": "626FC117E92BD50D09F5A4CC7B93AD4E8A8A69CEDA38DC178D8D1399663BE114",
+    "Reason": "Historical experiment or completed one-time migration/patch script",
+    "Date": "2026-09-14"
+  },
+  {
+    "Path": "output/archive/terrain-experiments/inspect-rhino.py",
+    "SHA256": "E24E925AE2F40B72A402F4742A5B2D7FE61A59242CDCCE27363A18D558481FC1",
+    "Reason": "Historical experiment or completed one-time migration/patch script",
+    "Date": "2026-09-14"
+  },
+  {
+    "Path": "output/archive/terrain-experiments/live-terrain-inspect.py",
+    "SHA256": "6203CA8339D6B097525425E215996CE39054123ABE56F6A912E26C086CC00E70",
+    "Reason": "Historical experiment or completed one-time migration/patch script",
+    "Date": "2026-09-14"
+  },
+  {
+    "Path": "output/archive/terrain-experiments/orient-modules-downhill.py",
+    "SHA256": "18DBC2A229974955DE3FDE19EAD8E92C4F783DD5FC52F395505205CDB6E1F777",
+    "Reason": "Historical experiment or completed one-time migration/patch script",
+    "Date": "2026-09-14"
+  },
+  {
+    "Path": "output/archive/terrain-experiments/orient-modules.py",
+    "SHA256": "253025349B05FCFD79AD29DF7030F6C3222542BC81EE59C5355D5B3B74A8165B",
+    "Reason": "Historical experiment or completed one-time migration/patch script",
+    "Date": "2026-09-14"
+  },
+  {
+    "Path": "output/archive/terrain-experiments/prepare-v3-apply.py",
+    "SHA256": "94586BB0308305B31D2C3066E34CD3E365177A5A2E9F3CE2C1A34270976D2D10",
+    "Reason": "Historical experiment or completed one-time migration/patch script",
+    "Date": "2026-09-14"
+  },
+  {
+    "Path": "output/archive/terrain-experiments/probe-rhino.cs",
+    "SHA256": "F7A3F3C2344330971049E59B6B1773BEF11C72211DB11D2D2571A6A48832E86A",
+    "Reason": "Historical experiment or completed one-time migration/patch script",
+    "Date": "2026-09-14"
+  },
+  {
+    "Path": "output/archive/terrain-experiments/probe-rhino.py",
+    "SHA256": "9002A0ABE190070F8E30D2F88A8AE935E7E3EE6430225F647035AEF0121B8E08",
+    "Reason": "Historical experiment or completed one-time migration/patch script",
+    "Date": "2026-09-14"
+  },
+  {
+    "Path": "output/archive/terrain-experiments/regrade-visibility-terrain.py",
+    "SHA256": "973161D95B62C62FF88CD7B56F090AE2679CD8469A802D7AC7CC77E64A7FEA2F",
+    "Reason": "Historical experiment or completed one-time migration/patch script",
+    "Date": "2026-09-14"
+  },
+  {
+    "Path": "output/archive/terrain-experiments/rhino-call.ps1",
+    "SHA256": "6C45F371EB665281D45F438AC3C2031438A74BC6C5BA7E4070E1F2C8696C2A80",
+    "Reason": "Historical experiment or completed one-time migration/patch script",
+    "Date": "2026-09-14"
+  },
+  {
+    "Path": "output/archive/terrain-experiments/solve-natural-terrain.py",
+    "SHA256": "B26B5EAEA338229C59C7128F35F639E0E0C5DB08D3F583E01C028E37B0C3A36E",
+    "Reason": "Historical experiment or completed one-time migration/patch script",
+    "Date": "2026-09-14"
+  },
+  {
+    "Path": "output/archive/terrain-experiments/solve-v3-pad-levels.py",
+    "SHA256": "1D06B82A2888D272190DFBAD528A01F5F02366D18DC0421FEFEDA1ED82821E67",
+    "Reason": "Historical experiment or completed one-time migration/patch script",
+    "Date": "2026-09-14"
+  },
+  {
+    "Path": "output/archive/terrain-experiments/verify-and-capture-v3.py",
+    "SHA256": "38413F189FA4BF3914D61988B19125968D0964EA39D6653308654EC81E79A566",
+    "Reason": "Historical experiment or completed one-time migration/patch script",
+    "Date": "2026-09-14"
+  },
+  {
+    "Path": "planning-iterations/build-capture.ps1",
+    "SHA256": "98A17B0B459421FA2BB82B0A5F0168D02460C1BEE29A7B3D465D3E8A45B7BA41",
+    "Reason": "Historical experiment or completed one-time migration/patch script",
+    "Date": "2026-09-14"
+  },
+  {
+    "Path": "planning-iterations/interior-overlay.py",
+    "SHA256": "AA5C872481B56AA8D3B3EB8BEB25A25E934F18F228E88FB6034706344BB9736E",
+    "Reason": "Historical experiment or completed one-time migration/patch script",
+    "Date": "2026-09-14"
+  },
+  {
+    "Path": "planning-iterations/study.py",
+    "SHA256": "FE67FCA821D00435A582D0E602C35131A9301E591090DC7405E02DE742F4976A",
+    "Reason": "Historical experiment or completed one-time migration/patch script",
+    "Date": "2026-09-14"
+  },
+  {
+    "Path": "planning-iterations/image-first-three/build-options.py",
+    "SHA256": "C09C61772AF2FA012EAD634BCC01D7D7BECBA638A74F8ABA52D3512FA7BC6F48",
+    "Reason": "Historical experiment or completed one-time migration/patch script",
+    "Date": "2026-09-14"
+  },
+  {
+    "Path": "planning-iterations/image-first-three/spacing-audit.py",
+    "SHA256": "98744C46373E98AF6CEF537B4C41F36BACBBDAB4DB4C397F2A5DC86DFC01381C",
+    "Reason": "Historical experiment or completed one-time migration/patch script",
+    "Date": "2026-09-14"
+  },
+  {
+    "Path": "planning-iterations/interior-led/arrange.py",
+    "SHA256": "2E636A63B81DC7F2A6704FC30617DAB8D14870F7EC96E06C5A6FB6F8CA0CAC07",
+    "Reason": "Historical experiment or completed one-time migration/patch script",
+    "Date": "2026-09-14"
+  },
+  {
+    "Path": "planning-iterations/interior-led/circulation.py",
+    "SHA256": "F7BD206A2B7D11A6C3DA564524653A2E8AF72C33A14660CC33B4E214EA20CF5F",
+    "Reason": "Historical experiment or completed one-time migration/patch script",
+    "Date": "2026-09-14"
+  },
+  {
+    "Path": "planning-iterations/interior-led/review.py",
+    "SHA256": "ABB6820FBA91B69AB7C879FBC2E654647CFCEE6C46E7C4934CC9075CB94F91D6",
+    "Reason": "Historical experiment or completed one-time migration/patch script",
+    "Date": "2026-09-14"
+  },
+  {
+    "Path": "rhino-plugin/ResortTerrain/extend-tests.py",
+    "SHA256": "D2FA9752A91F77725D627458951298E44EA8F28B7B376E4FB48729ADEF302265",
+    "Reason": "Historical experiment or completed one-time migration/patch script",
+    "Date": "2026-09-14"
+  },
+  {
+    "Path": "rhino-plugin/ResortTerrain/refine-tracking.py",
+    "SHA256": "25A2E43E852B13542886DBBBCA03096B87416C9527C4403205512C7C95BD66AC",
+    "Reason": "Historical experiment or completed one-time migration/patch script",
+    "Date": "2026-09-14"
+  },
+  {
+    "Path": "PROJECT_GUIDE/reorganize-output.ps1",
+    "SHA256": "4F884A8BEE7B051AB0F370370E89A4E644AEAAC10BFBDFDB6606EB6F0E88A711",
+    "Reason": "Historical experiment or completed one-time migration/patch script",
+    "Date": "2026-09-14"
+  }
+]

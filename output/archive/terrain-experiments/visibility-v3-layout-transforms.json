@@ -1,0 +1,36 @@
+[
+  {
+    "option": "01_GROUPED_A",
+    "transforms": {}
+  },
+  {
+    "option": "02_FREE_G",
+    "transforms": {
+      "HOTEL-1": {
+        "angle_deg": 10,
+        "dx": 0.0,
+        "dy": 0.0
+      }
+    }
+  },
+  {
+    "option": "03_FREE_I",
+    "transforms": {
+      "HOTEL-1": {
+        "angle_deg": 15,
+        "dx": 0.0,
+        "dy": 0.0
+      },
+      "HOTEL-2": {
+        "angle_deg": 20,
+        "dx": 6.363961030678926,
+        "dy": -6.363961030678929
+      },
+      "V14": {
+        "angle_deg": 30,
+        "dx": 2.121320343559642,
+        "dy": -2.121320343559643
+      }
+    }
+  }
+]

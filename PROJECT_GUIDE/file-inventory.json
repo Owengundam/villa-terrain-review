@@ -1,0 +1,1990 @@
+﻿[
+    {
+        "Experiment":  "01",
+        "Role":  "Document / other",
+        "Path":  "planning-iterations/generation-prompts.md",
+        "Bytes":  4103,
+        "Modified":  "2026-09-09 14:53:41"
+    },
+    {
+        "Experiment":  "01",
+        "Role":  "Document / other",
+        "Path":  "planning-iterations/README.md",
+        "Bytes":  2336,
+        "Modified":  "2026-09-09 14:53:41"
+    },
+    {
+        "Experiment":  "01",
+        "Role":  "Image",
+        "Path":  "planning-iterations/C2-landscape-with-actual-interiors.png",
+        "Bytes":  11875775,
+        "Modified":  "2026-09-09 14:51:35"
+    },
+    {
+        "Experiment":  "01",
+        "Role":  "Image",
+        "Path":  "planning-iterations/interior-overlay-preview.jpg",
+        "Bytes":  37136,
+        "Modified":  "2026-09-09 14:44:36"
+    },
+    {
+        "Experiment":  "01",
+        "Role":  "Image",
+        "Path":  "planning-iterations/option-a-generated.png",
+        "Bytes":  2577788,
+        "Modified":  "2026-09-09 14:14:48"
+    },
+    {
+        "Experiment":  "01",
+        "Role":  "Image",
+        "Path":  "planning-iterations/option-a-masses-only.jpg",
+        "Bytes":  44019,
+        "Modified":  "2026-09-09 14:13:08"
+    },
+    {
+        "Experiment":  "01",
+        "Role":  "Image",
+        "Path":  "planning-iterations/option-a-rhino.jpg",
+        "Bytes":  51304,
+        "Modified":  "2026-09-09 14:09:14"
+    },
+    {
+        "Experiment":  "01",
+        "Role":  "Image",
+        "Path":  "planning-iterations/option-b-generated.png",
+        "Bytes":  2827962,
+        "Modified":  "2026-09-09 14:15:36"
+    },
+    {
+        "Experiment":  "01",
+        "Role":  "Image",
+        "Path":  "planning-iterations/option-b-masses-only.jpg",
+        "Bytes":  44126,
+        "Modified":  "2026-09-09 14:13:09"
+    },
+    {
+        "Experiment":  "01",
+        "Role":  "Image",
+        "Path":  "planning-iterations/option-b-rhino.jpg",
+        "Bytes":  49147,
+        "Modified":  "2026-09-09 14:09:15"
+    },
+    {
+        "Experiment":  "01",
+        "Role":  "Image",
+        "Path":  "planning-iterations/option-c2-generated.png",
+        "Bytes":  2671428,
+        "Modified":  "2026-09-09 14:22:49"
+    },
+    {
+        "Experiment":  "01",
+        "Role":  "Image",
+        "Path":  "planning-iterations/option-c-generated.png",
+        "Bytes":  2749279,
+        "Modified":  "2026-09-09 14:16:26"
+    },
+    {
+        "Experiment":  "01",
+        "Role":  "Image",
+        "Path":  "planning-iterations/option-c-masses-only.jpg",
+        "Bytes":  43332,
+        "Modified":  "2026-09-09 14:13:10"
+    },
+    {
+        "Experiment":  "01",
+        "Role":  "Image",
+        "Path":  "planning-iterations/option-c-rhino.jpg",
+        "Bytes":  49254,
+        "Modified":  "2026-09-09 14:09:16"
+    },
+    {
+        "Experiment":  "01",
+        "Role":  "Rhino model",
+        "Path":  "planning-iterations/C2-campus-interior-presentation.3dm",
+        "Bytes":  17887232,
+        "Modified":  "2026-09-09 14:51:36"
+    },
+    {
+        "Experiment":  "02",
+        "Role":  "Document / other",
+        "Path":  "planning-iterations/interior-led/prompts.md",
+        "Bytes":  6451,
+        "Modified":  "2026-09-09 15:18:28"
+    },
+    {
+        "Experiment":  "02",
+        "Role":  "Document / other",
+        "Path":  "planning-iterations/interior-led/README.md",
+        "Bytes":  3125,
+        "Modified":  "2026-09-09 15:18:28"
+    },
+    {
+        "Experiment":  "02",
+        "Role":  "Image",
+        "Path":  "planning-iterations/interior-led/detail-0.jpg",
+        "Bytes":  70166,
+        "Modified":  "2026-09-09 15:00:01"
+    },
+    {
+        "Experiment":  "02",
+        "Role":  "Image",
+        "Path":  "planning-iterations/interior-led/detail-1.jpg",
+        "Bytes":  43691,
+        "Modified":  "2026-09-09 15:00:01"
+    },
+    {
+        "Experiment":  "02",
+        "Role":  "Image",
+        "Path":  "planning-iterations/interior-led/detail-2.jpg",
+        "Bytes":  44078,
+        "Modified":  "2026-09-09 15:00:02"
+    },
+    {
+        "Experiment":  "02",
+        "Role":  "Image",
+        "Path":  "planning-iterations/interior-led/detail-3.jpg",
+        "Bytes":  60927,
+        "Modified":  "2026-09-09 15:00:02"
+    },
+    {
+        "Experiment":  "02",
+        "Role":  "Image",
+        "Path":  "planning-iterations/interior-led/E-exact-interior.jpg",
+        "Bytes":  37461,
+        "Modified":  "2026-09-09 15:10:08"
+    },
+    {
+        "Experiment":  "02",
+        "Role":  "Image",
+        "Path":  "planning-iterations/interior-led/generated-draft.png",
+        "Bytes":  3402211,
+        "Modified":  "2026-09-09 15:05:42"
+    },
+    {
+        "Experiment":  "02",
+        "Role":  "Image",
+        "Path":  "planning-iterations/interior-led/generated-refined.png",
+        "Bytes":  3175390,
+        "Modified":  "2026-09-09 15:08:41"
+    },
+    {
+        "Experiment":  "02",
+        "Role":  "Image",
+        "Path":  "planning-iterations/interior-led/interior-led-garden-campus-final.png",
+        "Bytes":  2956371,
+        "Modified":  "2026-09-09 15:12:30"
+    },
+    {
+        "Experiment":  "02",
+        "Role":  "Image",
+        "Path":  "planning-iterations/interior-led/oriented-detail-0.jpg",
+        "Bytes":  65991,
+        "Modified":  "2026-09-09 15:03:55"
+    },
+    {
+        "Experiment":  "02",
+        "Role":  "Image",
+        "Path":  "planning-iterations/interior-led/oriented-detail-1.jpg",
+        "Bytes":  53964,
+        "Modified":  "2026-09-09 15:03:55"
+    },
+    {
+        "Experiment":  "02",
+        "Role":  "Image",
+        "Path":  "planning-iterations/interior-led/oriented-detail-2.jpg",
+        "Bytes":  46745,
+        "Modified":  "2026-09-09 15:03:55"
+    },
+    {
+        "Experiment":  "02",
+        "Role":  "Image",
+        "Path":  "planning-iterations/interior-led/oriented-detail-3.jpg",
+        "Bytes":  56669,
+        "Modified":  "2026-09-09 15:03:55"
+    },
+    {
+        "Experiment":  "02",
+        "Role":  "Image",
+        "Path":  "planning-iterations/interior-led/rhino-actual-plans.jpg",
+        "Bytes":  49940,
+        "Modified":  "2026-09-09 15:03:03"
+    },
+    {
+        "Experiment":  "02",
+        "Role":  "Image",
+        "Path":  "planning-iterations/interior-led/rhino-actual-plans-hires.png",
+        "Bytes":  361379,
+        "Modified":  "2026-09-09 15:03:51"
+    },
+    {
+        "Experiment":  "02",
+        "Role":  "Image",
+        "Path":  "planning-iterations/interior-led/rhino-final.jpg",
+        "Bytes":  63322,
+        "Modified":  "2026-09-09 15:15:32"
+    },
+    {
+        "Experiment":  "02",
+        "Role":  "Rhino model",
+        "Path":  "planning-iterations/interior-led/interior-led-garden-campus.3dm",
+        "Bytes":  35913728,
+        "Modified":  "2026-09-09 15:16:47"
+    },
+    {
+        "Experiment":  "03",
+        "Role":  "Data / report",
+        "Path":  "planning-iterations/image-first-three/option-layouts.json",
+        "Bytes":  12376,
+        "Modified":  "2026-09-10 12:12:04"
+    },
+    {
+        "Experiment":  "03",
+        "Role":  "Data / report",
+        "Path":  "planning-iterations/image-first-three/spacing-audit.json",
+        "Bytes":  17642,
+        "Modified":  "2026-09-10 12:06:14"
+    },
+    {
+        "Experiment":  "03",
+        "Role":  "Data / report",
+        "Path":  "planning-iterations/image-first-three/translation-checks.json",
+        "Bytes":  24041,
+        "Modified":  "2026-09-10 12:12:04"
+    },
+    {
+        "Experiment":  "03",
+        "Role":  "Document / other",
+        "Path":  "planning-iterations/image-first-three/prompts.md",
+        "Bytes":  7208,
+        "Modified":  "2026-09-09 15:44:46"
+    },
+    {
+        "Experiment":  "03",
+        "Role":  "Document / other",
+        "Path":  "planning-iterations/image-first-three/README.md",
+        "Bytes":  2167,
+        "Modified":  "2026-09-10 12:12:33"
+    },
+    {
+        "Experiment":  "03",
+        "Role":  "Image",
+        "Path":  "planning-iterations/image-first-three/01-imagined.png",
+        "Bytes":  3242869,
+        "Modified":  "2026-09-09 15:26:30"
+    },
+    {
+        "Experiment":  "03",
+        "Role":  "Image",
+        "Path":  "planning-iterations/image-first-three/01-rhino.jpg",
+        "Bytes":  56830,
+        "Modified":  "2026-09-09 15:40:21"
+    },
+    {
+        "Experiment":  "03",
+        "Role":  "Image",
+        "Path":  "planning-iterations/image-first-three/02-imagined.png",
+        "Bytes":  3186543,
+        "Modified":  "2026-09-09 15:27:36"
+    },
+    {
+        "Experiment":  "03",
+        "Role":  "Image",
+        "Path":  "planning-iterations/image-first-three/02-rhino.jpg",
+        "Bytes":  55702,
+        "Modified":  "2026-09-09 15:40:21"
+    },
+    {
+        "Experiment":  "03",
+        "Role":  "Image",
+        "Path":  "planning-iterations/image-first-three/03-imagined.png",
+        "Bytes":  3107387,
+        "Modified":  "2026-09-09 15:30:29"
+    },
+    {
+        "Experiment":  "03",
+        "Role":  "Image",
+        "Path":  "planning-iterations/image-first-three/03-rhino.jpg",
+        "Bytes":  57726,
+        "Modified":  "2026-09-09 15:40:22"
+    },
+    {
+        "Experiment":  "03",
+        "Role":  "Image",
+        "Path":  "planning-iterations/image-first-three/origin-sync-check.jpg",
+        "Bytes":  16915,
+        "Modified":  "2026-09-10 13:55:35"
+    },
+    {
+        "Experiment":  "03",
+        "Role":  "Image",
+        "Path":  "planning-iterations/image-first-three/rhino-comparison.jpg",
+        "Bytes":  57657,
+        "Modified":  "2026-09-09 15:44:47"
+    },
+    {
+        "Experiment":  "03",
+        "Role":  "Image",
+        "Path":  "planning-iterations/image-first-three/rhino-comparison-spacing-rules.jpg",
+        "Bytes":  57648,
+        "Modified":  "2026-09-10 12:12:58"
+    },
+    {
+        "Experiment":  "03",
+        "Role":  "Rhino model",
+        "Path":  "planning-iterations/image-first-three/three-image-first-layouts.3dm",
+        "Bytes":  36605952,
+        "Modified":  "2026-09-10 13:55:36"
+    },
+    {
+        "Experiment":  "03",
+        "Role":  "Rhino model",
+        "Path":  "planning-iterations/image-first-three/three-image-first-layouts-spacing-rules.3dm",
+        "Bytes":  36626432,
+        "Modified":  "2026-09-10 12:12:56"
+    },
+    {
+        "Experiment":  "04",
+        "Role":  "Document / other",
+        "Path":  "output/archive/terrain-experiments/terrain-studies-notes.md",
+        "Bytes":  2376,
+        "Modified":  "2026-09-10 10:31:47"
+    },
+    {
+        "Experiment":  "04",
+        "Role":  "Image",
+        "Path":  "output/archive/terrain-experiments/downhill-option-I.jpg",
+        "Bytes":  42829,
+        "Modified":  "2026-09-10 10:57:21"
+    },
+    {
+        "Experiment":  "04",
+        "Role":  "Image",
+        "Path":  "output/archive/terrain-experiments/selected-site.jpg",
+        "Bytes":  37361,
+        "Modified":  "2026-09-10 10:09:33"
+    },
+    {
+        "Experiment":  "04",
+        "Role":  "Image",
+        "Path":  "output/archive/terrain-experiments/terrain-perspective.jpg",
+        "Bytes":  44227,
+        "Modified":  "2026-09-10 10:30:51"
+    },
+    {
+        "Experiment":  "04",
+        "Role":  "Image",
+        "Path":  "output/archive/terrain-experiments/three-terrain-top.jpg",
+        "Bytes":  59792,
+        "Modified":  "2026-09-10 10:31:46"
+    },
+    {
+        "Experiment":  "04",
+        "Role":  "Image",
+        "Path":  "output/archive/terrain-experiments/view-oriented-I.jpg",
+        "Bytes":  43052,
+        "Modified":  "2026-09-10 10:51:37"
+    },
+    {
+        "Experiment":  "04",
+        "Role":  "Rhino model",
+        "Path":  "output/archive/terrain-experiments/site-before-terrain-studies.3dm",
+        "Bytes":  102400,
+        "Modified":  "2026-09-10 10:11:25"
+    },
+    {
+        "Experiment":  "04",
+        "Role":  "Rhino model",
+        "Path":  "output/archive/terrain-experiments/three-resort-options-downhill.3dm",
+        "Bytes":  892928,
+        "Modified":  "2026-09-10 10:57:57"
+    },
+    {
+        "Experiment":  "04",
+        "Role":  "Rhino model",
+        "Path":  "output/archive/terrain-experiments/three-resort-options-view-oriented.3dm",
+        "Bytes":  884736,
+        "Modified":  "2026-09-10 10:51:57"
+    },
+    {
+        "Experiment":  "05",
+        "Role":  "Document / other",
+        "Path":  "output/archive/terrain-experiments/current-plan-clearance-audit.md",
+        "Bytes":  3495,
+        "Modified":  "2026-09-10 14:38:55"
+    },
+    {
+        "Experiment":  "05",
+        "Role":  "Document / other",
+        "Path":  "output/archive/terrain-experiments/visibility-audit-v2-report.md",
+        "Bytes":  2444,
+        "Modified":  "2026-09-10 15:05:22"
+    },
+    {
+        "Experiment":  "05",
+        "Role":  "Image",
+        "Path":  "output/archive/terrain-experiments/visibility-regraded-G-perspective.jpg",
+        "Bytes":  44968,
+        "Modified":  "2026-09-10 15:04:44"
+    },
+    {
+        "Experiment":  "05",
+        "Role":  "Rhino model",
+        "Path":  "output/archive/terrain-experiments/three-resort-terrain-options-visibility-regraded.3dm",
+        "Bytes":  1249280,
+        "Modified":  "2026-09-10 15:02:43"
+    },
+    {
+        "Experiment":  "06",
+        "Role":  "Data / report",
+        "Path":  "output/archive/terrain-experiments/natural-terrain-input.json",
+        "Bytes":  89233,
+        "Modified":  "2026-09-10 15:51:26"
+    },
+    {
+        "Experiment":  "06",
+        "Role":  "Data / report",
+        "Path":  "output/archive/terrain-experiments/natural-terrain-solved.json",
+        "Bytes":  3313139,
+        "Modified":  "2026-09-10 15:51:32"
+    },
+    {
+        "Experiment":  "06",
+        "Role":  "Data / report",
+        "Path":  "output/archive/terrain-experiments/natural-terrain-validation.json",
+        "Bytes":  1505,
+        "Modified":  "2026-09-10 15:32:28"
+    },
+    {
+        "Experiment":  "06",
+        "Role":  "Data / report",
+        "Path":  "output/archive/terrain-experiments/natural-terrain-view.json",
+        "Bytes":  226,
+        "Modified":  "2026-09-10 15:28:14"
+    },
+    {
+        "Experiment":  "06",
+        "Role":  "Data / report",
+        "Path":  "output/archive/terrain-experiments/visibility-v3-adjustments.json",
+        "Bytes":  11053,
+        "Modified":  "2026-09-10 15:51:26"
+    },
+    {
+        "Experiment":  "06",
+        "Role":  "Data / report",
+        "Path":  "output/archive/terrain-experiments/visibility-v3-audit.json",
+        "Bytes":  129908,
+        "Modified":  "2026-09-10 16:22:22"
+    },
+    {
+        "Experiment":  "06",
+        "Role":  "Data / report",
+        "Path":  "output/archive/terrain-experiments/visibility-v3-final-checks.json",
+        "Bytes":  1110,
+        "Modified":  "2026-09-10 16:22:41"
+    },
+    {
+        "Experiment":  "06",
+        "Role":  "Data / report",
+        "Path":  "output/archive/terrain-experiments/visibility-v3-layout-transforms.json",
+        "Bytes":  633,
+        "Modified":  "2026-09-10 15:50:59"
+    },
+    {
+        "Experiment":  "06",
+        "Role":  "Data / report",
+        "Path":  "output/archive/terrain-experiments/visibility-v3-proposed-layout.json",
+        "Bytes":  129636,
+        "Modified":  "2026-09-10 15:50:59"
+    },
+    {
+        "Experiment":  "06",
+        "Role":  "Data / report",
+        "Path":  "output/archive/terrain-experiments/visibility-v3-terrain-validation.json",
+        "Bytes":  1503,
+        "Modified":  "2026-09-10 16:22:26"
+    },
+    {
+        "Experiment":  "06",
+        "Role":  "Image",
+        "Path":  "output/archive/terrain-experiments/natural-terrain-rhino-G.jpg",
+        "Bytes":  79310,
+        "Modified":  "2026-09-10 15:34:05"
+    },
+    {
+        "Experiment":  "06",
+        "Role":  "Image",
+        "Path":  "output/archive/terrain-experiments/natural-terrain-rhino-G.png",
+        "Bytes":  110091,
+        "Modified":  "2026-09-10 15:33:06"
+    },
+    {
+        "Experiment":  "06",
+        "Role":  "Image",
+        "Path":  "output/archive/terrain-experiments/natural-terrain-surface-review.png",
+        "Bytes":  740379,
+        "Modified":  "2026-09-10 15:51:32"
+    },
+    {
+        "Experiment":  "06",
+        "Role":  "Image",
+        "Path":  "output/archive/terrain-experiments/terrain-before-natural.jpg",
+        "Bytes":  15295,
+        "Modified":  "2026-09-10 15:27:29"
+    },
+    {
+        "Experiment":  "06",
+        "Role":  "Image",
+        "Path":  "output/archive/terrain-experiments/visibility-v3-option-I.jpg",
+        "Bytes":  74962,
+        "Modified":  "2026-09-10 16:22:38"
+    },
+    {
+        "Experiment":  "06",
+        "Role":  "Rhino model",
+        "Path":  "output/archive/terrain-experiments/three-resort-terrain-options.3dm",
+        "Bytes":  4767744,
+        "Modified":  "2026-09-10 16:36:20"
+    },
+    {
+        "Experiment":  "07",
+        "Role":  "Code / configuration",
+        "Path":  "rhino-plugin/ResortTerrain/build-in-rhino.py",
+        "Bytes":  2537,
+        "Modified":  "2026-09-14 11:59:12"
+    },
+    {
+        "Experiment":  "07",
+        "Role":  "Code / configuration",
+        "Path":  "rhino-plugin/ResortTerrain/check-current.py",
+        "Bytes":  1165,
+        "Modified":  "2026-09-14 11:59:12"
+    },
+    {
+        "Experiment":  "07",
+        "Role":  "Code / configuration",
+        "Path":  "rhino-plugin/ResortTerrain/dist/manifest.yml",
+        "Bytes":  209,
+        "Modified":  "2026-09-10 16:53:07"
+    },
+    {
+        "Experiment":  "07",
+        "Role":  "Code / configuration",
+        "Path":  "rhino-plugin/ResortTerrain/install-in-rhino.py",
+        "Bytes":  1163,
+        "Modified":  "2026-09-14 11:59:12"
+    },
+    {
+        "Experiment":  "07",
+        "Role":  "Code / configuration",
+        "Path":  "rhino-plugin/ResortTerrain/ResortTerrain.csproj",
+        "Bytes":  756,
+        "Modified":  "2026-09-10 16:53:38"
+    },
+    {
+        "Experiment":  "07",
+        "Role":  "Code / configuration",
+        "Path":  "rhino-plugin/ResortTerrain/src/Model.cs",
+        "Bytes":  12954,
+        "Modified":  "2026-09-10 16:48:27"
+    },
+    {
+        "Experiment":  "07",
+        "Role":  "Code / configuration",
+        "Path":  "rhino-plugin/ResortTerrain/src/Plugin.cs",
+        "Bytes":  8727,
+        "Modified":  "2026-09-10 16:53:07"
+    },
+    {
+        "Experiment":  "07",
+        "Role":  "Code / configuration",
+        "Path":  "rhino-plugin/ResortTerrain/src/SelfTests.cs",
+        "Bytes":  8202,
+        "Modified":  "2026-09-10 16:50:21"
+    },
+    {
+        "Experiment":  "07",
+        "Role":  "Code / configuration",
+        "Path":  "rhino-plugin/ResortTerrain/src/Solver.cs",
+        "Bytes":  9006,
+        "Modified":  "2026-09-10 16:35:14"
+    },
+    {
+        "Experiment":  "07",
+        "Role":  "Code / configuration",
+        "Path":  "rhino-plugin/ResortTerrain/src/Terrain.cs",
+        "Bytes":  5228,
+        "Modified":  "2026-09-10 16:49:51"
+    },
+    {
+        "Experiment":  "07",
+        "Role":  "Code / configuration",
+        "Path":  "rhino-plugin/ResortTerrain/src/Workflow.cs",
+        "Bytes":  16737,
+        "Modified":  "2026-09-10 16:48:27"
+    },
+    {
+        "Experiment":  "07",
+        "Role":  "Code / configuration",
+        "Path":  "rhino-plugin/ResortTerrain/test-dialog.py",
+        "Bytes":  1146,
+        "Modified":  "2026-09-14 11:59:12"
+    },
+    {
+        "Experiment":  "07",
+        "Role":  "Code / configuration",
+        "Path":  "rhino-plugin/ResortTerrain/test-in-rhino.py",
+        "Bytes":  1230,
+        "Modified":  "2026-09-14 11:59:12"
+    },
+    {
+        "Experiment":  "07",
+        "Role":  "Data / report",
+        "Path":  "output/archive/terrain-experiments/resort-plugin-check-command.json",
+        "Bytes":  35,
+        "Modified":  "2026-09-10 16:53:53"
+    },
+    {
+        "Experiment":  "07",
+        "Role":  "Data / report",
+        "Path":  "output/archive/terrain-experiments/resort-plugin-commands.json",
+        "Bytes":  28,
+        "Modified":  "2026-09-10 16:53:53"
+    },
+    {
+        "Experiment":  "07",
+        "Role":  "Data / report",
+        "Path":  "output/terrain-reports/resort-terrain-20260910-165353-458.json",
+        "Bytes":  2380,
+        "Modified":  "2026-09-10 16:53:53"
+    },
+    {
+        "Experiment":  "07",
+        "Role":  "Data / report",
+        "Path":  "output/terrain-reports/resort-terrain-20260910-170700-618.json",
+        "Bytes":  2380,
+        "Modified":  "2026-09-10 17:07:00"
+    },
+    {
+        "Experiment":  "07",
+        "Role":  "Data / report",
+        "Path":  "output/terrain-reports/resort-terrain-20260910-170710-361.json",
+        "Bytes":  2022,
+        "Modified":  "2026-09-10 17:07:10"
+    },
+    {
+        "Experiment":  "07",
+        "Role":  "Data / report",
+        "Path":  "rhino-plugin/ResortTerrain/build-log.json",
+        "Bytes":  747,
+        "Modified":  "2026-09-10 16:53:08"
+    },
+    {
+        "Experiment":  "07",
+        "Role":  "Data / report",
+        "Path":  "rhino-plugin/ResortTerrain/current-model-check.json",
+        "Bytes":  2443,
+        "Modified":  "2026-09-10 16:50:22"
+    },
+    {
+        "Experiment":  "07",
+        "Role":  "Data / report",
+        "Path":  "rhino-plugin/ResortTerrain/test-results.json",
+        "Bytes":  617,
+        "Modified":  "2026-09-10 16:49:53"
+    },
+    {
+        "Experiment":  "07",
+        "Role":  "Document / other",
+        "Path":  "output/terrain-reports/resort-terrain-20260910-165353-458.txt",
+        "Bytes":  1883,
+        "Modified":  "2026-09-10 16:53:53"
+    },
+    {
+        "Experiment":  "07",
+        "Role":  "Document / other",
+        "Path":  "output/terrain-reports/resort-terrain-20260910-170700-618.txt",
+        "Bytes":  1883,
+        "Modified":  "2026-09-10 17:07:00"
+    },
+    {
+        "Experiment":  "07",
+        "Role":  "Document / other",
+        "Path":  "output/terrain-reports/resort-terrain-20260910-170710-361.txt",
+        "Bytes":  1574,
+        "Modified":  "2026-09-10 17:07:10"
+    },
+    {
+        "Experiment":  "07",
+        "Role":  "Document / other",
+        "Path":  "rhino-plugin/ResortTerrain/dist/README.md",
+        "Bytes":  5948,
+        "Modified":  "2026-09-10 16:53:07"
+    },
+    {
+        "Experiment":  "07",
+        "Role":  "Document / other",
+        "Path":  "rhino-plugin/ResortTerrain/README.md",
+        "Bytes":  5948,
+        "Modified":  "2026-09-10 16:53:07"
+    },
+    {
+        "Experiment":  "07",
+        "Role":  "Plugin build",
+        "Path":  "rhino-plugin/ResortTerrain/dist/Field.ResortTerrain.rhp",
+        "Bytes":  80896,
+        "Modified":  "2026-09-10 16:53:08"
+    },
+    {
+        "Experiment":  "08",
+        "Role":  "Data / report",
+        "Path":  "output/archive/staged-planning/STAGE1_audit_snapshot_2026-09-11.json",
+        "Bytes":  119617,
+        "Modified":  "2026-09-11 16:32:05"
+    },
+    {
+        "Experiment":  "08",
+        "Role":  "Data / report",
+        "Path":  "output/archive/staged-planning/STAGE1_diagnostics_2026-09-11.json",
+        "Bytes":  3502,
+        "Modified":  "2026-09-11 16:57:19"
+    },
+    {
+        "Experiment":  "08",
+        "Role":  "Data / report",
+        "Path":  "output/archive/staged-planning/STAGE1_orientation_log_2026-09-11.json",
+        "Bytes":  14921,
+        "Modified":  "2026-09-11 16:55:32"
+    },
+    {
+        "Experiment":  "08",
+        "Role":  "Data / report",
+        "Path":  "output/archive/staged-planning/STAGE1_per_building_report_2026-09-11.csv",
+        "Bytes":  12288,
+        "Modified":  "2026-09-11 16:59:52"
+    },
+    {
+        "Experiment":  "08",
+        "Role":  "Data / report",
+        "Path":  "output/archive/staged-planning/STAGE1B_diagnostics_2026-09-11.json",
+        "Bytes":  3510,
+        "Modified":  "2026-09-11 17:21:18"
+    },
+    {
+        "Experiment":  "08",
+        "Role":  "Data / report",
+        "Path":  "output/archive/staged-planning/STAGE1B_orientation_log_2026-09-11.json",
+        "Bytes":  12099,
+        "Modified":  "2026-09-11 17:18:50"
+    },
+    {
+        "Experiment":  "08",
+        "Role":  "Data / report",
+        "Path":  "output/archive/staged-planning/STAGE1B_per_building_report_2026-09-11.csv",
+        "Bytes":  12288,
+        "Modified":  "2026-09-11 17:21:59"
+    },
+    {
+        "Experiment":  "08",
+        "Role":  "Data / report",
+        "Path":  "output/archive/staged-planning/STAGE1B_terrain_field_2026-09-11.json",
+        "Bytes":  670,
+        "Modified":  "2026-09-11 17:17:12"
+    },
+    {
+        "Experiment":  "08",
+        "Role":  "Data / report",
+        "Path":  "output/checks/stage2/STAGE2_orientation_log_40m_2026-09-11.json",
+        "Bytes":  12184,
+        "Modified":  "2026-09-11 17:34:47"
+    },
+    {
+        "Experiment":  "08",
+        "Role":  "Data / report",
+        "Path":  "output/checks/stage2/STAGE2_terrain_field_40m_2026-09-11.json",
+        "Bytes":  803,
+        "Modified":  "2026-09-11 17:34:31"
+    },
+    {
+        "Experiment":  "08",
+        "Role":  "Data / report",
+        "Path":  "output/checks/stage2/STAGE2v0_final_diagnostics_2026-09-11.json",
+        "Bytes":  464,
+        "Modified":  "2026-09-11 17:39:34"
+    },
+    {
+        "Experiment":  "08",
+        "Role":  "Data / report",
+        "Path":  "output/checks/stage2/STAGE2v0_per_building_report_2026-09-11.csv",
+        "Bytes":  12288,
+        "Modified":  "2026-09-11 17:39:33"
+    },
+    {
+        "Experiment":  "08",
+        "Role":  "Data / report",
+        "Path":  "output/checks/stage2/STAGE2v0_spacing_report_2026-09-11.json",
+        "Bytes":  3632,
+        "Modified":  "2026-09-11 17:36:39"
+    },
+    {
+        "Experiment":  "08",
+        "Role":  "Document / other",
+        "Path":  "output/resort planning.3dm.rhl",
+        "Bytes":  47,
+        "Modified":  "2026-09-14 11:55:14"
+    },
+    {
+        "Experiment":  "08",
+        "Role":  "Image",
+        "Path":  "output/archive/staged-planning/STAGE1_images_2026-09-11/oblique_terrain_v2.jpg",
+        "Bytes":  28304,
+        "Modified":  "2026-09-11 17:22:58"
+    },
+    {
+        "Experiment":  "08",
+        "Role":  "Image",
+        "Path":  "output/archive/staged-planning/STAGE1_images_2026-09-11/overall_3_options.jpg",
+        "Bytes":  24956,
+        "Modified":  "2026-09-11 17:02:28"
+    },
+    {
+        "Experiment":  "08",
+        "Role":  "Image",
+        "Path":  "output/archive/staged-planning/STAGE1_images_2026-09-11/overall_3_options_v2.jpg",
+        "Bytes":  39509,
+        "Modified":  "2026-09-11 17:22:56"
+    },
+    {
+        "Experiment":  "08",
+        "Role":  "Image",
+        "Path":  "output/archive/staged-planning/STAGE1_images_2026-09-11/plan_01_GROUPED_A.jpg",
+        "Bytes":  31659,
+        "Modified":  "2026-09-11 17:02:45"
+    },
+    {
+        "Experiment":  "08",
+        "Role":  "Image",
+        "Path":  "output/archive/staged-planning/STAGE1_images_2026-09-11/plan_01_v2.jpg",
+        "Bytes":  33677,
+        "Modified":  "2026-09-11 17:23:13"
+    },
+    {
+        "Experiment":  "08",
+        "Role":  "Image",
+        "Path":  "output/archive/staged-planning/STAGE1_images_2026-09-11/plan_02_FREE_G.jpg",
+        "Bytes":  33739,
+        "Modified":  "2026-09-11 17:02:46"
+    },
+    {
+        "Experiment":  "08",
+        "Role":  "Image",
+        "Path":  "output/archive/staged-planning/STAGE1_images_2026-09-11/plan_02_v2.jpg",
+        "Bytes":  45385,
+        "Modified":  "2026-09-11 17:23:14"
+    },
+    {
+        "Experiment":  "08",
+        "Role":  "Image",
+        "Path":  "output/archive/staged-planning/STAGE1_images_2026-09-11/plan_03_FREE_I.jpg",
+        "Bytes":  32269,
+        "Modified":  "2026-09-11 17:02:47"
+    },
+    {
+        "Experiment":  "08",
+        "Role":  "Image",
+        "Path":  "output/archive/staged-planning/STAGE1_images_2026-09-11/plan_03_v2.jpg",
+        "Bytes":  42473,
+        "Modified":  "2026-09-11 17:23:15"
+    },
+    {
+        "Experiment":  "08",
+        "Role":  "Rhino model",
+        "Path":  "output/archive/staged-planning/resort planning_STAGE1_ORIENTED_2026-09-11.3dm",
+        "Bytes":  950272,
+        "Modified":  "2026-09-11 17:00:10"
+    },
+    {
+        "Experiment":  "08",
+        "Role":  "Rhino model",
+        "Path":  "output/archive/staged-planning/resort planning_STAGE1B_ORIENTED_SKETCH_TERRAIN_2026-09-11.3dm",
+        "Bytes":  5947392,
+        "Modified":  "2026-09-11 17:22:24"
+    },
+    {
+        "Experiment":  "08",
+        "Role":  "Rhino model",
+        "Path":  "output/resort planning.3dm",
+        "Bytes":  6459392,
+        "Modified":  "2026-09-11 18:29:54"
+    },
+    {
+        "Experiment":  "09",
+        "Role":  "Code / configuration",
+        "Path":  "outputs/partial-edit/prepare_crops.py",
+        "Bytes":  2714,
+        "Modified":  "2026-09-11 17:52:05"
+    },
+    {
+        "Experiment":  "09",
+        "Role":  "Code / configuration",
+        "Path":  "outputs/partial-edit/server.py",
+        "Bytes":  3232,
+        "Modified":  "2026-09-11 17:46:07"
+    },
+    {
+        "Experiment":  "09",
+        "Role":  "Data / report",
+        "Path":  "outputs/partial-edit/alignment/alignment.json",
+        "Bytes":  1705,
+        "Modified":  "2026-09-11 17:48:36"
+    },
+    {
+        "Experiment":  "09",
+        "Role":  "Data / report",
+        "Path":  "outputs/partial-edit/alignment-r2/alignment.json",
+        "Bytes":  1735,
+        "Modified":  "2026-09-11 17:50:55"
+    },
+    {
+        "Experiment":  "09",
+        "Role":  "Data / report",
+        "Path":  "outputs/partial-edit/geometry.json",
+        "Bytes":  536,
+        "Modified":  "2026-09-11 17:52:06"
+    },
+    {
+        "Experiment":  "09",
+        "Role":  "Data / report",
+        "Path":  "outputs/partial-edit/selection.json",
+        "Bytes":  173,
+        "Modified":  "2026-09-11 17:47:39"
+    },
+    {
+        "Experiment":  "09",
+        "Role":  "Data / report",
+        "Path":  "outputs/partial-edit/status.json",
+        "Bytes":  21,
+        "Modified":  "2026-09-11 17:47:39"
+    },
+    {
+        "Experiment":  "09",
+        "Role":  "Document / other",
+        "Path":  "outputs/partial-edit/editor.html",
+        "Bytes":  9245,
+        "Modified":  "2026-09-11 17:46:07"
+    },
+    {
+        "Experiment":  "09",
+        "Role":  "Image",
+        "Path":  "outputs/partial-edit/alignment/aligned-moving.png",
+        "Bytes":  1255956,
+        "Modified":  "2026-09-11 17:48:36"
+    },
+    {
+        "Experiment":  "09",
+        "Role":  "Image",
+        "Path":  "outputs/partial-edit/alignment/overlay.png",
+        "Bytes":  998361,
+        "Modified":  "2026-09-11 17:48:36"
+    },
+    {
+        "Experiment":  "09",
+        "Role":  "Image",
+        "Path":  "outputs/partial-edit/alignment-r2/aligned-moving.png",
+        "Bytes":  740551,
+        "Modified":  "2026-09-11 17:50:54"
+    },
+    {
+        "Experiment":  "09",
+        "Role":  "Image",
+        "Path":  "outputs/partial-edit/alignment-r2/overlay.png",
+        "Bytes":  3053280,
+        "Modified":  "2026-09-11 17:50:55"
+    },
+    {
+        "Experiment":  "09",
+        "Role":  "Image",
+        "Path":  "outputs/partial-edit/crop-masked.png",
+        "Bytes":  728222,
+        "Modified":  "2026-09-11 17:52:06"
+    },
+    {
+        "Experiment":  "09",
+        "Role":  "Image",
+        "Path":  "outputs/partial-edit/crop-reference.png",
+        "Bytes":  125727,
+        "Modified":  "2026-09-11 17:52:06"
+    },
+    {
+        "Experiment":  "09",
+        "Role":  "Image",
+        "Path":  "outputs/partial-edit/plan.png",
+        "Bytes":  186671,
+        "Modified":  "2026-09-04 13:12:53"
+    },
+    {
+        "Experiment":  "09",
+        "Role":  "Image",
+        "Path":  "outputs/partial-edit/render.png",
+        "Bytes":  3532330,
+        "Modified":  "2026-09-08 15:31:47"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Code / configuration",
+        "Path":  "inspect_doc.py",
+        "Bytes":  1091,
+        "Modified":  "2026-09-11 15:41:54"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Code / configuration",
+        "Path":  "rpc.js",
+        "Bytes":  1951,
+        "Modified":  "2026-09-11 15:40:39"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Data / report",
+        "Path":  "output/archive/terrain-experiments/cancel-command.json",
+        "Bytes":  27,
+        "Modified":  "2026-09-10 15:22:23"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Data / report",
+        "Path":  "output/archive/terrain-experiments/list-boundary-args.json",
+        "Bytes":  112,
+        "Modified":  "2026-09-10 15:20:20"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Data / report",
+        "Path":  "output/archive/terrain-experiments/list-terrain-args.json",
+        "Bytes":  71,
+        "Modified":  "2026-09-10 15:13:34"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Data / report",
+        "Path":  "output/archive/terrain-experiments/rhino-probe-result.json",
+        "Bytes":  275,
+        "Modified":  "2026-09-10 15:22:29"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Data / report",
+        "Path":  "output/archive/terrain-experiments/run-probe-command.json",
+        "Bytes":  189,
+        "Modified":  "2026-09-10 15:16:19"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Data / report",
+        "Path":  "output/archive/terrain-experiments/viewport-args.json",
+        "Bytes":  178,
+        "Modified":  "2026-09-10 15:12:24"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Document / other",
+        "Path":  "output/archive/terrain-experiments/free-layout-reference/prompts.txt",
+        "Bytes":  16236,
+        "Modified":  "2026-09-09 18:08:25"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Document / other",
+        "Path":  "output/archive/terrain-experiments/free-layout-reference/Thumbs.db",
+        "Bytes":  23040,
+        "Modified":  "2026-09-14 11:57:01"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Document / other",
+        "Path":  "output/previews/current-plan-renders/prompts.txt",
+        "Bytes":  11057,
+        "Modified":  "2026-09-10 11:16:48"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Document / other",
+        "Path":  "output/previews/current-plan-renders/Thumbs.db",
+        "Bytes":  88064,
+        "Modified":  "2026-09-14 15:50:15"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Document / other",
+        "Path":  "output/previews/phase2-plan-renders/A",
+        "Bytes":  2767848,
+        "Modified":  "2026-09-14 16:01:46"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Document / other",
+        "Path":  "output/previews/phase2-plan-renders/README.md",
+        "Bytes":  1118,
+        "Modified":  "2026-09-14 16:04:17"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Document / other",
+        "Path":  "output/previews/phase2-plan-renders/Thumbs.db",
+        "Bytes":  53760,
+        "Modified":  "2026-09-14 16:06:48"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Document / other",
+        "Path":  "output/README.md",
+        "Bytes":  2137,
+        "Modified":  "2026-09-14 17:28:13"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Document / other",
+        "Path":  "planning-iterations/image-first-three/_repo_rhinomcp/.git/config",
+        "Bytes":  303,
+        "Modified":  "2026-09-10 12:09:40"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Document / other",
+        "Path":  "planning-iterations/image-first-three/_repo_rhinomcp/.git/description",
+        "Bytes":  73,
+        "Modified":  "2026-09-10 12:09:36"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Document / other",
+        "Path":  "planning-iterations/image-first-three/_repo_rhinomcp/.git/HEAD",
+        "Bytes":  21,
+        "Modified":  "2026-09-10 12:09:40"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Document / other",
+        "Path":  "planning-iterations/image-first-three/_repo_rhinomcp/.git/hooks/applypatch-msg.sample",
+        "Bytes":  478,
+        "Modified":  "2026-09-10 12:09:36"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Document / other",
+        "Path":  "planning-iterations/image-first-three/_repo_rhinomcp/.git/hooks/commit-msg.sample",
+        "Bytes":  896,
+        "Modified":  "2026-09-10 12:09:36"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Document / other",
+        "Path":  "planning-iterations/image-first-three/_repo_rhinomcp/.git/hooks/fsmonitor-watchman.sample",
+        "Bytes":  4726,
+        "Modified":  "2026-09-10 12:09:36"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Document / other",
+        "Path":  "planning-iterations/image-first-three/_repo_rhinomcp/.git/hooks/post-update.sample",
+        "Bytes":  189,
+        "Modified":  "2026-09-10 12:09:36"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Document / other",
+        "Path":  "planning-iterations/image-first-three/_repo_rhinomcp/.git/hooks/pre-applypatch.sample",
+        "Bytes":  424,
+        "Modified":  "2026-09-10 12:09:36"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Document / other",
+        "Path":  "planning-iterations/image-first-three/_repo_rhinomcp/.git/hooks/pre-commit.sample",
+        "Bytes":  1649,
+        "Modified":  "2026-09-10 12:09:36"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Document / other",
+        "Path":  "planning-iterations/image-first-three/_repo_rhinomcp/.git/hooks/pre-merge-commit.sample",
+        "Bytes":  416,
+        "Modified":  "2026-09-10 12:09:36"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Document / other",
+        "Path":  "planning-iterations/image-first-three/_repo_rhinomcp/.git/hooks/prepare-commit-msg.sample",
+        "Bytes":  1492,
+        "Modified":  "2026-09-10 12:09:37"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Document / other",
+        "Path":  "planning-iterations/image-first-three/_repo_rhinomcp/.git/hooks/pre-push.sample",
+        "Bytes":  1374,
+        "Modified":  "2026-09-10 12:09:36"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Document / other",
+        "Path":  "planning-iterations/image-first-three/_repo_rhinomcp/.git/hooks/pre-rebase.sample",
+        "Bytes":  4898,
+        "Modified":  "2026-09-10 12:09:36"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Document / other",
+        "Path":  "planning-iterations/image-first-three/_repo_rhinomcp/.git/hooks/pre-receive.sample",
+        "Bytes":  544,
+        "Modified":  "2026-09-10 12:09:37"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Document / other",
+        "Path":  "planning-iterations/image-first-three/_repo_rhinomcp/.git/hooks/push-to-checkout.sample",
+        "Bytes":  2783,
+        "Modified":  "2026-09-10 12:09:37"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Document / other",
+        "Path":  "planning-iterations/image-first-three/_repo_rhinomcp/.git/hooks/sendemail-validate.sample",
+        "Bytes":  2308,
+        "Modified":  "2026-09-10 12:09:37"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Document / other",
+        "Path":  "planning-iterations/image-first-three/_repo_rhinomcp/.git/hooks/update.sample",
+        "Bytes":  3650,
+        "Modified":  "2026-09-10 12:09:37"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Document / other",
+        "Path":  "planning-iterations/image-first-three/_repo_rhinomcp/.git/index",
+        "Bytes":  289,
+        "Modified":  "2026-09-10 12:09:41"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Document / other",
+        "Path":  "planning-iterations/image-first-three/_repo_rhinomcp/.git/info/exclude",
+        "Bytes":  240,
+        "Modified":  "2026-09-10 12:09:37"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Document / other",
+        "Path":  "planning-iterations/image-first-three/_repo_rhinomcp/.git/logs/HEAD",
+        "Bytes":  181,
+        "Modified":  "2026-09-10 12:09:40"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Document / other",
+        "Path":  "planning-iterations/image-first-three/_repo_rhinomcp/.git/logs/refs/heads/main",
+        "Bytes":  181,
+        "Modified":  "2026-09-10 12:09:40"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Document / other",
+        "Path":  "planning-iterations/image-first-three/_repo_rhinomcp/.git/logs/refs/remotes/origin/HEAD",
+        "Bytes":  181,
+        "Modified":  "2026-09-10 12:09:40"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Document / other",
+        "Path":  "planning-iterations/image-first-three/_repo_rhinomcp/.git/objects/pack/pack-a9ee9ef58ec540ee33502d3520bbb06e7309ebe2.idx",
+        "Bytes":  1184,
+        "Modified":  "2026-09-10 12:09:40"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Document / other",
+        "Path":  "planning-iterations/image-first-three/_repo_rhinomcp/.git/objects/pack/pack-a9ee9ef58ec540ee33502d3520bbb06e7309ebe2.pack",
+        "Bytes":  1293,
+        "Modified":  "2026-09-10 12:09:40"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Document / other",
+        "Path":  "planning-iterations/image-first-three/_repo_rhinomcp/.git/objects/pack/pack-a9ee9ef58ec540ee33502d3520bbb06e7309ebe2.rev",
+        "Bytes":  68,
+        "Modified":  "2026-09-10 12:09:40"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Document / other",
+        "Path":  "planning-iterations/image-first-three/_repo_rhinomcp/.git/packed-refs",
+        "Bytes":  112,
+        "Modified":  "2026-09-10 12:09:40"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Document / other",
+        "Path":  "planning-iterations/image-first-three/_repo_rhinomcp/.git/refs/heads/main",
+        "Bytes":  41,
+        "Modified":  "2026-09-10 12:09:40"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Document / other",
+        "Path":  "planning-iterations/image-first-three/_repo_rhinomcp/.git/refs/remotes/origin/HEAD",
+        "Bytes":  30,
+        "Modified":  "2026-09-10 12:09:40"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Document / other",
+        "Path":  "planning-iterations/image-first-three/_repo_rhinomcp/.git/shallow",
+        "Bytes":  41,
+        "Modified":  "2026-09-10 12:09:40"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Document / other",
+        "Path":  "planning-iterations/image-first-three/_repo_rhinomcp/404.html",
+        "Bytes":  547,
+        "Modified":  "2026-09-10 12:09:41"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Document / other",
+        "Path":  "planning-iterations/image-first-three/_repo_rhinomcp/index.html",
+        "Bytes":  547,
+        "Modified":  "2026-09-10 12:09:41"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Document / other",
+        "Path":  "planning-iterations/image-first-three/_repo_rhinomcp/README.md",
+        "Bytes":  64,
+        "Modified":  "2026-09-10 12:09:41"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Document / other",
+        "Path":  "SCRIPTS.md",
+        "Bytes":  4141,
+        "Modified":  "2026-09-14 17:28:13"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Image",
+        "Path":  "output/archive/terrain-experiments/current-live-perspective.jpg",
+        "Bytes":  15295,
+        "Modified":  "2026-09-10 15:12:52"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Image",
+        "Path":  "output/archive/terrain-experiments/free-layout-reference/G-woodland.png",
+        "Bytes":  2167529,
+        "Modified":  "2026-09-09 18:05:31"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Image",
+        "Path":  "output/archive/terrain-experiments/free-layout-reference/H-hillside.png",
+        "Bytes":  2292396,
+        "Modified":  "2026-09-09 18:09:40"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Image",
+        "Path":  "output/archive/terrain-experiments/free-layout-reference/I-garden.png",
+        "Bytes":  2408472,
+        "Modified":  "2026-09-09 17:49:57"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Image",
+        "Path":  "output/archive/terrain-experiments/port-2000-origin-square.jpg",
+        "Bytes":  16085,
+        "Modified":  "2026-09-10 14:01:13"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Image",
+        "Path":  "output/previews/current-plan-renders/A-grouped-current.png",
+        "Bytes":  2625473,
+        "Modified":  "2026-09-10 11:09:31"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Image",
+        "Path":  "output/previews/current-plan-renders/G-free-current.png",
+        "Bytes":  2512919,
+        "Modified":  "2026-09-10 11:14:34"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Image",
+        "Path":  "output/previews/current-plan-renders/I-free-current.png",
+        "Bytes":  2790162,
+        "Modified":  "2026-09-10 11:15:40"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Image",
+        "Path":  "output/previews/current-plan-renders/rhino-A.jpg",
+        "Bytes":  28711,
+        "Modified":  "2026-09-10 11:03:43"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Image",
+        "Path":  "output/previews/current-plan-renders/rhino-G.jpg",
+        "Bytes":  28704,
+        "Modified":  "2026-09-10 11:03:43"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Image",
+        "Path":  "output/previews/current-plan-renders/rhino-I.jpg",
+        "Bytes":  27665,
+        "Modified":  "2026-09-10 11:03:43"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Image",
+        "Path":  "output/previews/phase2-plan-renders/A-geometry-guide.png",
+        "Bytes":  58633,
+        "Modified":  "2026-09-14 15:56:44"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Image",
+        "Path":  "output/previews/phase2-plan-renders/A-phase2.png",
+        "Bytes":  2767848,
+        "Modified":  "2026-09-14 15:58:37"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Image",
+        "Path":  "output/previews/phase2-plan-renders/G-geometry-guide.png",
+        "Bytes":  60194,
+        "Modified":  "2026-09-14 15:56:44"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Image",
+        "Path":  "output/previews/phase2-plan-renders/G-phase2.png",
+        "Bytes":  2745848,
+        "Modified":  "2026-09-14 15:59:58"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Image",
+        "Path":  "output/previews/phase2-plan-renders/I-geometry-guide.png",
+        "Bytes":  59426,
+        "Modified":  "2026-09-14 15:56:44"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Image",
+        "Path":  "output/previews/phase2-plan-renders/I-phase2.png",
+        "Bytes":  2969201,
+        "Modified":  "2026-09-14 16:03:43"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Recovery",
+        "Path":  "output/_backups/resort planning.3dmbak",
+        "Bytes":  4689920,
+        "Modified":  "2026-09-11 18:29:57"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Recovery",
+        "Path":  "output/_backups/RHI3370.tmp",
+        "Bytes":  4743168,
+        "Modified":  "2026-09-10 15:53:00"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Recovery",
+        "Path":  "output/_backups/RHI3FD1.tmp",
+        "Bytes":  4706304,
+        "Modified":  "2026-09-10 15:57:26"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Recovery",
+        "Path":  "output/_backups/RHI87F7.tmp",
+        "Bytes":  4706304,
+        "Modified":  "2026-09-10 15:57:44"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Recovery",
+        "Path":  "output/_backups/RHI941F.tmp",
+        "Bytes":  880640,
+        "Modified":  "2026-09-10 13:54:21"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Recovery",
+        "Path":  "output/_backups/three-resort-terrain-options.3dmbak",
+        "Bytes":  4808704,
+        "Modified":  "2026-09-10 16:22:40"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Recovery",
+        "Path":  "output/_backups/three-resort-terrain-options-before-visibility-v3.3dmbak",
+        "Bytes":  4763648,
+        "Modified":  "2026-09-10 16:22:23"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Recovery",
+        "Path":  "planning-iterations/image-first-three/three-image-first-layouts.3dmbak",
+        "Bytes":  36515840,
+        "Modified":  "2026-09-09 15:44:59"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Rhino model",
+        "Path":  "output/_backups/resort planning_BACKUP_2026-09-11_pre-stage1.3dm",
+        "Bytes":  794624,
+        "Modified":  "2026-09-11 16:32:58"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Rhino model",
+        "Path":  "output/_backups/three-resort-terrain-options-before-natural-grading.3dm",
+        "Bytes":  1441792,
+        "Modified":  "2026-09-10 15:32:25"
+    },
+    {
+        "Experiment":  "10",
+        "Role":  "Rhino model",
+        "Path":  "output/_backups/three-resort-terrain-options-before-visibility-v3.3dm",
+        "Bytes":  4857856,
+        "Modified":  "2026-09-10 16:22:20"
+    },
+    {
+        "Experiment":  "11",
+        "Role":  "Code / configuration",
+        "Path":  "phase2/checker.py",
+        "Bytes":  1920,
+        "Modified":  "2026-09-14 14:32:26"
+    },
+    {
+        "Experiment":  "11",
+        "Role":  "Code / configuration",
+        "Path":  "phase2/geometry.py",
+        "Bytes":  3354,
+        "Modified":  "2026-09-14 14:32:26"
+    },
+    {
+        "Experiment":  "11",
+        "Role":  "Code / configuration",
+        "Path":  "phase2/model_geometry.py",
+        "Bytes":  14177,
+        "Modified":  "2026-09-14 14:44:39"
+    },
+    {
+        "Experiment":  "11",
+        "Role":  "Code / configuration",
+        "Path":  "phase2/run_phase2.py",
+        "Bytes":  5137,
+        "Modified":  "2026-09-14 14:47:03"
+    },
+    {
+        "Experiment":  "11",
+        "Role":  "Code / configuration",
+        "Path":  "phase2/solver.py",
+        "Bytes":  5643,
+        "Modified":  "2026-09-14 14:32:26"
+    },
+    {
+        "Experiment":  "11",
+        "Role":  "Code / configuration",
+        "Path":  "phase2/tests/rhino_integration.py",
+        "Bytes":  7185,
+        "Modified":  "2026-09-14 14:44:00"
+    },
+    {
+        "Experiment":  "11",
+        "Role":  "Code / configuration",
+        "Path":  "phase2/tests/test_phase2.py",
+        "Bytes":  3342,
+        "Modified":  "2026-09-14 14:36:09"
+    },
+    {
+        "Experiment":  "11",
+        "Role":  "Data / report",
+        "Path":  "output/checks/phase2/20260914-143915-064904/report.json",
+        "Bytes":  396408,
+        "Modified":  "2026-09-14 14:39:15"
+    },
+    {
+        "Experiment":  "11",
+        "Role":  "Data / report",
+        "Path":  "output/checks/phase2/integration-20260914-144100/tests.json",
+        "Bytes":  711,
+        "Modified":  "2026-09-14 14:41:01"
+    },
+    {
+        "Experiment":  "11",
+        "Role":  "Data / report",
+        "Path":  "output/checks/phase2/integration-20260914-144442/tests.json",
+        "Bytes":  807,
+        "Modified":  "2026-09-14 14:44:49"
+    },
+    {
+        "Experiment":  "11",
+        "Role":  "Document / other",
+        "Path":  "output/checks/phase2/20260914-143915-064904/0b0340ce-1d04-4091-a8bb-19e0fcdafe8f.svg",
+        "Bytes":  11520,
+        "Modified":  "2026-09-14 14:39:15"
+    },
+    {
+        "Experiment":  "11",
+        "Role":  "Document / other",
+        "Path":  "output/checks/phase2/20260914-143915-064904/0cb74199-2110-4dcd-9c1b-020b6b2f3ffd.svg",
+        "Bytes":  11481,
+        "Modified":  "2026-09-14 14:39:15"
+    },
+    {
+        "Experiment":  "11",
+        "Role":  "Document / other",
+        "Path":  "output/checks/phase2/20260914-143915-064904/1bc22989-bcac-49f9-ab24-043a1ced3e9e.svg",
+        "Bytes":  11520,
+        "Modified":  "2026-09-14 14:39:15"
+    },
+    {
+        "Experiment":  "11",
+        "Role":  "Document / other",
+        "Path":  "output/checks/phase2/20260914-143915-064904/5c727e6c-44ba-4c8b-8b61-498233663b52.svg",
+        "Bytes":  11481,
+        "Modified":  "2026-09-14 14:39:15"
+    },
+    {
+        "Experiment":  "11",
+        "Role":  "Document / other",
+        "Path":  "output/checks/phase2/20260914-143915-064904/d5771089-0cee-4904-ae2c-510d88e2f985.svg",
+        "Bytes":  11505,
+        "Modified":  "2026-09-14 14:39:15"
+    },
+    {
+        "Experiment":  "11",
+        "Role":  "Document / other",
+        "Path":  "output/checks/phase2/20260914-143915-064904/d8a98b7f-7450-4503-bcf9-33b1a566231a.svg",
+        "Bytes":  11505,
+        "Modified":  "2026-09-14 14:39:15"
+    },
+    {
+        "Experiment":  "11",
+        "Role":  "Document / other",
+        "Path":  "output/checks/phase2/20260914-143915-064904/index.html",
+        "Bytes":  1932,
+        "Modified":  "2026-09-14 14:48:50"
+    },
+    {
+        "Experiment":  "11",
+        "Role":  "Document / other",
+        "Path":  "output/checks/phase2/README.md",
+        "Bytes":  1432,
+        "Modified":  "2026-09-14 14:48:50"
+    },
+    {
+        "Experiment":  "11",
+        "Role":  "Document / other",
+        "Path":  "phase2/__pycache__/checker.cpython-312.pyc",
+        "Bytes":  3595,
+        "Modified":  "2026-09-14 14:36:10"
+    },
+    {
+        "Experiment":  "11",
+        "Role":  "Document / other",
+        "Path":  "phase2/__pycache__/checker.cpython-39.pyc",
+        "Bytes":  1933,
+        "Modified":  "2026-09-14 14:36:12"
+    },
+    {
+        "Experiment":  "11",
+        "Role":  "Document / other",
+        "Path":  "phase2/__pycache__/geometry.cpython-312.pyc",
+        "Bytes":  10192,
+        "Modified":  "2026-09-14 14:36:10"
+    },
+    {
+        "Experiment":  "11",
+        "Role":  "Document / other",
+        "Path":  "phase2/__pycache__/geometry.cpython-39.pyc",
+        "Bytes":  6589,
+        "Modified":  "2026-09-14 14:36:12"
+    },
+    {
+        "Experiment":  "11",
+        "Role":  "Document / other",
+        "Path":  "phase2/__pycache__/model_geometry.cpython-39.pyc",
+        "Bytes":  17763,
+        "Modified":  "2026-09-14 14:44:42"
+    },
+    {
+        "Experiment":  "11",
+        "Role":  "Document / other",
+        "Path":  "phase2/__pycache__/solver.cpython-312.pyc",
+        "Bytes":  11037,
+        "Modified":  "2026-09-14 14:36:10"
+    },
+    {
+        "Experiment":  "11",
+        "Role":  "Document / other",
+        "Path":  "phase2/__pycache__/solver.cpython-39.pyc",
+        "Bytes":  6495,
+        "Modified":  "2026-09-14 14:36:12"
+    },
+    {
+        "Experiment":  "11",
+        "Role":  "Document / other",
+        "Path":  "phase2/README.md",
+        "Bytes":  5404,
+        "Modified":  "2026-09-14 15:31:07"
+    },
+    {
+        "Experiment":  "11",
+        "Role":  "Document / other",
+        "Path":  "phase2/tests/__pycache__/test_phase2.cpython-312.pyc",
+        "Bytes":  9135,
+        "Modified":  "2026-09-14 14:36:10"
+    },
+    {
+        "Experiment":  "11",
+        "Role":  "Rhino model",
+        "Path":  "output/checks/phase2/integration-20260914-144100/before-phase2-bf859109-6888-4407-b7e2-f30731024474.3dm",
+        "Bytes":  32768,
+        "Modified":  "2026-09-14 14:41:00"
+    },
+    {
+        "Experiment":  "11",
+        "Role":  "Rhino model",
+        "Path":  "output/checks/phase2/integration-20260914-144100/before-phase2-ca0b5bf5-544a-43dc-b012-62bea81688d0.3dm",
+        "Bytes":  32768,
+        "Modified":  "2026-09-14 14:41:00"
+    },
+    {
+        "Experiment":  "11",
+        "Role":  "Rhino model",
+        "Path":  "output/checks/phase2/integration-20260914-144442/before-phase2-257c30af-724a-4526-a08e-0b606160d77f.3dm",
+        "Bytes":  8491008,
+        "Modified":  "2026-09-14 14:44:47"
+    },
+    {
+        "Experiment":  "11",
+        "Role":  "Rhino model",
+        "Path":  "output/checks/phase2/integration-20260914-144442/before-phase2-66499602-b556-4e51-b5a8-5aa05f3f7891.3dm",
+        "Bytes":  32768,
+        "Modified":  "2026-09-14 14:44:42"
+    },
+    {
+        "Experiment":  "11",
+        "Role":  "Rhino model",
+        "Path":  "output/checks/phase2/integration-20260914-144442/before-phase2-9d61fddd-e377-4531-8ae6-6c21df849aa8.3dm",
+        "Bytes":  32768,
+        "Modified":  "2026-09-14 14:44:42"
+    },
+    {
+        "Experiment":  "11",
+        "Role":  "Rhino model",
+        "Path":  "output/checks/phase2/integration-20260914-144442/live-model-test-copy.3dm",
+        "Bytes":  8589312,
+        "Modified":  "2026-09-14 14:44:44"
+    },
+    {
+        "Experiment":  "12",
+        "Role":  "Code / configuration",
+        "Path":  "view_elevation/core.py",
+        "Bytes":  9325,
+        "Modified":  "2026-09-14 15:21:56"
+    },
+    {
+        "Experiment":  "12",
+        "Role":  "Code / configuration",
+        "Path":  "view_elevation/export_rhino.py",
+        "Bytes":  2202,
+        "Modified":  "2026-09-14 15:21:56"
+    },
+    {
+        "Experiment":  "12",
+        "Role":  "Code / configuration",
+        "Path":  "view_elevation/render_plan_guides.py",
+        "Bytes":  1607,
+        "Modified":  "2026-09-14 15:56:43"
+    },
+    {
+        "Experiment":  "12",
+        "Role":  "Code / configuration",
+        "Path":  "view_elevation/run.py",
+        "Bytes":  3496,
+        "Modified":  "2026-09-14 15:24:00"
+    },
+    {
+        "Experiment":  "12",
+        "Role":  "Code / configuration",
+        "Path":  "view_elevation/tests/test_views.py",
+        "Bytes":  2592,
+        "Modified":  "2026-09-14 15:25:37"
+    },
+    {
+        "Experiment":  "12",
+        "Role":  "Code / configuration",
+        "Path":  "view_elevation/verify.py",
+        "Bytes":  3080,
+        "Modified":  "2026-09-14 15:24:00"
+    },
+    {
+        "Experiment":  "12",
+        "Role":  "Data / report",
+        "Path":  "output/checks/view-elevation/20260914-152538/report.json",
+        "Bytes":  2400693,
+        "Modified":  "2026-09-14 15:26:22"
+    },
+    {
+        "Experiment":  "12",
+        "Role":  "Data / report",
+        "Path":  "output/checks/view-elevation/input-20260914-152159.json",
+        "Bytes":  711142,
+        "Modified":  "2026-09-14 15:21:59"
+    },
+    {
+        "Experiment":  "12",
+        "Role":  "Data / report",
+        "Path":  "output/checks/view-elevation/input-20260914-153018.json",
+        "Bytes":  711142,
+        "Modified":  "2026-09-14 15:30:19"
+    },
+    {
+        "Experiment":  "12",
+        "Role":  "Document / other",
+        "Path":  "output/checks/view-elevation/20260914-152538/index.html",
+        "Bytes":  791384,
+        "Modified":  "2026-09-14 15:31:37"
+    },
+    {
+        "Experiment":  "12",
+        "Role":  "Document / other",
+        "Path":  "output/checks/view-elevation/20260914-152538/viewer-fragment.html",
+        "Bytes":  790415,
+        "Modified":  "2026-09-14 15:31:37"
+    },
+    {
+        "Experiment":  "12",
+        "Role":  "Document / other",
+        "Path":  "view_elevation/__pycache__/core.cpython-312.pyc",
+        "Bytes":  22101,
+        "Modified":  "2026-09-14 15:24:01"
+    },
+    {
+        "Experiment":  "12",
+        "Role":  "Document / other",
+        "Path":  "view_elevation/__pycache__/verify.cpython-312.pyc",
+        "Bytes":  8263,
+        "Modified":  "2026-09-14 15:24:01"
+    },
+    {
+        "Experiment":  "12",
+        "Role":  "Document / other",
+        "Path":  "view_elevation/README.md",
+        "Bytes":  3214,
+        "Modified":  "2026-09-14 15:31:07"
+    },
+    {
+        "Experiment":  "12",
+        "Role":  "Document / other",
+        "Path":  "view_elevation/tests/__pycache__/test_views.cpython-312.pyc",
+        "Bytes":  8073,
+        "Modified":  "2026-09-14 15:25:38"
+    },
+    {
+        "Experiment":  "12",
+        "Role":  "Document / other",
+        "Path":  "view_elevation/viewer.html",
+        "Bytes":  7624,
+        "Modified":  "2026-09-14 15:31:07"
+    },
+    {
+        "Experiment":  "13",
+        "Role":  "Code / configuration",
+        "Path":  "phase0/preview.py",
+        "Bytes":  2160,
+        "Modified":  "2026-09-14 17:26:37"
+    },
+    {
+        "Experiment":  "13",
+        "Role":  "Code / configuration",
+        "Path":  "phase0/run.py",
+        "Bytes":  4831,
+        "Modified":  "2026-09-14 17:26:37"
+    },
+    {
+        "Experiment":  "13",
+        "Role":  "Code / configuration",
+        "Path":  "phase0/tests/test_phase0.py",
+        "Bytes":  1624,
+        "Modified":  "2026-09-14 17:28:13"
+    },
+    {
+        "Experiment":  "13",
+        "Role":  "Data / report",
+        "Path":  "output/checks/phase0/20260914-172638/report.json",
+        "Bytes":  1540991,
+        "Modified":  "2026-09-14 17:26:51"
+    },
+    {
+        "Experiment":  "13",
+        "Role":  "Document / other",
+        "Path":  "output/checks/phase0/20260914-172638/index.html",
+        "Bytes":  673,
+        "Modified":  "2026-09-14 17:26:51"
+    },
+    {
+        "Experiment":  "13",
+        "Role":  "Document / other",
+        "Path":  "phase0/__pycache__/preview.cpython-312.pyc",
+        "Bytes":  4748,
+        "Modified":  "2026-09-14 17:26:51"
+    },
+    {
+        "Experiment":  "13",
+        "Role":  "Document / other",
+        "Path":  "phase0/__pycache__/run.cpython-312.pyc",
+        "Bytes":  10225,
+        "Modified":  "2026-09-14 17:28:14"
+    },
+    {
+        "Experiment":  "13",
+        "Role":  "Document / other",
+        "Path":  "phase0/README.md",
+        "Bytes":  2864,
+        "Modified":  "2026-09-14 17:28:13"
+    },
+    {
+        "Experiment":  "13",
+        "Role":  "Document / other",
+        "Path":  "phase0/tests/__pycache__/test_phase0.cpython-312.pyc",
+        "Bytes":  4422,
+        "Modified":  "2026-09-14 17:28:14"
+    },
+    {
+        "Experiment":  "13",
+        "Role":  "Image",
+        "Path":  "output/checks/phase0/20260914-172638/parallel.png",
+        "Bytes":  72151,
+        "Modified":  "2026-09-14 17:26:51"
+    },
+    {
+        "Experiment":  "13",
+        "Role":  "Image",
+        "Path":  "output/checks/phase0/20260914-172638/staggered.png",
+        "Bytes":  73369,
+        "Modified":  "2026-09-14 17:26:51"
+    }
+]

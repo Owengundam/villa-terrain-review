@@ -1,0 +1,29 @@
+{
+  "site_area": 40335.39999999993,
+  "site_extents": [
+    242.96402739333098,
+    286.9104798849271
+  ],
+  "layouts": [
+    {
+      "name": "free",
+      "uphill": [],
+      "size_errors": []
+    },
+    {
+      "name": "parallel",
+      "uphill": [],
+      "size_errors": []
+    },
+    {
+      "name": "staggered-2",
+      "uphill": [],
+      "size_errors": []
+    },
+    {
+      "name": "staggered-3",
+      "uphill": [],
+      "size_errors": []
+    }
+  ]
+}

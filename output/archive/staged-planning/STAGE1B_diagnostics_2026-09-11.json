@@ -1,0 +1,199 @@
+{
+ "integrity": {
+  "01_GROUPED_A": {
+   "modules": 24,
+   "fills": 24,
+   "gardens": 22,
+   "view_curves": 48,
+   "labels": 26,
+   "modules_off_datum": 0
+  },
+  "02_FREE_G": {
+   "modules": 24,
+   "fills": 24,
+   "gardens": 22,
+   "view_curves": 48,
+   "labels": 26,
+   "modules_off_datum": 0
+  },
+  "03_FREE_I": {
+   "modules": 24,
+   "fills": 24,
+   "gardens": 22,
+   "view_curves": 48,
+   "labels": 26,
+   "modules_off_datum": 0
+  }
+ },
+ "spacing": {
+  "01_GROUPED_A": [
+   {
+    "a": "V01",
+    "b": "V02",
+    "clearance": 0.0,
+    "overlap": true
+   },
+   {
+    "a": "V03",
+    "b": "V04",
+    "clearance": 0.0,
+    "overlap": true
+   },
+   {
+    "a": "V05",
+    "b": "V06",
+    "clearance": 0.0,
+    "overlap": true
+   },
+   {
+    "a": "V07",
+    "b": "V08",
+    "clearance": 0.0,
+    "overlap": true
+   },
+   {
+    "a": "V09",
+    "b": "V10",
+    "clearance": 1.713,
+    "overlap": false
+   },
+   {
+    "a": "V11",
+    "b": "V12",
+    "clearance": 1.509,
+    "overlap": false
+   },
+   {
+    "a": "V13",
+    "b": "V14",
+    "clearance": 0.0,
+    "overlap": true
+   },
+   {
+    "a": "V15",
+    "b": "V16",
+    "clearance": 0.0,
+    "overlap": true
+   },
+   {
+    "a": "V17",
+    "b": "V18",
+    "clearance": 0.0,
+    "overlap": true
+   },
+   {
+    "a": "V17",
+    "b": "HOTEL-2",
+    "clearance": 0.0,
+    "overlap": true
+   },
+   {
+    "a": "V19",
+    "b": "V20",
+    "clearance": 0.0,
+    "overlap": true
+   }
+  ],
+  "02_FREE_G": [
+   {
+    "a": "V01",
+    "b": "V02",
+    "clearance": 2.009,
+    "overlap": false
+   },
+   {
+    "a": "V02",
+    "b": "V03",
+    "clearance": 0.0,
+    "overlap": true
+   },
+   {
+    "a": "V13",
+    "b": "HOTEL-1",
+    "clearance": 0.0,
+    "overlap": true
+   },
+   {
+    "a": "V14",
+    "b": "HOTEL-2",
+    "clearance": 0.0,
+    "overlap": true
+   },
+   {
+    "a": "V16",
+    "b": "V17",
+    "clearance": 1.913,
+    "overlap": false
+   },
+   {
+    "a": "V16",
+    "b": "V18",
+    "clearance": 0.546,
+    "overlap": false
+   },
+   {
+    "a": "HOTEL-2",
+    "b": "RESTAURANT",
+    "clearance": 0.0,
+    "overlap": true
+   }
+  ],
+  "03_FREE_I": [
+   {
+    "a": "V03",
+    "b": "V04",
+    "clearance": 2.055,
+    "overlap": false
+   },
+   {
+    "a": "V08",
+    "b": "V09",
+    "clearance": 2.467,
+    "overlap": false
+   },
+   {
+    "a": "V12",
+    "b": "V13",
+    "clearance": 0.0,
+    "overlap": true
+   },
+   {
+    "a": "V13",
+    "b": "HOTEL-2",
+    "clearance": 2.523,
+    "overlap": false
+   },
+   {
+    "a": "V15",
+    "b": "HOTEL-2",
+    "clearance": 0.0,
+    "overlap": true
+   }
+  ]
+ },
+ "issues": [
+  "01_GROUPED_A: OVERLAP V01-V02",
+  "01_GROUPED_A: OVERLAP V03-V04",
+  "01_GROUPED_A: OVERLAP V05-V06",
+  "01_GROUPED_A: OVERLAP V07-V08",
+  "01_GROUPED_A: clearance 1.713 m < 3.0 m (V09-V10)",
+  "01_GROUPED_A: clearance 1.509 m < 3.0 m (V11-V12)",
+  "01_GROUPED_A: OVERLAP V13-V14",
+  "01_GROUPED_A: OVERLAP V15-V16",
+  "01_GROUPED_A: OVERLAP V17-V18",
+  "01_GROUPED_A: OVERLAP V17-HOTEL-2",
+  "01_GROUPED_A: OVERLAP V19-V20",
+  "02_FREE_G: clearance 2.009 m < 3.0 m (V01-V02)",
+  "02_FREE_G: OVERLAP V02-V03",
+  "02_FREE_G: OVERLAP V13-HOTEL-1",
+  "02_FREE_G: OVERLAP V14-HOTEL-2",
+  "02_FREE_G: clearance 1.913 m < 3.0 m (V16-V17)",
+  "02_FREE_G: clearance 0.546 m < 3.0 m (V16-V18)",
+  "02_FREE_G: OVERLAP HOTEL-2-RESTAURANT",
+  "03_FREE_I: clearance 2.055 m < 3.0 m (V03-V04)",
+  "03_FREE_I: clearance 2.467 m < 3.0 m (V08-V09)",
+  "03_FREE_I: OVERLAP V12-V13",
+  "03_FREE_I: clearance 2.523 m < 3.0 m (V13-HOTEL-2)",
+  "03_FREE_I: OVERLAP V15-HOTEL-2"
+ ]
+}

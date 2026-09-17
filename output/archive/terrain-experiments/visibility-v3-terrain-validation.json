@@ -1,0 +1,42 @@
+{
+  "saved": "\\\\192.168.200.190\\03-AI\u7d20\u6750  projects\\Projects 2026\\\u5317\u4eac\u683c\u62c9\u65af\u5c0f\u9547\\whm\\Main Agent Workspace\\Planning Agent\\output\\three-resort-terrain-options.3dm",
+  "backup": "\\\\192.168.200.190\\03-AI\u7d20\u6750  projects\\Projects 2026\\\u5317\u4eac\u683c\u62c9\u65af\u5c0f\u9547\\whm\\Main Agent Workspace\\Planning Agent\\output\\_backups\\three-resort-terrain-options-before-visibility-v3.3dm",
+  "options": [
+    {
+      "option": "01_GROUPED_A",
+      "terrain_id": "5780fa60-3f79-447b-9561-77b93464bef4",
+      "valid": true,
+      "vertices": 31454,
+      "faces": 61784,
+      "contours": 26,
+      "maximum_building_ground_error_m": 0.0075,
+      "zmin": -4.0359625441774325,
+      "zmax": 47.355916861707,
+      "buildings": 24
+    },
+    {
+      "option": "02_FREE_G",
+      "terrain_id": "c4cd5309-15df-4123-b6c4-26c386d5e2a2",
+      "valid": true,
+      "vertices": 31660,
+      "faces": 62196,
+      "contours": 28,
+      "maximum_building_ground_error_m": 0.0007,
+      "zmin": -1.9590191474958123,
+      "zmax": 53.05752076567714,
+      "buildings": 24
+    },
+    {
+      "option": "03_FREE_I",
+      "terrain_id": "86eb114b-0bdf-4755-9718-bd458f805169",
+      "valid": true,
+      "vertices": 31599,
+      "faces": 62074,
+      "contours": 27,
+      "maximum_building_ground_error_m": 0.0008,
+      "zmin": -0.9205694869349277,
+      "zmax": 49.596092780841836,
+      "buildings": 24
+    }
+  ]
+}

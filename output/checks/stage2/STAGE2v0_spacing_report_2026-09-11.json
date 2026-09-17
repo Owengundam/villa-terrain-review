@@ -1,0 +1,298 @@
+{
+ "01_GROUPED_A": {
+  "iterations": 8,
+  "before": [
+   {
+    "a": "V03",
+    "b": "V04",
+    "clearance": 0.0,
+    "overlap": true
+   },
+   {
+    "a": "V17",
+    "b": "HOTEL-2",
+    "clearance": 0.0,
+    "overlap": true
+   },
+   {
+    "a": "V07",
+    "b": "V08",
+    "clearance": 0.263,
+    "overlap": false
+   },
+   {
+    "a": "V01",
+    "b": "V02",
+    "clearance": 1.111,
+    "overlap": false
+   },
+   {
+    "a": "V17",
+    "b": "V18",
+    "clearance": 1.224,
+    "overlap": false
+   },
+   {
+    "a": "V13",
+    "b": "V14",
+    "clearance": 1.457,
+    "overlap": false
+   },
+   {
+    "a": "V05",
+    "b": "V06",
+    "clearance": 1.515,
+    "overlap": false
+   },
+   {
+    "a": "V19",
+    "b": "V20",
+    "clearance": 2.52,
+    "overlap": false
+   },
+   {
+    "a": "V15",
+    "b": "V16",
+    "clearance": 2.592,
+    "overlap": false
+   }
+  ],
+  "after": [],
+  "displacements": {
+   "V01": [
+    -1.234,
+    -0.0
+   ],
+   "V02": [
+    1.234,
+    0.0
+   ],
+   "V03": [
+    -2.477,
+    -0.0
+   ],
+   "V04": [
+    2.477,
+    0.0
+   ],
+   "V05": [
+    -0.778,
+    -0.0
+   ],
+   "V06": [
+    0.778,
+    0.0
+   ],
+   "V07": [
+    -1.394,
+    0.0
+   ],
+   "V08": [
+    1.394,
+    0.0
+   ],
+   "V13": [
+    -0.842,
+    0.118
+   ],
+   "V14": [
+    0.842,
+    -0.118
+   ],
+   "V15": [
+    -0.23,
+    0.032
+   ],
+   "V16": [
+    0.23,
+    -0.032
+   ],
+   "V17": [
+    0.563,
+    -0.8
+   ],
+   "V18": [
+    2.457,
+    -0.482
+   ],
+   "V19": [
+    -0.286,
+    0.061
+   ],
+   "V20": [
+    0.286,
+    -0.061
+   ],
+   "HOTEL-2": [
+    -3.02,
+    1.282
+   ]
+  },
+  "outside_boundary": [
+   "V20"
+  ],
+  "converged": true
+ },
+ "02_FREE_G": {
+  "iterations": 8,
+  "before": [
+   {
+    "a": "V13",
+    "b": "HOTEL-1",
+    "clearance": 0.0,
+    "overlap": true
+   },
+   {
+    "a": "V01",
+    "b": "V02",
+    "clearance": 0.474,
+    "overlap": false
+   },
+   {
+    "a": "V02",
+    "b": "V03",
+    "clearance": 1.239,
+    "overlap": false
+   },
+   {
+    "a": "V14",
+    "b": "HOTEL-2",
+    "clearance": 1.827,
+    "overlap": false
+   },
+   {
+    "a": "V16",
+    "b": "V17",
+    "clearance": 1.899,
+    "overlap": false
+   }
+  ],
+  "after": [],
+  "displacements": {
+   "V01": [
+    -2.372,
+    -0.947
+   ],
+   "V02": [
+    0.255,
+    0.622
+   ],
+   "V03": [
+    2.117,
+    0.325
+   ],
+   "V13": [
+    2.5,
+    2.997
+   ],
+   "V14": [
+    -0.111,
+    -0.791
+   ],
+   "V16": [
+    0.41,
+    0.699
+   ],
+   "V17": [
+    -0.41,
+    -0.699
+   ],
+   "HOTEL-1": [
+    -2.5,
+    -2.997
+   ],
+   "HOTEL-2": [
+    0.111,
+    0.791
+   ]
+  },
+  "outside_boundary": [],
+  "converged": true
+ },
+ "03_FREE_I": {
+  "iterations": 12,
+  "before": [
+   {
+    "a": "V12",
+    "b": "V13",
+    "clearance": 0.0,
+    "overlap": true
+   },
+   {
+    "a": "V15",
+    "b": "HOTEL-2",
+    "clearance": 0.0,
+    "overlap": true
+   },
+   {
+    "a": "V02",
+    "b": "V03",
+    "clearance": 0.854,
+    "overlap": false
+   },
+   {
+    "a": "V06",
+    "b": "V07",
+    "clearance": 1.218,
+    "overlap": false
+   },
+   {
+    "a": "V03",
+    "b": "V04",
+    "clearance": 2.107,
+    "overlap": false
+   },
+   {
+    "a": "V01",
+    "b": "V02",
+    "clearance": 2.901,
+    "overlap": false
+   }
+  ],
+  "after": [],
+  "displacements": {
+   "V01": [
+    0.468,
+    1.035
+   ],
+   "V02": [
+    0.203,
+    1.143
+   ],
+   "V03": [
+    0.297,
+    -1.053
+   ],
+   "V04": [
+    -0.968,
+    -1.125
+   ],
+   "V06": [
+    0.136,
+    0.937
+   ],
+   "V07": [
+    -0.136,
+    -0.937
+   ],
+   "V12": [
+    -2.095,
+    1.378
+   ],
+   "V13": [
+    0.213,
+    -3.218
+   ],
+   "V15": [
+    3.561,
+    4.273
+   ],
+   "HOTEL-2": [
+    -1.68,
+    -2.433
+   ]
+  },
+  "outside_boundary": [],
+  "converged": true
+ }
+}

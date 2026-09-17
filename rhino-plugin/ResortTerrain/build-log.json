@@ -1,0 +1,7 @@
+{
+  "success": true,
+  "messages": [
+    "warning CS1701: Assuming assembly reference 'System.Drawing.Primitives, Version=7.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a' used by 'RhinoCommon' matches identity 'System.Drawing.Primitives, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a' of 'System.Drawing.Primitives', you may need to supply runtime policy",
+    "warning CS1701: Assuming assembly reference 'System.Drawing.Primitives, Version=7.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a' used by 'RhinoCommon' matches identity 'System.Drawing.Primitives, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a' of 'System.Drawing.Primitives', you may need to supply runtime policy"
+  ]
+}

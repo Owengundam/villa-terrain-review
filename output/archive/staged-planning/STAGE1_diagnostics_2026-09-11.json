@@ -1,0 +1,142 @@
+{
+ "integrity": {
+  "type_counts_now": {
+   "TextEntity": 92,
+   "LineCurve": 72,
+   "PolylineCurve": 163,
+   "Mesh": 138,
+   "InstanceReferenceGeometry": 80,
+   "Brep": 3
+  },
+  "type_counts_orig": {
+   "PolylineCurve": 109,
+   "LineCurve": 72,
+   "InstanceReferenceGeometry": 80,
+   "Mesh": 138,
+   "TextEntity": 89
+  },
+  "buildings_per_option": {
+   "01_GROUPED_A": {
+    "modules": 24,
+    "fills": 24,
+    "gardens": 22,
+    "view_curves": 48,
+    "labels": 26
+   },
+   "02_FREE_G": {
+    "modules": 24,
+    "fills": 24,
+    "gardens": 22,
+    "view_curves": 48,
+    "labels": 26
+   },
+   "03_FREE_I": {
+    "modules": 24,
+    "fills": 24,
+    "gardens": 22,
+    "view_curves": 48,
+    "labels": 26
+   }
+  },
+  "reference_objects_checked": 35,
+  "reference_mismatches": 29
+ },
+ "spacing": {
+  "01_GROUPED_A": {
+   "nearby_pairs_checked": 1,
+   "violations": [
+    {
+     "a": "V17",
+     "b": "HOTEL-2",
+     "clearance": 2.141,
+     "overlap": false
+    }
+   ]
+  },
+  "02_FREE_G": {
+   "nearby_pairs_checked": 1,
+   "violations": [
+    {
+     "a": "V16",
+     "b": "V17",
+     "clearance": 2.217,
+     "overlap": false
+    }
+   ]
+  },
+  "03_FREE_I": {
+   "nearby_pairs_checked": 2,
+   "violations": [
+    {
+     "a": "V01",
+     "b": "V02",
+     "clearance": 2.466,
+     "overlap": false
+    },
+    {
+     "a": "V02",
+     "b": "V03",
+     "clearance": 1.866,
+     "overlap": false
+    }
+   ]
+  }
+ },
+ "issues": [
+  "reference object moved: ('\u6587\u5b57\u6807\u6ce8', '')",
+  "reference object moved: ('\u6587\u5b57\u6807\u6ce8', '')",
+  "reference object moved: ('\u6587\u5b57\u6807\u6ce8', '')",
+  "reference object moved: ('\u6587\u5b57\u6807\u6ce8', '')",
+  "reference object moved: ('\u6587\u5b57\u6807\u6ce8', '')",
+  "reference object moved: ('A-WALL-01', '')",
+  "reference object moved: ('A-WALL-01', '')",
+  "reference object moved: ('A-WALL-01', '')",
+  "reference object moved: ('A-WALL-01', '')",
+  "reference object moved: ('\u6587\u5b57\u6807\u6ce8', '')",
+  "reference object moved: ('A-WALL-01', '')",
+  "reference object moved: ('\u6587\u5b57\u6807\u6ce8', '')",
+  "reference object moved: ('A-WALL-01', '')",
+  "reference object moved: ('\u6587\u5b57\u6807\u6ce8', '')",
+  "reference object moved: ('A-WALL-01', '')",
+  "reference object moved: ('\u6587\u5b57\u6807\u6ce8', '')",
+  "reference object moved: ('A-WALL-01', '')",
+  "reference object moved: ('\u6587\u5b57\u6807\u6ce8', '')",
+  "reference object moved: ('A-WALL-01', '')",
+  "reference object moved: ('A-WALL-01', '')",
+  "reference object moved: ('A-WALL-01', '')",
+  "reference object moved: ('A-WALL-01', '')",
+  "reference object moved: ('TRACE_99_UNCERTAIN', '')",
+  "reference object moved: ('TRACE_99_UNCERTAIN', '')",
+  "reference object moved: ('TRACE_02_ROAD', '')",
+  "reference object moved: ('TRACE_02_ROAD', '')",
+  "reference object moved: ('TRACE_02_ROAD', '')",
+  "reference object moved: ('TRACE_02_ROAD', '')",
+  "reference object moved: ('TRACE_01_REDLINE', '')",
+  "01_GROUPED_A: clearance 2.141 m < 3.0 m (V17-HOTEL-2)",
+  "02_FREE_G: clearance 2.217 m < 3.0 m (V16-V17)",
+  "03_FREE_I: clearance 2.466 m < 3.0 m (V01-V02)",
+  "03_FREE_I: clearance 1.866 m < 3.0 m (V02-V03)"
+ ],
+ "datum": {
+  "01_GROUPED_A": {
+   "modules_off_datum": 0
+  },
+  "02_FREE_G": {
+   "modules_off_datum": 0
+  },
+  "03_FREE_I": {
+   "modules_off_datum": 0
+  }
+ },
+ "pivot": {
+  "01_GROUPED_A": {
+   "pivots_moved": 1
+  },
+  "02_FREE_G": {
+   "pivots_moved": 1
+  },
+  "03_FREE_I": {
+   "pivots_moved": 1
+  }
+ }
+}

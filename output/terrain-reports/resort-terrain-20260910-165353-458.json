@@ -1,0 +1,64 @@
+{
+  "Mode": "Check",
+  "Applied": false,
+  "Backup": null,
+  "SavedPath": null,
+  "Seconds": 0.2954714,
+  "Issues": [
+    "03_FREE_I: V06 / V07 have 2.57 m clearance (limit 3.00 m).",
+    "03_FREE_I: V02 / V03 have 2.33 m clearance (limit 3.00 m).",
+    "03_FREE_I: V08 / V09 have 2.80 m clearance (limit 3.00 m).",
+    "03_FREE_I: existing terrain reaches 608.3% slope (limit 100%). Orange points mark steep areas.",
+    "02_FREE_G: V03 / V02 have 2.74 m clearance (limit 3.00 m).",
+    "02_FREE_G: V14 / HOTEL-2 have 2.92 m clearance (limit 3.00 m).",
+    "02_FREE_G: V17 / V16 have 2.25 m clearance (limit 3.00 m).",
+    "02_FREE_G: V18 / V16 have 2.92 m clearance (limit 3.00 m).",
+    "02_FREE_G: existing terrain reaches 490.6% slope (limit 100%). Orange points mark steep areas.",
+    "01_GROUPED_A: V06 / V05 have 2.32 m clearance (limit 3.00 m).",
+    "01_GROUPED_A: V08 / V07 have 2.29 m clearance (limit 3.00 m).",
+    "01_GROUPED_A: V10 / V09 have 2.31 m clearance (limit 3.00 m).",
+    "01_GROUPED_A: V12 / V11 have 2.82 m clearance (limit 3.00 m).",
+    "01_GROUPED_A: V17 / HOTEL-2 have 2.41 m clearance (limit 3.00 m).",
+    "01_GROUPED_A: V18 / V17 have 2.58 m clearance (limit 3.00 m).",
+    "01_GROUPED_A: V20 / V19 have 2.90 m clearance (limit 3.00 m).",
+    "01_GROUPED_A: existing terrain reaches 469.6% slope (limit 100%). Orange points mark steep areas."
+  ],
+  "Options": [
+    {
+      "Option": "03_FREE_I",
+      "Buildings": 24,
+      "Relationships": 51,
+      "Failures": 0,
+      "MinimumDrop": 5.25,
+      "MaximumSlopePercent": 608.302759310897,
+      "ContactError": 0,
+      "CachedTriangulation": false,
+      "Unchanged": false,
+      "Changes": []
+    },
+    {
+      "Option": "02_FREE_G",
+      "Buildings": 24,
+      "Relationships": 49,
+      "Failures": 0,
+      "MinimumDrop": 5.348453521728516,
+      "MaximumSlopePercent": 490.5674136810588,
+      "ContactError": 0,
+      "CachedTriangulation": false,
+      "Unchanged": false,
+      "Changes": []
+    },
+    {
+      "Option": "01_GROUPED_A",
+      "Buildings": 24,
+      "Relationships": 61,
+      "Failures": 0,
+      "MinimumDrop": 5.343905448913574,
+      "MaximumSlopePercent": 469.61322897515714,
+      "ContactError": 0,
+      "CachedTriangulation": false,
+      "Unchanged": false,
+      "Changes": []
+    }
+  ]
+}

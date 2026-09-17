@@ -1,0 +1,9 @@
+name: field-resort-terrain
+version: 1.0.0
+authors:
+  - FIELD
+description: Native resort visibility checks, bounded grading and terrain updates for Rhino 8 .NET 8.
+keywords:
+  - terrain
+  - grading
+  - resort

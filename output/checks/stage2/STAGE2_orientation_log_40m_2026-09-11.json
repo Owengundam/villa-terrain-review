@@ -1,0 +1,650 @@
+[
+ {
+  "opt": "01_GROUPED_A",
+  "id": "V01",
+  "front_before_deg": -152.15,
+  "downhill_deg": -134.63,
+  "delta_deg": 17.52,
+  "residual_deg": 0.0,
+  "grad_mag": 0.2047
+ },
+ {
+  "opt": "01_GROUPED_A",
+  "id": "V02",
+  "front_before_deg": -145.98,
+  "downhill_deg": -129.55,
+  "delta_deg": 16.43,
+  "residual_deg": 0.0,
+  "grad_mag": 0.2041
+ },
+ {
+  "opt": "01_GROUPED_A",
+  "id": "V03",
+  "front_before_deg": -167.04,
+  "downhill_deg": -142.39,
+  "delta_deg": 24.65,
+  "residual_deg": -0.0,
+  "grad_mag": 0.1629
+ },
+ {
+  "opt": "01_GROUPED_A",
+  "id": "V04",
+  "front_before_deg": -161.25,
+  "downhill_deg": -135.95,
+  "delta_deg": 25.29,
+  "residual_deg": -0.0,
+  "grad_mag": 0.1547
+ },
+ {
+  "opt": "01_GROUPED_A",
+  "id": "V05",
+  "front_before_deg": -115.62,
+  "downhill_deg": -105.02,
+  "delta_deg": 10.6,
+  "residual_deg": -0.0,
+  "grad_mag": 0.1618
+ },
+ {
+  "opt": "01_GROUPED_A",
+  "id": "V06",
+  "front_before_deg": -53.38,
+  "downhill_deg": -67.81,
+  "delta_deg": -14.43,
+  "residual_deg": -0.0,
+  "grad_mag": 0.167
+ },
+ {
+  "opt": "01_GROUPED_A",
+  "id": "V07",
+  "front_before_deg": -116.71,
+  "downhill_deg": -106.15,
+  "delta_deg": 10.56,
+  "residual_deg": -0.0,
+  "grad_mag": 0.1691
+ },
+ {
+  "opt": "01_GROUPED_A",
+  "id": "V08",
+  "front_before_deg": -64.06,
+  "downhill_deg": -74.99,
+  "delta_deg": -10.93,
+  "residual_deg": 0.0,
+  "grad_mag": 0.1621
+ },
+ {
+  "opt": "01_GROUPED_A",
+  "id": "V09",
+  "front_before_deg": -82.34,
+  "downhill_deg": -85.69,
+  "delta_deg": -3.35,
+  "residual_deg": -0.0,
+  "grad_mag": 0.1563
+ },
+ {
+  "opt": "01_GROUPED_A",
+  "id": "V10",
+  "front_before_deg": -105.14,
+  "downhill_deg": -98.2,
+  "delta_deg": 6.94,
+  "residual_deg": -0.0,
+  "grad_mag": 0.1505
+ },
+ {
+  "opt": "01_GROUPED_A",
+  "id": "V11",
+  "front_before_deg": -84.32,
+  "downhill_deg": -86.95,
+  "delta_deg": -2.63,
+  "residual_deg": -0.0,
+  "grad_mag": 0.1479
+ },
+ {
+  "opt": "01_GROUPED_A",
+  "id": "V12",
+  "front_before_deg": -108.28,
+  "downhill_deg": -99.68,
+  "delta_deg": 8.61,
+  "residual_deg": -0.0,
+  "grad_mag": 0.1458
+ },
+ {
+  "opt": "01_GROUPED_A",
+  "id": "V13",
+  "front_before_deg": -148.73,
+  "downhill_deg": -122.29,
+  "delta_deg": 26.43,
+  "residual_deg": 0.0,
+  "grad_mag": 0.1339
+ },
+ {
+  "opt": "01_GROUPED_A",
+  "id": "V14",
+  "front_before_deg": -163.97,
+  "downhill_deg": -138.78,
+  "delta_deg": 25.19,
+  "residual_deg": -0.0,
+  "grad_mag": 0.1578
+ },
+ {
+  "opt": "01_GROUPED_A",
+  "id": "V15",
+  "front_before_deg": -143.61,
+  "downhill_deg": -121.7,
+  "delta_deg": 21.92,
+  "residual_deg": -0.0,
+  "grad_mag": 0.1493
+ },
+ {
+  "opt": "01_GROUPED_A",
+  "id": "V16",
+  "front_before_deg": -152.9,
+  "downhill_deg": -132.03,
+  "delta_deg": 20.87,
+  "residual_deg": 0.0,
+  "grad_mag": 0.1743
+ },
+ {
+  "opt": "01_GROUPED_A",
+  "id": "V17",
+  "front_before_deg": -38.1,
+  "downhill_deg": -57.97,
+  "delta_deg": -19.87,
+  "residual_deg": 0.0,
+  "grad_mag": 0.1614
+ },
+ {
+  "opt": "01_GROUPED_A",
+  "id": "V18",
+  "front_before_deg": -36.38,
+  "downhill_deg": -58.16,
+  "delta_deg": -21.78,
+  "residual_deg": 0.0,
+  "grad_mag": 0.1516
+ },
+ {
+  "opt": "01_GROUPED_A",
+  "id": "V19",
+  "front_before_deg": -54.31,
+  "downhill_deg": -68.2,
+  "delta_deg": -13.9,
+  "residual_deg": 0.0,
+  "grad_mag": 0.1693
+ },
+ {
+  "opt": "01_GROUPED_A",
+  "id": "V20",
+  "front_before_deg": -48.88,
+  "downhill_deg": -65.14,
+  "delta_deg": -16.26,
+  "residual_deg": -0.0,
+  "grad_mag": 0.1639
+ },
+ {
+  "opt": "01_GROUPED_A",
+  "id": "HOTEL-1",
+  "front_before_deg": -35.98,
+  "downhill_deg": -53.96,
+  "delta_deg": -17.98,
+  "residual_deg": 0.0,
+  "grad_mag": 0.1827
+ },
+ {
+  "opt": "01_GROUPED_A",
+  "id": "HOTEL-2",
+  "front_before_deg": -89.04,
+  "downhill_deg": -89.43,
+  "delta_deg": -0.38,
+  "residual_deg": -0.0,
+  "grad_mag": 0.1682
+ },
+ {
+  "opt": "01_GROUPED_A",
+  "id": "BANQUET",
+  "front_before_deg": -138.91,
+  "downhill_deg": -117.38,
+  "delta_deg": 21.53,
+  "residual_deg": -0.0,
+  "grad_mag": 0.1425
+ },
+ {
+  "opt": "01_GROUPED_A",
+  "id": "RESTAURANT",
+  "front_before_deg": -45.43,
+  "downhill_deg": -64.45,
+  "delta_deg": -19.02,
+  "residual_deg": 0.0,
+  "grad_mag": 0.1494
+ },
+ {
+  "opt": "02_FREE_G",
+  "id": "V01",
+  "front_before_deg": -150.78,
+  "downhill_deg": -132.21,
+  "delta_deg": 18.57,
+  "residual_deg": -0.0,
+  "grad_mag": 0.1909
+ },
+ {
+  "opt": "02_FREE_G",
+  "id": "V02",
+  "front_before_deg": -148.18,
+  "downhill_deg": -131.3,
+  "delta_deg": 16.88,
+  "residual_deg": -0.0,
+  "grad_mag": 0.2038
+ },
+ {
+  "opt": "02_FREE_G",
+  "id": "V03",
+  "front_before_deg": -135.03,
+  "downhill_deg": -119.19,
+  "delta_deg": 15.84,
+  "residual_deg": -0.0,
+  "grad_mag": 0.1796
+ },
+ {
+  "opt": "02_FREE_G",
+  "id": "V04",
+  "front_before_deg": -157.1,
+  "downhill_deg": -131.08,
+  "delta_deg": 26.02,
+  "residual_deg": -0.0,
+  "grad_mag": 0.1458
+ },
+ {
+  "opt": "02_FREE_G",
+  "id": "V05",
+  "front_before_deg": -161.46,
+  "downhill_deg": -136.01,
+  "delta_deg": 25.45,
+  "residual_deg": -0.0,
+  "grad_mag": 0.1542
+ },
+ {
+  "opt": "02_FREE_G",
+  "id": "V06",
+  "front_before_deg": -156.89,
+  "downhill_deg": -132.9,
+  "delta_deg": 23.99,
+  "residual_deg": 0.0,
+  "grad_mag": 0.1578
+ },
+ {
+  "opt": "02_FREE_G",
+  "id": "V07",
+  "front_before_deg": -144.72,
+  "downhill_deg": -127.38,
+  "delta_deg": 17.34,
+  "residual_deg": -0.0,
+  "grad_mag": 0.1909
+ },
+ {
+  "opt": "02_FREE_G",
+  "id": "V08",
+  "front_before_deg": -119.5,
+  "downhill_deg": -104.99,
+  "delta_deg": 14.51,
+  "residual_deg": 0.0,
+  "grad_mag": 0.1349
+ },
+ {
+  "opt": "02_FREE_G",
+  "id": "V09",
+  "front_before_deg": -137.6,
+  "downhill_deg": -119.57,
+  "delta_deg": 18.04,
+  "residual_deg": -0.0,
+  "grad_mag": 0.167
+ },
+ {
+  "opt": "02_FREE_G",
+  "id": "V10",
+  "front_before_deg": -101.78,
+  "downhill_deg": -96.95,
+  "delta_deg": 4.83,
+  "residual_deg": -0.0,
+  "grad_mag": 0.168
+ },
+ {
+  "opt": "02_FREE_G",
+  "id": "V11",
+  "front_before_deg": -104.06,
+  "downhill_deg": -97.87,
+  "delta_deg": 6.19,
+  "residual_deg": -0.0,
+  "grad_mag": 0.156
+ },
+ {
+  "opt": "02_FREE_G",
+  "id": "V12",
+  "front_before_deg": -67.46,
+  "downhill_deg": -76.91,
+  "delta_deg": -9.44,
+  "residual_deg": -0.0,
+  "grad_mag": 0.1624
+ },
+ {
+  "opt": "02_FREE_G",
+  "id": "V13",
+  "front_before_deg": -43.35,
+  "downhill_deg": -60.08,
+  "delta_deg": -16.73,
+  "residual_deg": 0.0,
+  "grad_mag": 0.1758
+ },
+ {
+  "opt": "02_FREE_G",
+  "id": "V14",
+  "front_before_deg": -48.47,
+  "downhill_deg": -64.45,
+  "delta_deg": -15.98,
+  "residual_deg": -0.0,
+  "grad_mag": 0.1681
+ },
+ {
+  "opt": "02_FREE_G",
+  "id": "V15",
+  "front_before_deg": -69.22,
+  "downhill_deg": -78.51,
+  "delta_deg": -9.28,
+  "residual_deg": 0.0,
+  "grad_mag": 0.1518
+ },
+ {
+  "opt": "02_FREE_G",
+  "id": "V16",
+  "front_before_deg": -103.92,
+  "downhill_deg": -96.99,
+  "delta_deg": 6.93,
+  "residual_deg": 0.0,
+  "grad_mag": 0.1382
+ },
+ {
+  "opt": "02_FREE_G",
+  "id": "V17",
+  "front_before_deg": -79.12,
+  "downhill_deg": -84.81,
+  "delta_deg": -5.68,
+  "residual_deg": 0.0,
+  "grad_mag": 0.1315
+ },
+ {
+  "opt": "02_FREE_G",
+  "id": "V18",
+  "front_before_deg": -119.59,
+  "downhill_deg": -106.03,
+  "delta_deg": 13.56,
+  "residual_deg": -0.0,
+  "grad_mag": 0.1467
+ },
+ {
+  "opt": "02_FREE_G",
+  "id": "V19",
+  "front_before_deg": -85.05,
+  "downhill_deg": -87.22,
+  "delta_deg": -2.17,
+  "residual_deg": 0.0,
+  "grad_mag": 0.1557
+ },
+ {
+  "opt": "02_FREE_G",
+  "id": "V20",
+  "front_before_deg": -32.84,
+  "downhill_deg": -52.24,
+  "delta_deg": -19.4,
+  "residual_deg": -0.0,
+  "grad_mag": 0.1771
+ },
+ {
+  "opt": "02_FREE_G",
+  "id": "HOTEL-1",
+  "front_before_deg": -42.09,
+  "downhill_deg": -56.43,
+  "delta_deg": -14.34,
+  "residual_deg": 0.0,
+  "grad_mag": 0.209
+ },
+ {
+  "opt": "02_FREE_G",
+  "id": "HOTEL-2",
+  "front_before_deg": -35.01,
+  "downhill_deg": -55.99,
+  "delta_deg": -20.98,
+  "residual_deg": -0.0,
+  "grad_mag": 0.1595
+ },
+ {
+  "opt": "02_FREE_G",
+  "id": "BANQUET",
+  "front_before_deg": -85.78,
+  "downhill_deg": -87.65,
+  "delta_deg": -1.87,
+  "residual_deg": -0.0,
+  "grad_mag": 0.1602
+ },
+ {
+  "opt": "02_FREE_G",
+  "id": "RESTAURANT",
+  "front_before_deg": -33.47,
+  "downhill_deg": -53.97,
+  "delta_deg": -20.5,
+  "residual_deg": 0.0,
+  "grad_mag": 0.1662
+ },
+ {
+  "opt": "03_FREE_I",
+  "id": "V01",
+  "front_before_deg": -152.24,
+  "downhill_deg": -134.05,
+  "delta_deg": 18.19,
+  "residual_deg": -0.0,
+  "grad_mag": 0.1979
+ },
+ {
+  "opt": "03_FREE_I",
+  "id": "V02",
+  "front_before_deg": -164.86,
+  "downhill_deg": -136.88,
+  "delta_deg": 27.98,
+  "residual_deg": 0.0,
+  "grad_mag": 0.1444
+ },
+ {
+  "opt": "03_FREE_I",
+  "id": "V03",
+  "front_before_deg": -159.46,
+  "downhill_deg": -132.09,
+  "delta_deg": 27.36,
+  "residual_deg": 0.0,
+  "grad_mag": 0.1429
+ },
+ {
+  "opt": "03_FREE_I",
+  "id": "V04",
+  "front_before_deg": -131.83,
+  "downhill_deg": -112.3,
+  "delta_deg": 19.52,
+  "residual_deg": -0.0,
+  "grad_mag": 0.1384
+ },
+ {
+  "opt": "03_FREE_I",
+  "id": "V05",
+  "front_before_deg": -144.16,
+  "downhill_deg": -125.62,
+  "delta_deg": 18.54,
+  "residual_deg": -0.0,
+  "grad_mag": 0.1782
+ },
+ {
+  "opt": "03_FREE_I",
+  "id": "V06",
+  "front_before_deg": -141.25,
+  "downhill_deg": -124.81,
+  "delta_deg": 16.44,
+  "residual_deg": 0.0,
+  "grad_mag": 0.1921
+ },
+ {
+  "opt": "03_FREE_I",
+  "id": "V07",
+  "front_before_deg": -136.46,
+  "downhill_deg": -119.99,
+  "delta_deg": 16.47,
+  "residual_deg": 0.0,
+  "grad_mag": 0.1782
+ },
+ {
+  "opt": "03_FREE_I",
+  "id": "V08",
+  "front_before_deg": -128.49,
+  "downhill_deg": -114.09,
+  "delta_deg": 14.4,
+  "residual_deg": -0.0,
+  "grad_mag": 0.1754
+ },
+ {
+  "opt": "03_FREE_I",
+  "id": "V09",
+  "front_before_deg": -114.07,
+  "downhill_deg": -104.45,
+  "delta_deg": 9.62,
+  "residual_deg": 0.0,
+  "grad_mag": 0.1709
+ },
+ {
+  "opt": "03_FREE_I",
+  "id": "V10",
+  "front_before_deg": -148.56,
+  "downhill_deg": -124.39,
+  "delta_deg": 24.17,
+  "residual_deg": 0.0,
+  "grad_mag": 0.1444
+ },
+ {
+  "opt": "03_FREE_I",
+  "id": "V11",
+  "front_before_deg": -86.33,
+  "downhill_deg": -88.07,
+  "delta_deg": -1.74,
+  "residual_deg": 0.0,
+  "grad_mag": 0.1472
+ },
+ {
+  "opt": "03_FREE_I",
+  "id": "V12",
+  "front_before_deg": -44.23,
+  "downhill_deg": -59.79,
+  "delta_deg": -15.56,
+  "residual_deg": -0.0,
+  "grad_mag": 0.1862
+ },
+ {
+  "opt": "03_FREE_I",
+  "id": "V13",
+  "front_before_deg": -30.13,
+  "downhill_deg": -50.44,
+  "delta_deg": -20.31,
+  "residual_deg": -0.0,
+  "grad_mag": 0.1738
+ },
+ {
+  "opt": "03_FREE_I",
+  "id": "V14",
+  "front_before_deg": -50.31,
+  "downhill_deg": -64.38,
+  "delta_deg": -14.07,
+  "residual_deg": 0.0,
+  "grad_mag": 0.1827
+ },
+ {
+  "opt": "03_FREE_I",
+  "id": "V15",
+  "front_before_deg": -81.19,
+  "downhill_deg": -85.07,
+  "delta_deg": -3.88,
+  "residual_deg": -0.0,
+  "grad_mag": 0.1555
+ },
+ {
+  "opt": "03_FREE_I",
+  "id": "V16",
+  "front_before_deg": -113.21,
+  "downhill_deg": -102.53,
+  "delta_deg": 10.68,
+  "residual_deg": -0.0,
+  "grad_mag": 0.148
+ },
+ {
+  "opt": "03_FREE_I",
+  "id": "V17",
+  "front_before_deg": -108.08,
+  "downhill_deg": -99.23,
+  "delta_deg": 8.85,
+  "residual_deg": 0.0,
+  "grad_mag": 0.1401
+ },
+ {
+  "opt": "03_FREE_I",
+  "id": "V18",
+  "front_before_deg": -68.16,
+  "downhill_deg": -79.65,
+  "delta_deg": -11.5,
+  "residual_deg": -0.0,
+  "grad_mag": 0.129
+ },
+ {
+  "opt": "03_FREE_I",
+  "id": "V19",
+  "front_before_deg": -45.19,
+  "downhill_deg": -64.4,
+  "delta_deg": -19.21,
+  "residual_deg": 0.0,
+  "grad_mag": 0.1492
+ },
+ {
+  "opt": "03_FREE_I",
+  "id": "V20",
+  "front_before_deg": -52.14,
+  "downhill_deg": -66.97,
+  "delta_deg": -14.82,
+  "residual_deg": -0.0,
+  "grad_mag": 0.1673
+ },
+ {
+  "opt": "03_FREE_I",
+  "id": "HOTEL-1",
+  "front_before_deg": -113.09,
+  "downhill_deg": -103.62,
+  "delta_deg": 9.47,
+  "residual_deg": 0.0,
+  "grad_mag": 0.163
+ },
+ {
+  "opt": "03_FREE_I",
+  "id": "HOTEL-2",
+  "front_before_deg": -55.61,
+  "downhill_deg": -69.18,
+  "delta_deg": -13.58,
+  "residual_deg": 0.0,
+  "grad_mag": 0.1668
+ },
+ {
+  "opt": "03_FREE_I",
+  "id": "BANQUET",
+  "front_before_deg": -34.95,
+  "downhill_deg": -56.49,
+  "delta_deg": -21.54,
+  "residual_deg": 0.0,
+  "grad_mag": 0.1559
+ },
+ {
+  "opt": "03_FREE_I",
+  "id": "RESTAURANT",
+  "front_before_deg": -121.57,
+  "downhill_deg": -107.17,
+  "delta_deg": 14.4,
+  "residual_deg": -0.0,
+  "grad_mag": 0.1444
+ }
+]
