@@ -15,6 +15,7 @@
 /*__TERRAIN__*/
 /*__PRESENTATION__*/
 const data=/*__DATA__*/;
+const data0=JSON.parse(JSON.stringify(data)); // shipped result, never mutated — source of truth for full revert
 const workerSource=/*__WORKER__*/;
 const $=id=>document.getElementById(id),names={'free':'Free','parallel':'Parallel','staggered-2':'Staggered 2','staggered-3':'Staggered 3'};
 let index=0,selected=0,active=[],heldOff=[],changes=[],state,rules,busy=false,cleanups=[],worker;
@@ -27,7 +28,11 @@ function run(op,nextRules=rules){if(busy)return;lock(true);$('status').textConte
  worker.onmessage=e=>{if(e.data.progress){$('status').textContent=`Searching · ${e.data.count} villas under consideration`;return;}worker.terminate();lock(false);if(e.data.error){state=View3D.inspect(data.layouts[index],active,state.z,rules);draw();$('status').textContent=e.data.error;return;}rules=nextRules;const result=e.data.result;if(result.active)active=result.active;state=result;if(result.heldOff)heldOff=result.heldOff;if(op==='edit')changes=result.changes||[];if(op==='reduce'){heldOff=[];changes=[];}draw();$('action-message').textContent=result.message||'';$('action-message').className=result.rejected?'error':'';};
  worker.onerror=e=>{worker.terminate();lock(false);state=View3D.inspect(data.layouts[index],active,state.z,rules);draw();$('status').textContent='Calculation failed: '+e.message;};worker.postMessage({op,layout:data.layouts[index],active,seed:state.z,rules:nextRules,selected,auto:$('auto').checked,heldOff});
 }
-function reset(){const l=data.layouts[index];active=l.units.map(u=>u.active);rules={...data.rules.view3d};state=View3D.inspect(l,active,l.units.map(u=>u.z),rules);selected=0;heldOff=[];changes=[];$('action-message').textContent='';form();draw();}
+function reset(){
+ // Restore saved plan: full revert to the shipped result — original layouts (arrows, pads, ghosts) AND original contours.
+ data.layouts=JSON.parse(JSON.stringify(data0.layouts));
+ data.contours=JSON.parse(JSON.stringify(data0.contours));
+ const l=data.layouts[index];active=l.units.map(u=>u.active);rules={...data.rules.view3d};state=View3D.inspect(l,active,l.units.map(u=>u.z),rules);selected=0;heldOff=[];changes=[];$('action-message').textContent='';form();draw();}
 function toggle(){if(busy)return;run('edit');}
 function draw(){
  cleanups.forEach(f=>f());cleanups=[];const l=data.layouts[index],u=l.units[selected],m=state.metrics[selected],changeMap=new Map(changes.map(c=>[c.index,c])),bad=new Set([...state.conflicts.flat(),...state.outside,...state.viewBad.flatMap((b,i)=>b?[i]:[])]);
@@ -53,7 +58,7 @@ function draw(){
 $('layout').onchange=()=>{index=+$('layout').value;reset();};$('unit').onchange=()=>{selected=+$('unit').value;draw();};$('toggle').onclick=toggle;$('restore').onclick=reset;$('calculate').onclick=()=>{try{run('reduce',settings());}catch(e){$('status').textContent=e.message;}};
 /* Terrain editing panel: drag control points, OK rebuilds terrain and recalculates buildings */
 let terrainLines=null,terrainWorking=null,terrainSel=-1,terrainDrag=null;
-const terrainOriginal=JSON.parse(JSON.stringify(data.contours)); // shipped contours, never mutated
+const terrainOriginal=JSON.parse(JSON.stringify(data0.contours)); // shipped contours, never mutated
 const terrainSvgScale={w:0,k:0,x0:0,y0:0,ymax:0};
 function terrainXY(p){return[20+(p[0]-terrainSvgScale.x0)*terrainSvgScale.k,20+(terrainSvgScale.ymax-p[1])*terrainSvgScale.k];}
 function terrainWorld(x,y){return[terrainSvgScale.x0+(x-20)/terrainSvgScale.k,terrainSvgScale.ymax-(y-20)/terrainSvgScale.k];}

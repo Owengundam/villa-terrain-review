@@ -62,4 +62,18 @@ vm.runInContext("$('terrainOk').onclick()",ctx);
 const contoursRestored=vm.runInContext("JSON.stringify(data.contours[0].points)===JSON.stringify(TerrainEdit.buildFromContours(terrainOriginal)[0].controls)",ctx);
 assert(contoursRestored,'OK after Reset recalculates on the original terrain');
 console.log('PASS Reset lines restores original contours and OK then recalculates on them');
+// BUGFIX regression 3: Restore saved plan must fully revert — arrows (views), pads and contours
+vm.runInContext("busy=false",ctx);
+const shippedViews=vm.runInContext("JSON.stringify(data0.layouts.map(l=>l.units.map(u=>u.view)))",ctx);
+const shippedContours=vm.runInContext("JSON.stringify(data0.contours)",ctx);
+vm.runInContext("terrainOpen()",ctx);
+vm.runInContext("terrainLines[1].controls[5][0]-=70; terrainLines[1].controls[5][1]+=35; terrainDraw();",ctx);
+vm.runInContext("$('terrainOk').onclick()",ctx);
+const changed=vm.runInContext("JSON.stringify(data.layouts.map(l=>l.units.map(u=>u.view)))",ctx);
+assert(changed!==shippedViews,'terrain edit re-aims view arrows');
+vm.runInContext("busy=false",ctx);
+vm.runInContext("reset()",ctx);
+assert.equal(vm.runInContext("JSON.stringify(data.layouts.map(l=>l.units.map(u=>u.view)))",ctx),shippedViews,'Restore saved plan reverts arrows to shipped directions');
+assert.equal(vm.runInContext("JSON.stringify(data.contours)",ctx),shippedContours,'Restore saved plan reverts contours');
+console.log('PASS Restore saved plan fully reverts arrows, pads and contours');
 console.log('INFO villa V001 reference before drag:',beforeRef.toFixed(2),'after drag:',afterDrag.toFixed(2),'| action message:',element('action-message').textContent);
