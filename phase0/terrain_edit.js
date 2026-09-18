@@ -53,18 +53,21 @@ const TerrainEdit=(()=>{
  function apply(data,lines,perpTol=0){
   const pts=samples(lines);
   return data.layouts.map(l=>({...l,units:l.units.map(u=>{
-   const view=downhill(u.center,pts,u.view);
-   // Coupled orientation: rotate the footprint with the view so the long axis stays
-   // perpendicular to the local contour, facing downhill (mandatory planning rule).
-   // Villas already within perpTol of the new downhill keep their orientation —
-   // rotation beyond the acceptable angle is unnecessary disturbance.
-   const err=Math.acos(Math.max(-1,Math.min(1,u.view[0]*view[0]+u.view[1]*view[1])))*180/Math.PI;
-   if(!Number.isFinite(err)||(perpTol>0&&err<=perpTol))return {...u,reference:elevation(u.center[0],u.center[1],pts)};
-   const ang=Math.atan2(u.view[0]*view[1]-u.view[1]*view[0],u.view[0]*view[0]+u.view[1]*view[1]);
-   if(!Number.isFinite(ang)||Math.abs(ang)<1e-6)return {...u,view,reference:elevation(u.center[0],u.center[1],pts)};
+   // Coupled orientation: the long axis stays perpendicular to the local contour,
+   // facing downhill. The PHYSICAL test is the integrated front-vs-back ground drop
+   // over the 23 m length — the point gradient of the IDW field is too noisy to be
+   // trusted (it flips signs near dragged lines). If the front facade sits on higher
+   // ground than the back facade the villa points uphill: flip 180° (the long axis
+   // remains perpendicular, the arrow reverses). Otherwise the villa is already
+   // downhill — never rotate it on the point gradient's word.
+   const pts2=pts;
+   const zf=elevation(u.center[0]+u.view[0]*11.5,u.center[1]+u.view[1]*11.5,pts2);
+   const zb=elevation(u.center[0]-u.view[0]*11.5,u.center[1]-u.view[1]*11.5,pts2);
+   if(!(zf>zb+0.05))return {...u,reference:elevation(u.center[0],u.center[1],pts)};
+   const ang=Math.PI; // pure flip
    const c=Math.cos(ang),s=Math.sin(ang);
    const points=u.points.map(p=>{const dx=p[0]-u.center[0],dy=p[1]-u.center[1];return [u.center[0]+dx*c-dy*s,u.center[1]+dx*s+dy*c];});
-   return {...u,view,points,reference:elevation(u.center[0],u.center[1],pts),rotation:(u.rotation||0)+ang};
+   return {...u,view:[-u.view[0],-u.view[1]],points,reference:elevation(u.center[0],u.center[1],pts),rotation:(u.rotation||0)+ang};
   })}));}
  function diff(before,after){
   let maxShift=0,rotated=0;
@@ -199,23 +202,54 @@ const TerrainEdit=(()=>{
    if(!repaired)break;
   }
   // 3. Orientation repair: a moved villa can now sit where its (unchanged) view
-  //    disagrees with the local downhill — even pointing uphill. Re-aim every villa
-  //    beyond perpTol to the downhill at its CURRENT centre; keep the rotation only
-  //    if it does not increase conflicts/boundary issues.
-  const tol=cfg.perpTol??0;
+  //    disagrees with the local downhill — even pointing uphill. Physical test:
+  //    front-vs-back integrated drop. Flip 180° any villa whose front facade is on
+  //    higher ground than its back facade (never trust the noisy point gradient).
   units.forEach((u,i)=>{
-   const err=orientationError(u,pts);
-   if(err<=tol)return;
-   const view=downhill(u.center,pts,u.view);
-   const ang=Math.atan2(u.view[0]*view[1]-u.view[1]*view[0],u.view[0]*view[0]+u.view[1]*view[1]);
-   if(!Number.isFinite(ang)||Math.abs(ang)<1e-6)return;
+   const zf=elevation(u.center[0]+u.view[0]*11.5,u.center[1]+u.view[1]*11.5,pts);
+   const zb=elevation(u.center[0]-u.view[0]*11.5,u.center[1]-u.view[1]*11.5,pts);
+   if(!(zf>zb+0.05))return;
+   const ang=Math.PI; // pure flip: long axis stays perpendicular, arrow reverses
    const c=Math.cos(ang),s=Math.sin(ang);
-   const rotated={...u,points:u.points.map(p=>{const dx=p[0]-u.center[0],dy=p[1]-u.center[1];return [u.center[0]+dx*c-dy*s,u.center[1]+dx*s+dy*c];}),view,rotation:(u.rotation||0)+ang};
-   const trial=units.map((q,k)=>k===i?rotated:q);
-   const tg=geomCheck({units:trial},boundary,trial.map(()=>true),sideGap);
-   if(tg.conflicts.length+tg.issues.length<=issueCount()){
-    units[i]=rotated;moves[i].rot+=ang;
-   }});
+   const rotated={...u,points:u.points.map(p=>{const dx=p[0]-u.center[0],dy=p[1]-u.center[1];return [u.center[0]+dx*c-dy*s,u.center[1]+dx*s+dy*c];}),view:[-u.view[0],-u.view[1]],rotation:(u.rotation||0)+ang};
+   const zf2=elevation(rotated.center[0]+rotated.view[0]*11.5,rotated.center[1]+rotated.view[1]*11.5,pts);
+   const zb2=elevation(rotated.center[0]-rotated.view[0]*11.5,rotated.center[1]-rotated.view[1]*11.5,pts);
+   if(zf2>zb2+0.05)return; // still uphill after flip — degenerate spot, leave it
+   // Flipping an UPHILL villa is mandatory (planning rule), even if it introduces
+   // clearance conflicts — those are then resolved by another slide-repair pass below.
+   units[i]=rotated;moves[i].rot+=ang;
+   const tg=geomCheck({units},boundary,units.map(()=>true),sideGap);
+   if(tg.conflicts.length||tg.issues.length){
+    // flip created conflicts: run one more slide-repair round immediately
+    for(let pass=0;pass<40;pass++){
+     const gg=geomCheck({units},boundary,units.map(()=>true),sideGap);
+     if(!gg.conflicts.length&&!gg.issues.length)break;
+     let fixedOne=false;
+     for(const [pi,pj] of gg.conflicts){
+      const b2=geomCheck({units},boundary,units.map(()=>true),sideGap).conflicts.length+geomCheck({units},boundary,units.map(()=>true),sideGap).issues.length;
+      for(const [aa] of [[pi],[pj]]){
+       const uu=units[aa],vv=uu.view,ax=[vv[1],-vv[0]];
+       const dirs=[[ax[0],ax[1]],[-ax[0],-ax[1]],[vv[0],vv[1]],[-vv[0],-vv[1]]];
+       for(const [ux,uy] of dirs){
+        for(const step of [4,2,1,.5]){
+         const dx2=ux*step,dy2=uy*step;
+         if(Math.hypot(moves[aa].dx+dx2,moves[aa].dy+dy2)>maxMove)continue;
+         const tr2=units.map((q,k)=>k===aa?{...uu,center:[uu.center[0]+dx2,uu.center[1]+dy2],points:uu.points.map(p=>[p[0]+dx2,p[1]+dy2])}:q);
+         const tg2=geomCheck({units:tr2},boundary,tr2.map(()=>true),sideGap);
+         if(tg2.conflicts.length+tg2.issues.length<b2){
+          units[aa]=tr2[aa];moves[aa].dx+=dx2;moves[aa].dy+=dy2;fixedOne=true;break;
+         }
+        }
+        if(fixedOne)break;
+       }
+       if(fixedOne)break;
+      }
+      if(fixedOne)break;
+     }
+     if(!fixedOne)break;
+    }
+   }
+  });
   // 4. Shrinking: once legal, halve each remaining move while legality holds
   for(let round=0;round<6;round++){
    let any=false;
