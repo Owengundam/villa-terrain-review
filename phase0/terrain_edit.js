@@ -70,6 +70,38 @@ const TerrainEdit=(()=>{
    const dot=Math.max(-1,Math.min(1,v0[0]*v1[0]+v0[1]*v1[1]));
    if(Math.acos(dot)*180/Math.PI>0.5)rotated++;}));
   return {maxShift,rotated};}
- return {MAX,simplify,buildFromContours,samples,elevation,downhill,apply,diff};
+ /* Live geometry checks on the CURRENT (possibly rotated) footprints.
+    polyDist: minimum distance between two convex polygons (0 if overlapping). */
+ function segSeg(a,b,c,d){function cross(o,a,b){return (a[0]-o[0])*(b[1]-o[1])-(a[1]-o[1])*(b[0]-o[0]);}
+  const d1=cross(c,d,a),d2=cross(c,d,b),d3=cross(a,b,c),d4=cross(a,b,d);
+  return ((d1>0)!==(d2>0))&&((d3>0)!==(d4>0));}
+ function ptPolyDist(p,poly){let best=Infinity;
+  for(let k=0;k<poly.length;k++){const a=poly[k],b=poly[(k+1)%poly.length];
+   best=Math.min(best,segDist(p,a,b));}
+  return best;}
+ function polyDist(p1,p2){
+  for(let k=0;k<p1.length;k++)if(ptPolyDist(p1[k],p2)===0)return 0;
+  for(let k=0;k<p2.length;k++)if(ptPolyDist(p2[k],p1)===0)return 0;
+  let best=Infinity;
+  for(let k=0;k<p1.length;k++)best=Math.min(best,ptPolyDist(p1[k],p2));
+  for(let k=0;k<p2.length;k++)best=Math.min(best,ptPolyDist(p2[k],p1));
+  return best;}
+ function pointInPoly(p,poly){let inside=false;
+  for(let i=0,j=poly.length-1;i<poly.length;j=i++){
+   const xi=poly[i][0],yi=poly[i][1],xj=poly[j][0],yj=poly[j][1];
+   if(((yi>p[1])!==(yj>p[1]))&&(p[0]<(xj-xi)*(p[1]-yi)/(yj-yi)+xi))inside=!inside;}
+  return inside;}
+ const SIDE_GAP=3;
+ function geomCheck(l,boundary,active=null){
+  const act=active||l.units.map(()=>true);
+  const issues=[],conflicts=[];
+  for(let i=0;i<l.units.length;i++)for(let j=i+1;j<l.units.length;j++){
+   if(act[i]&&act[j]&&polyDist(l.units[i].points,l.units[j].points)<SIDE_GAP-1e-6){conflicts.push([i,j]);issues.push({type:'clearance',i,j});}}
+  if(boundary)for(let i=0;i<l.units.length;i++){
+   if(!act[i])continue;
+   const out=l.units[i].points.some(p=>!pointInPoly(p,boundary));
+   if(out){issues.push({type:'boundary',i});}}
+  return {conflicts,issues,ok:!issues.length};}
+ return {MAX,simplify,buildFromContours,samples,elevation,downhill,apply,diff,polyDist,pointInPoly,geomCheck,SIDE_GAP};
 })();
 if(typeof module!=='undefined')module.exports=TerrainEdit;

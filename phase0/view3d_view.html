@@ -115,6 +115,14 @@ $('terrainOk').onclick=()=>{
   if(ang>0.5)rotated++;
  }));
  data.layouts=nextLayouts;
+ // Live geometry re-check on the ROTATED footprints: 3 m side clearance + boundary containment.
+ let geomIssues=0;
+ data.layouts.forEach(l=>{
+  const g=TerrainEdit.geomCheck(l,data.boundary);
+  l.conflicts=g.conflicts;
+  l.outside=g.issues.filter(x=>x.type==='boundary').map(x=>x.i);
+  geomIssues+=g.conflicts.length+l.outside.length;
+ });
  // Persist the edited control lines so reopening the panel (or a second OK) keeps the edited terrain.
  data.contours=data.contours.map((c,i)=>({...c,points:lines[i].controls.map(p=>p.slice())}));
  terrainClose();
@@ -122,7 +130,7 @@ $('terrainOk').onclick=()=>{
  active=l.units.map(()=>true);heldOff=[];changes=[];selected=0;
  state=View3D.inspect(l,active,l.units.map(u=>u.reference),rules);
  run('reduce',settings());
- $('action-message').textContent=`Terrain updated: pads shifted up to ${maxShift.toFixed(1)} m, ${rotated} views re-aimed. Recalculating…`;
+ $('action-message').textContent=`Terrain updated: pads shifted up to ${maxShift.toFixed(1)} m, ${rotated} views re-aimed`+(geomIssues?`, ${geomIssues} clearance/boundary conflicts found (villas will be auto-ghosted)`:'')+`. Recalculating…`;
 };
 $('export').onclick=async()=>{try{const plan=VillaPresentation.exportPlan(data,data.layouts[index],active,state.valid),blob=new Blob([plan.svg.replace('</svg>',`<text x="80" y="76" font-size="16" font-family="Arial">3D view: eye ${rules.eye} m / buildings ${rules.height} m / vertical ${rules.bottom} to ${rules.top} degrees / clear ${rules.clear*100}% / central ${rules.centralClear*100}%</text></svg>`)],{type:'image/svg+xml'}),url=URL.createObjectURL(blob),im=new Image();await new Promise((resolve,reject)=>{im.onload=resolve;im.onerror=reject;im.src=url;});const c=document.createElement('canvas');c.width=plan.width;c.height=plan.height;c.getContext('2d').drawImage(im,0,0);URL.revokeObjectURL(url);const png=await new Promise(resolve=>c.toBlob(resolve,'image/png')),link=document.createElement('a'),out=URL.createObjectURL(png);link.href=out;link.download=data.layouts[index].name+'-3d-'+active.filter(Boolean).length+'.png';link.click();setTimeout(()=>URL.revokeObjectURL(out),1000);}catch(e){$('status').textContent='Export failed: '+e.message;}};
 reset();

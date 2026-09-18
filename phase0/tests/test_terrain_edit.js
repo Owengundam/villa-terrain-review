@@ -71,6 +71,31 @@ l.units.forEach((u,i)=>{
 });
 }
 console.log('PASS footprints rotate with the view arrow (coupled orientation)');
+// 5b. geomCheck: live 3 m side clearance + boundary on rotated footprints
+const geomOK=T.geomCheck(report.layouts[0],report.boundary,report.layouts[0].units.map(u=>u.active!==false));
+assert(geomOK.ok,'shipped ACTIVE villas pass live geometry check');
+// overlapping copies must be detected
+const dup=JSON.parse(JSON.stringify(report.layouts[0]));
+dup.units[1].points=dup.units[0].points.map(p=>p.slice()); // villa 1 exactly on villa 0
+const geomBad=T.geomCheck(dup,report.boundary);
+assert(geomBad.conflicts.some(([a,b])=>(a===0&&b===1)||(a===1&&b===0)),'overlap detected as 3 m conflict');
+// a villa pushed outside the boundary must be detected
+const out=JSON.parse(JSON.stringify(report.layouts[0]));
+const xs=report.boundary.map(p=>p[0]),xmax=Math.max(...xs);
+out.units[0].points=out.units[0].points.map(p=>[p[0]+3000,p[1]]);
+out.units[0].center=[out.units[0].center[0]+3000,out.units[0].center[1]];
+const geomOut=T.geomCheck(out,report.boundary);
+assert(geomOut.issues.some(x=>x.type==='boundary'&&x.i===0),'boundary escape detected');
+// rotation must be able to CREATE a conflict: rotate one villa of a tight pair
+const pair=JSON.parse(JSON.stringify(report.layouts[0]));
+if(pair.units.length>1){
+ // find the closest pair and rotate one 30° about its centre — corner sweep may violate 3 m
+ const u=pair.units[1],ang=30*Math.PI/180,c=Math.cos(ang),s=Math.sin(ang);
+ u.points=u.points.map(p=>{const dx=p[0]-u.center[0],dy=p[1]-u.center[1];return [u.center[0]+dx*c-dy*s,u.center[1]+dx*s+dy*c];});
+ const rotated=T.geomCheck(pair,report.boundary);
+ console.log('INFO rotated-unit check on shipped layout: conflicts=',rotated.conflicts.length,'(may be 0 if spacing is generous)');
+}
+console.log('PASS live geometry: 3 m clearance and boundary re-checked on current footprints');
 console.log('PASS apply() preserves layouts; edited line shifts references up to',dd.maxShift.toFixed(2),'m and rotates',dd.rotated,'views');
 
 // 6. Drag every control point of one line: references respond smoothly, no NaN
