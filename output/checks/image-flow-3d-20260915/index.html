@@ -143,7 +143,16 @@ const TerrainEdit=(()=>{
   return [-gx/m,-gy/m];}
  function apply(data,lines){
   const pts=samples(lines);
-  return data.layouts.map(l=>({...l,units:l.units.map(u=>({ ...u,reference:elevation(u.center[0],u.center[1],pts),view:downhill(u.center,pts,u.view)}))}));}
+  return data.layouts.map(l=>({...l,units:l.units.map(u=>{
+   const view=downhill(u.center,pts,u.view);
+   // Coupled orientation: rotate the footprint with the view so the long axis stays
+   // perpendicular to the local contour, facing downhill (mandatory planning rule).
+   const ang=Math.atan2(u.view[0]*view[1]-u.view[1]*view[0],u.view[0]*view[0]+u.view[1]*view[1]);
+   if(!Number.isFinite(ang)||Math.abs(ang)<1e-6)return {...u,view,reference:elevation(u.center[0],u.center[1],pts)};
+   const c=Math.cos(ang),s=Math.sin(ang);
+   const points=u.points.map(p=>{const dx=p[0]-u.center[0],dy=p[1]-u.center[1];return [u.center[0]+dx*c-dy*s,u.center[1]+dx*s+dy*c];});
+   return {...u,view,points,reference:elevation(u.center[0],u.center[1],pts),rotation:(u.rotation||0)+ang};
+  })}));}
  function diff(before,after){
   let maxShift=0,rotated=0;
   before.forEach((l,li)=>l.units.forEach((u,i)=>{

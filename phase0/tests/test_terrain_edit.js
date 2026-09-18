@@ -41,7 +41,7 @@ for(const step of [2,5]){
 }
 console.log('PASS downhill view points toward lower terrain');
 
-// 5. apply() rebuilds references/views; unit count and ids preserved
+// 5. apply() rebuilds references/views AND rotates footprints with the view (coupled orientation)
 const edited=JSON.parse(JSON.stringify(lines));
 edited[0].controls[2][1]+=30; // drag one control point
 const before=JSON.parse(JSON.stringify(report.layouts));
@@ -50,6 +50,27 @@ assert.equal(after.length,report.layouts.length);
 after.forEach((l,li)=>{assert.equal(l.units.length,report.layouts[li].units.length);l.units.forEach((u,i)=>assert.equal(u.id,report.layouts[li].units[i].id));});
 const dd=T.diff(before,after);
 assert(dd.rotated>0||dd.maxShift>0,'edited terrain changes planning inputs');
+// footprint must rotate with the view: same centre, same dimensions, direction aligned
+for(const [li,l] of after.entries()){
+const src=report.layouts[li];
+l.units.forEach((u,i)=>{
+ const o=src.units[i];
+ const cs=u.points.map(p=>Math.hypot(p[0]-u.center[0],p[1]-u.center[1])).sort((a,b)=>a-b).map(v=>v.toFixed(4)).join(',');
+ const os=o.points.map(p=>Math.hypot(p[0]-o.center[0],p[1]-o.center[1])).sort((a,b)=>a-b).map(v=>v.toFixed(4)).join(',');
+ assert.equal(cs,os,'rotation preserves corner radii (shape unchanged)');
+ // view arrow is perpendicular to the long axis: exactly two corners at +11.5 m along view
+ const forward=u.points.filter(p=>{const dx=p[0]-u.center[0],dy=p[1]-u.center[1];return dx*u.view[0]+dy*u.view[1]>11;});
+ assert.equal(forward.length,2,'two corners face downhill along the view axis');
+ const [fa,fb]=forward;
+ for(const f of [fa,fb]){
+  const fx=f[0]-u.center[0],fy=f[1]-u.center[1],along=fx*u.view[0]+fy*u.view[1];
+  assert(Math.abs(along-11.5)<0.01,'forward corners sit 11.5 m along the view axis');
+  const perp=Math.abs(fx*(-u.view[1])+fy*u.view[0]);
+  assert(Math.abs(perp-5.5)<0.01,'corners offset 5.5 m across the view axis');
+ }
+});
+}
+console.log('PASS footprints rotate with the view arrow (coupled orientation)');
 console.log('PASS apply() preserves layouts; edited line shifts references up to',dd.maxShift.toFixed(2),'m and rotates',dd.rotated,'views');
 
 // 6. Drag every control point of one line: references respond smoothly, no NaN
