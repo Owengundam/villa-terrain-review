@@ -5,10 +5,10 @@
 #terrainPanel{position:fixed;inset:0;background:#0f2a3666;display:flex;align-items:center;justify-content:center;z-index:20;padding:20px}#terrainPanel[hidden]{display:none}.terrain-box{background:white;border-radius:14px;max-width:1560px;width:100%;max-height:92vh;display:flex;flex-direction:column;padding:18px 20px;box-shadow:0 12px 40px #0005}.terrain-box .terrain-head{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:8px}.terrain-box .terrain-head h2{margin:0}.terrain-box .terrain-body{overflow:auto;min-height:0}#terrainSvg svg{width:100%;height:auto;display:block}.ctrl{cursor:grab}.ctrl:active{cursor:grabbing}.ctrl circle{stroke-width:2;stroke:white}.terrain-tip{position:fixed;pointer-events:none;background:#173442;color:white;padding:5px 9px;border-radius:5px;z-index:30}
 </style>
 <main><header><div><small>TERRAIN PLANNING · 3D VISIBILITY</small><h1>Villa study</h1></div><small>40,335 m² site<br>11 × 23 m villas</small></header>
-<div class="toolbar"><label>Arrangement<select id="layout"></select></label><label class="auto-switch"><input id="auto" type="checkbox" role="switch" checked><span class="switch-track" aria-hidden="true"></span><span>Auto mode</span></label><button id="terrain">Edit terrain</button><button id="restore">Restore saved plan</button><button id="export">Export active villas · PNG</button></div>
-<div class="settings"><label>Eye above pad (m)<input id="eye" type="number" min="0.1" max="20" step="0.1"></label><label>Building height (m)<input id="height" type="number" min="0.1" max="30" step="0.1"></label><label>View bottom (°)<input id="bottom" type="number" min="-60" max="-0.1" step="1"></label><label>View top (°)<input id="top" type="number" min="0.1" max="60" step="1"></label><label>Overall clear (%)<input id="clear" type="number" min="0" max="100" step="1"></label><label>Central clear (%)<input id="centralClear" type="number" min="0" max="100" step="1"></label><button id="calculate" class="primary">Recalculate arrangement</button>
-<small>Apply these settings to the selected arrangement. Starts with all villas. Pads stay within ±1.5 m. Positions stay fixed.</small></div>
-<p id="action-message" role="alert"></p><p id="status" role="status" aria-live="polite"></p><div class="grid"><section class="panel"><h2>Site arrangement</h2><div id="map"></div><p class="legend"><span style="color:#13833d">● Activated (+)</span> · <span style="color:#d46a10">● Deactivated (−)</span> · <span style="color:#246ccc">● Pad adjusted (↕)</span> · Changes remain highlighted until the next action.</p><div id="changes" class="row" aria-live="polite"></div><p class="legend">Auto mode keeps the villa you activate and ghosts other villas as needed to satisfy the rules. Deactivation restores eligible ghosts. Manually deactivated villas stay off until explicitly activated or reset. With Auto mode off, all manual activations and deactivations are allowed; conflicts are shown without blocking the edit.<br>Hover for name · Click to toggle · Solid = active · Dashed = ghost · Red = active conflict</p></section>
+<div class="toolbar"><label>Arrangement<select id="layout"></select></label><label class="auto-switch"><input id="auto" type="checkbox" role="switch" checked><span class="switch-track" aria-hidden="true"></span><span>Auto mode</span></label><button id="terrain">Edit terrain</button><button id="startFitting">Planar fitting</button><button id="restore">Restore saved plan</button><button id="export">Export active villas · PNG</button></div>
+<div class="settings"><label>Eye above pad (m)<input id="eye" type="number" min="0.1" max="20" step="0.1"></label><label>Building height (m)<input id="height" type="number" min="0.1" max="30" step="0.1"></label><label>View bottom (°)<input id="bottom" type="number" min="-60" max="-0.1" step="1"></label><label>View top (°)<input id="top" type="number" min="0.1" max="60" step="1"></label><label>Overall clear (%)<input id="clear" type="number" min="0" max="100" step="1"></label><label>Central clear (%)<input id="centralClear" type="number" min="0" max="100" step="1"></label><label>Perpendicular tolerance (°)<input id="perpTol" type="number" min="0" max="45" step="1" value="0"></label><label>Min side clearance (m)<input id="sideGap" type="number" min="0" max="20" step="0.1" value="3"></label><button id="calculate" class="primary">3D view fitting</button>
+<small>3D view fitting: adjusts pad elevations and activates/deactivates villas so every active view passes. Runs after Planar fitting. Pads stay within ±1.5 m. Positions stay fixed.</small></div>
+<p id="action-message" role="alert"></p><p id="status" role="status" aria-live="polite"></p><p id="landmass" class="legend" style="min-height:20px"></p><div class="grid"><section class="panel"><h2>Site arrangement</h2><div id="map"></div><p class="legend"><span style="color:#13833d">● Activated (+)</span> · <span style="color:#d46a10">● Deactivated (−)</span> · <span style="color:#246ccc">● Pad adjusted (↕)</span> · Changes remain highlighted until the next action.</p><div id="changes" class="row" aria-live="polite"></div><p class="legend">Auto mode keeps the villa you activate and ghosts other villas as needed to satisfy the rules. Deactivation restores eligible ghosts. Manually deactivated villas stay off until explicitly activated or reset. With Auto mode off, all manual activations and deactivations are allowed; conflicts are shown without blocking the edit.<br>Hover for name · Click to toggle · Solid = active · Dashed = ghost · Red = active conflict</p></section>
 <section class="panel" id="inspector"><h2>Villa inspector</h2><div class="row"><select id="unit" aria-label="Selected villa"></select><button id="toggle"></button></div><p id="detail"></p><h2>View from the front façade</h2><div id="window"></div><p class="legend">Building silhouettes in angular coordinates. Dashed box: central view, symmetric about 0°. Ghosts do not obstruct. Partial-height obstruction counts proportionally.</p><div id="elevations"></div></section></div>
 <details class="panel" style="margin-top:22px"><summary>Calculation and assumptions</summary><p>Viewpoint: centre of the front façade, at pad level + eye height. Villas are solid vertical extrusions of their actual footprints. No fixed pad-drop threshold is used.</p><p>The horizontal window is ±15°. The central window is ±5° horizontally, from −2.5° to +2.5° vertically, centred on the 0° horizon. If the overall vertical window is narrower on either side, the central box shrinks equally on both sides to remain symmetric. The central requirement measures clear area, not a continuous opening. Default central blockage must be below 25%; exactly 25% fails.</p><p>Obstruction is measured as a fraction of horizontal-angle × vertical-angle area, with overlapping silhouettes counted once. Conservative 0.25° horizontal columns enclose each silhouette; narrow obstructions may be slightly overcounted. Pad fitting and removal use local search, not a maximum-count proof.</p><p>Defaults are study assumptions, not surveyed floor or roof heights. Eye height is measured from the pad; include any upper-floor offset here. Terrain, trees, windows and roof shape are not occluders in this building-only model. Terrain still supplies pad references and downhill orientation. Strict side clearance and existing geometry remain unchanged.</p><p><strong>Terrain editing:</strong> each contour line is simplified to at most 10 control points, which you can drag in the terrain panel. OK rebuilds the terrain field from the control lines (inverse-distance-squared weighting), recalculates every pad reference and downhill view, and recomputes all arrangements from the current settings. Elevation labels stay fixed; dragging a line never changes its labelled height.</p></details><div id="terrainPanel" hidden><div class="terrain-box"><div class="terrain-head"><h2>Edit terrain</h2><small class="muted">Drag the round control points (max 10 per line). Lines keep their labelled elevation.</small><span style="flex:1"></span><button id="terrainReset">Reset lines</button><button id="terrainCancel">Cancel</button><button id="terrainOk" class="primary">OK — recalculate buildings</button></div><p id="terrainHint" class="legend">Selected line: none — click a line to select it. Drag points to reshape it.</p><div class="terrain-body"><div id="terrainSvg"></div></div></div></div><div id="terrainTip" class="terrain-tip" hidden></div><div id="hover" hidden></div></main>
 <script>/* Conservative angular-area visibility for vertical footprint extrusions.
@@ -141,12 +141,16 @@ const TerrainEdit=(()=>{
   const m=Math.hypot(gx,gy);
   if(!Number.isFinite(m)||m<1e-4)return fallback?fallback.slice():[0,1];
   return [-gx/m,-gy/m];}
- function apply(data,lines){
+ function apply(data,lines,perpTol=0){
   const pts=samples(lines);
   return data.layouts.map(l=>({...l,units:l.units.map(u=>{
    const view=downhill(u.center,pts,u.view);
    // Coupled orientation: rotate the footprint with the view so the long axis stays
    // perpendicular to the local contour, facing downhill (mandatory planning rule).
+   // Villas already within perpTol of the new downhill keep their orientation —
+   // rotation beyond the acceptable angle is unnecessary disturbance.
+   const err=Math.acos(Math.max(-1,Math.min(1,u.view[0]*view[0]+u.view[1]*view[1])))*180/Math.PI;
+   if(!Number.isFinite(err)||(perpTol>0&&err<=perpTol))return {...u,reference:elevation(u.center[0],u.center[1],pts)};
    const ang=Math.atan2(u.view[0]*view[1]-u.view[1]*view[0],u.view[0]*view[0]+u.view[1]*view[1]);
    if(!Number.isFinite(ang)||Math.abs(ang)<1e-6)return {...u,view,reference:elevation(u.center[0],u.center[1],pts)};
    const c=Math.cos(ang),s=Math.sin(ang);
@@ -161,6 +165,26 @@ const TerrainEdit=(()=>{
    const dot=Math.max(-1,Math.min(1,v0[0]*v1[0]+v0[1]*v1[1]));
    if(Math.acos(dot)*180/Math.PI>0.5)rotated++;}));
   return {maxShift,rotated};}
+ /* Landmass change: cut/fill volume between the shipped terrain and the edited terrain.
+   Integrates (editedZ - originalZ) over a regular grid clipped to the site boundary.
+   Metres³; cut = excavation, fill = added ground. */
+ function polyArea(poly){let a=0;for(let i=0,j=poly.length-1;i<poly.length;j=i++)a+=(poly[j][0]+poly[i][0])*(poly[j][1]-poly[i][1]);return a/2;}
+ function pointInPoly(p,poly){let inside=false;
+  for(let i=0,j=poly.length-1;i<poly.length;j=i++){
+   const xi=poly[i][0],yi=poly[i][1],xj=poly[j][0],yj=poly[j][1];
+   if(((yi>p[1])!==(yj>p[1]))&&(p[0]<(xj-xi)*(p[1]-yi)/(yj-yi)+xi))inside=!inside;}
+  return inside;}
+ function volume(originalLines,editedLines,boundary,step=4){
+  const oPts=samples(originalLines),ePts=samples(editedLines);
+  const xs=boundary.map(p=>p[0]),ys=boundary.map(p=>p[1]);
+  const x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys);
+  let cut=0,fill=0,cells=0;
+  for(let x=x0+step/2;x<x1;x+=step)for(let y=y0+step/2;y<y1;y+=step){
+   if(!(pointInPoly([x,y],boundary)||pointInPoly([x-step/2,y-step/2],boundary)||pointInPoly([x+step/2,y-step/2],boundary)||pointInPoly([x+step/2,y+step/2],boundary)||pointInPoly([x-step/2,y+step/2],boundary)))continue;
+   const dz=elevation(x,y,ePts)-elevation(x,y,oPts);
+   if(dz<0)cut-=dz*step*step;else fill+=dz*step*step;
+   cells++;}
+  return {cut,fill,net:fill-cut,area:cells*step*step,step,siteArea:Math.abs(polyArea(boundary))};}
  /* Live geometry checks on the CURRENT (possibly rotated) footprints.
     polyDist: minimum distance between two convex polygons (0 if overlapping). */
  function segSeg(a,b,c,d){function cross(o,a,b){return (a[0]-o[0])*(b[1]-o[1])-(a[1]-o[1])*(b[0]-o[0]);}
@@ -177,23 +201,112 @@ const TerrainEdit=(()=>{
   for(let k=0;k<p1.length;k++)best=Math.min(best,ptPolyDist(p1[k],p2));
   for(let k=0;k<p2.length;k++)best=Math.min(best,ptPolyDist(p2[k],p1));
   return best;}
- function pointInPoly(p,poly){let inside=false;
-  for(let i=0,j=poly.length-1;i<poly.length;j=i++){
-   const xi=poly[i][0],yi=poly[i][1],xj=poly[j][0],yj=poly[j][1];
-   if(((yi>p[1])!==(yj>p[1]))&&(p[0]<(xj-xi)*(p[1]-yi)/(yj-yi)+xi))inside=!inside;}
-  return inside;}
  const SIDE_GAP=3;
- function geomCheck(l,boundary,active=null){
+ function geomCheck(l,boundary,active=null,sideGap=SIDE_GAP){
   const act=active||l.units.map(()=>true);
   const issues=[],conflicts=[];
   for(let i=0;i<l.units.length;i++)for(let j=i+1;j<l.units.length;j++){
-   if(act[i]&&act[j]&&polyDist(l.units[i].points,l.units[j].points)<SIDE_GAP-1e-6){conflicts.push([i,j]);issues.push({type:'clearance',i,j});}}
+   if(act[i]&&act[j]&&polyDist(l.units[i].points,l.units[j].points)<sideGap-1e-6){conflicts.push([i,j]);issues.push({type:'clearance',i,j});}}
   if(boundary)for(let i=0;i<l.units.length;i++){
    if(!act[i])continue;
    const out=l.units[i].points.some(p=>!pointInPoly(p,boundary));
    if(out){issues.push({type:'boundary',i});}}
   return {conflicts,issues,ok:!issues.length};}
- return {MAX,simplify,buildFromContours,samples,elevation,downhill,apply,diff,polyDist,pointInPoly,geomCheck,SIDE_GAP};
+ /* Orientation deviation of a footprint's view from the terrain downhill, in degrees. */
+ function orientationError(u,pts){
+  const ideal=downhill(u.center,pts,u.view);
+  const dot=Math.max(-1,Math.min(1,u.view[0]*ideal[0]+u.view[1]*ideal[1]));
+  return Math.acos(dot)*180/Math.PI;}
+ /* Start fitting: MOVEMENT-ONLY legalization — slide villas along facade/view axes to
+   clear clearance/boundary conflicts, then shrink movements. Orientation is NOT touched
+   here (that is terrain-OK's job; re-running it here would duplicate the move). Removal
+   is NOT done here — ghosting stays with the view solver.
+   cfg: sideGap (m), maxMove (m). Returns new layout units + move log. Every accepted
+   move strictly reduces the total issue count, so fitting never worsens the layout. */
+ function fitLayout(l,boundary,pts,cfg={}){
+  const sideGap=cfg.sideGap??SIDE_GAP,maxMove=cfg.maxMove??12;
+  const units=l.units.map(u=>({...u,points:u.points.map(p=>p.slice()),center:u.center.slice()}));
+  const moves=units.map(()=>({dx:0,dy:0,rot:0}));
+  const centre=u=>u.points.reduce((a,p)=>[a[0]+p[0],a[1]+p[1]],[0,0]).map(v=>v/u.points.length);
+  const live=()=>geomCheck({units},boundary,units.map(()=>true),sideGap);
+  // Conflict + boundary repair in one loop: every accepted move must strictly
+  // reduce the total issue count, so fitting never makes the layout worse.
+  const issueCount=()=>{const g=live();return g.conflicts.length+g.issues.length;};
+  for(let pass=0;pass<80;pass++){
+   const g=live();
+   if(!g.conflicts.length&&!g.issues.length)break;
+   let repaired=false;
+   const pairs=[...g.conflicts];
+   const boundaryIdx=g.issues.filter(x=>x.type==='boundary').map(x=>x.i);
+   // boundary villas slide inward along every axis direction
+   for(const a of boundaryIdx){
+    const u=units[a];
+    const v=u.view,axis=[v[1],-v[0]];
+    const c=centre(u),home=l.units[a].center;
+    const inward=[[home[0]-c[0],home[1]-c[1]],[v[0],v[1]],[-v[0],-v[1]],[axis[0],axis[1]],[-axis[0],-axis[1]]];
+    let fixed=false;
+    for(const [ux,uy] of inward){
+     const m=Math.hypot(ux,uy);if(m<1e-9)continue;
+     for(const step of [4,2,1,.5]){
+      const dx=ux/m*step,dy=uy/m*step;
+      const total=Math.hypot(moves[a].dx+dx,moves[a].dy+dy);
+      if(total>maxMove)continue;
+      const trial=units.map((q,k)=>k===a?{...u,center:[u.center[0]+dx,u.center[1]+dy],points:u.points.map(p=>[p[0]+dx,p[1]+dy])}:q);
+      const tg=geomCheck({units:trial},boundary,trial.map(()=>true),sideGap);
+      if(tg.conflicts.length+tg.issues.length<issueCount()){
+       units[a]=trial[a];moves[a].dx+=dx;moves[a].dy+=dy;repaired=true;fixed=true;break;
+      }
+     }
+     if(fixed)break;
+    }
+    if(repaired)break;
+   }
+   if(repaired)continue;
+   // clearance pairs: slide the villa whose facade axis points away from the other
+   for(const [i,j] of pairs){
+    const before=issueCount();
+    for(const [a,b] of [[i,j],[j,i]]){
+     const u=units[a],other=units[b];
+     // try all four slide directions (facade axis and view axis, both ways)
+     const v=u.view,axis=[v[1],-v[0]];
+     const dirs=[[axis[0],axis[1]],[-axis[0],-axis[1]],[v[0],v[1]],[-v[0],-v[1]]];
+     for(const [ux,uy] of dirs){
+      for(const step of [4,2,1,.5]){
+       const dx=ux*step,dy=uy*step;
+       const total=Math.hypot(moves[a].dx+dx,moves[a].dy+dy);
+       if(total>maxMove)continue;
+       const trial=units.map((q,k)=>k===a?{...u,center:[u.center[0]+dx,u.center[1]+dy],points:u.points.map(p=>[p[0]+dx,p[1]+dy])}:q);
+       const tc=geomCheck({units:trial},boundary,trial.map(()=>true),sideGap);
+       if(tc.conflicts.length+tc.issues.length<before){
+        units[a]=trial[a];moves[a].dx+=dx;moves[a].dy+=dy;repaired=true;break;
+       }
+      }
+      if(repaired)break;
+     }
+     if(repaired)break;
+    }
+    if(repaired)break;
+   }
+   if(!repaired)break;
+  }
+  // 4. Shrinking: once legal, halve each remaining move while legality holds
+  for(let round=0;round<6;round++){
+   let any=false;
+   units.forEach((u,i)=>{
+    const m=moves[i];if(Math.hypot(m.dx,m.dy)<.05)return;
+    const dx=m.dx/2,dy=m.dy/2;
+    const trial=units.map((q,k)=>k===i?{...q,center:[q.center[0]-dx,q.center[1]-dy],points:q.points.map(p=>[p[0]-dx,p[1]-dy])}:q);
+    const gg=geomCheck({units:trial},boundary,trial.map(()=>true),sideGap);
+    if(!gg.conflicts.length&&!gg.issues.length){units[i]=trial[i];m.dx-=dx;m.dy-=dy;any=true;}
+   });
+   if(!any)break;
+  }
+  const reference=units.map(u=>elevation(u.center[0],u.center[1],pts));
+  const final=live();
+  return {units:units.map((u,i)=>({...u,reference:reference[i]})),moves,
+          remaining:final.issues,ok:!final.issues.length};
+ }
+ return {MAX,simplify,buildFromContours,samples,elevation,downhill,apply,diff,volume,polyDist,pointInPoly,geomCheck,orientationError,fitLayout,SIDE_GAP};
 })();
 
 
@@ -317,31 +430,56 @@ $('terrainCancel').onclick=terrainClose;
 $('terrainReset').onclick=terrainReset;
 $('terrainOk').onclick=()=>{
  if(busy)return;
+ // OK = save terrain and close, nothing else. Rotation to the new downhill happens
+ // in Planar fitting; view recalculation in 3D view fitting. One thing is one thing.
  const lines=JSON.parse(JSON.stringify(terrainLines));
- const nextLayouts=TerrainEdit.apply(data,lines);
- let maxShift=0,rotated=0;
+ data.contours=data.contours.map((c,i)=>({...c,points:lines[i].controls.map(p=>p.slice())}));
+ const vol=TerrainEdit.volume(TerrainEdit.buildFromContours(terrainOriginal),lines,data.boundary);
+ terrainClose();
+ $('landmass').textContent=`Landmass change vs shipped terrain: +${vol.fill.toFixed(0)} m³ added · −${vol.cut.toFixed(0)} m³ removed · net ${(vol.net>=0?'+':'')}${vol.net.toFixed(0)} m³ — saved. Use Planar fitting to adapt the villas, then 3D view fitting.`;
+ $('action-message').textContent='Terrain saved.';
+};
+/* Planar fitting: reorient villas to the (new) terrain downhill beyond the tolerance,
+   slide villas to clear clearance/boundary conflicts, shrink movements, and remove/
+   reinsert villas that cannot be legalized. One stage of the two-stage fitting. */
+let fittingBusy=false;
+$('startFitting').onclick=()=>{
+ if(fittingBusy||busy)return;
+ fittingBusy=true;$('startFitting').disabled=true;
+ const perpTol=Math.max(0,Number($('perpTol').value)||0);
+ const reoriented=TerrainEdit.apply(data,TerrainEdit.buildFromContours(data.contours),perpTol);
+ let rotated=0;
  data.layouts.forEach((l,li)=>l.units.forEach((u,i)=>{
-  maxShift=Math.max(maxShift,Math.abs(nextLayouts[li].units[i].reference-u.reference));
-  const v0=u.view,v1=nextLayouts[li].units[i].view,ang=Math.acos(Math.max(-1,Math.min(1,v0[0]*v1[0]+v0[1]*v1[1])))*180/Math.PI;
+  const v0=u.view,v1=reoriented[li].units[i].view,ang=Math.acos(Math.max(-1,Math.min(1,v0[0]*v1[0]+v0[1]*v1[1])))*180/Math.PI;
   if(ang>0.5)rotated++;
  }));
- data.layouts=nextLayouts;
- // Live geometry re-check on the ROTATED footprints: 3 m side clearance + boundary containment.
- let geomIssues=0;
- data.layouts.forEach(l=>{
-  const g=TerrainEdit.geomCheck(l,data.boundary);
-  l.conflicts=g.conflicts;
-  l.outside=g.issues.filter(x=>x.type==='boundary').map(x=>x.i);
-  geomIssues+=g.conflicts.length+l.outside.length;
- });
- // Persist the edited control lines so reopening the panel (or a second OK) keeps the edited terrain.
- data.contours=data.contours.map((c,i)=>({...c,points:lines[i].controls.map(p=>p.slice())}));
- terrainClose();
+ data.layouts=reoriented;
  const l=data.layouts[index];
- active=l.units.map(()=>true);heldOff=[];changes=[];selected=0;
- state=View3D.inspect(l,active,l.units.map(u=>u.reference),rules);
- run('reduce',settings());
- $('action-message').textContent=`Terrain updated: pads shifted up to ${maxShift.toFixed(1)} m, ${rotated} views re-aimed`+(geomIssues?`, ${geomIssues} clearance/boundary conflicts found (villas will be auto-ghosted)`:'')+`. Recalculating…`;
+ const pts=TerrainEdit.samples(TerrainEdit.buildFromContours(data.contours));
+ const cfg={sideGap:Number($('sideGap').value)||3,maxMove:12};
+ const beforeIssues=TerrainEdit.geomCheck(l,data.boundary,l.units.map(()=>true),cfg.sideGap);
+ const fit=TerrainEdit.fitLayout(l,data.boundary,pts,cfg);
+ data.layouts[index]={...l,units:fit.units,conflicts:[],outside:[]};
+ // Stage B: refresh pad references for the moved villas; geometry issues that cannot
+ // be moved away become ghosts (removal), which 3D view fitting can reinsert.
+ let removed=0;
+ if(fit.remaining.length){
+  const bad=new Set(fit.remaining.map(x=>x.i));
+  removed=bad.size;
+ }
+ const movedCount=fit.moves.filter(m=>Math.hypot(m.dx,m.dy)>0.05).length;
+ const maxMoved=Math.max(0,...fit.moves.map(m=>Math.hypot(m.dx,m.dy)));
+ // Mark unresolved villas as ghosts so the plan shown is legal.
+ if(removed){
+  const bad=new Set(fit.remaining.map(x=>x.i));
+  fit.units.forEach((u,i)=>u.active=bad.has(i)?false:(u.active!==false));
+ }
+ active=data.layouts[index].units.map(u=>u.active!==false);
+ heldOff=fit.remaining.map(x=>x.i);changes=[];selected=0;
+ state=View3D.inspect(data.layouts[index],active,fit.units.map(u=>u.reference),rules);
+ draw();
+ fittingBusy=false;$('startFitting').disabled=false;
+ $('action-message').textContent=`Planar fitting (${data.layouts[index].name}): reoriented ${rotated} to terrain (±${perpTol}°), moved ${movedCount} villas (max ${maxMoved.toFixed(1)} m), ${removed} ghosted as unresolvable. Clearance ≥${cfg.sideGap} m.`+(fit.remaining.length?' Villas can be re-fitted in 3D view fitting.':' All footprint, boundary and clearance constraints pass.');
 };
 $('export').onclick=async()=>{try{const plan=VillaPresentation.exportPlan(data,data.layouts[index],active,state.valid),blob=new Blob([plan.svg.replace('</svg>',`<text x="80" y="76" font-size="16" font-family="Arial">3D view: eye ${rules.eye} m / buildings ${rules.height} m / vertical ${rules.bottom} to ${rules.top} degrees / clear ${rules.clear*100}% / central ${rules.centralClear*100}%</text></svg>`)],{type:'image/svg+xml'}),url=URL.createObjectURL(blob),im=new Image();await new Promise((resolve,reject)=>{im.onload=resolve;im.onerror=reject;im.src=url;});const c=document.createElement('canvas');c.width=plan.width;c.height=plan.height;c.getContext('2d').drawImage(im,0,0);URL.revokeObjectURL(url);const png=await new Promise(resolve=>c.toBlob(resolve,'image/png')),link=document.createElement('a'),out=URL.createObjectURL(png);link.href=out;link.download=data.layouts[index].name+'-3d-'+active.filter(Boolean).length+'.png';link.click();setTimeout(()=>URL.revokeObjectURL(out),1000);}catch(e){$('status').textContent='Export failed: '+e.message;}};
 reset();
