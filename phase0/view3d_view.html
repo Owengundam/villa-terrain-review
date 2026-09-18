@@ -132,10 +132,13 @@ $('startFitting').onclick=()=>{
  data.layouts=reoriented;
  const l=data.layouts[index];
  const pts=TerrainEdit.samples(TerrainEdit.buildFromContours(data.contours));
- const cfg={sideGap:Number($('sideGap').value)||3,maxMove:12};
+ const cfg={sideGap:Number($('sideGap').value)||3,maxMove:12,perpTol};
  const beforeIssues=TerrainEdit.geomCheck(l,data.boundary,l.units.map(()=>true),cfg.sideGap);
  const fit=TerrainEdit.fitLayout(l,data.boundary,pts,cfg);
  data.layouts[index]={...l,units:fit.units,conflicts:[],outside:[]};
+ // Planar fitting reorients twice: once with the global apply() above, and once inside
+ // fitLayout after moving (a slide across contours changes the local downhill).
+ const reRotated=fit.moves.filter(m=>Math.abs(m.rot)>1e-4).length;
  // Stage B: refresh pad references for the moved villas; geometry issues that cannot
  // be moved away become ghosts (removal), which 3D view fitting can reinsert.
  let removed=0;
@@ -155,7 +158,7 @@ $('startFitting').onclick=()=>{
  state=View3D.inspect(data.layouts[index],active,fit.units.map(u=>u.reference),rules);
  draw();
  fittingBusy=false;$('startFitting').disabled=false;
- $('action-message').textContent=`Planar fitting (${data.layouts[index].name}): reoriented ${rotated} to terrain (±${perpTol}°), moved ${movedCount} villas (max ${maxMoved.toFixed(1)} m), ${removed} ghosted as unresolvable. Clearance ≥${cfg.sideGap} m.`+(fit.remaining.length?' Villas can be re-fitted in 3D view fitting.':' All footprint, boundary and clearance constraints pass.');
+ $('action-message').textContent=`Planar fitting (${data.layouts[index].name}): reoriented ${rotated} to terrain (±${perpTol}°; ${reRotated} re-aimed after moving), moved ${movedCount} villas (max ${maxMoved.toFixed(1)} m), ${removed} ghosted as unresolvable. Clearance ≥${cfg.sideGap} m.`+(fit.remaining.length?' Villas can be re-fitted in 3D view fitting.':' All footprint, boundary and clearance constraints pass.');
 };
 $('export').onclick=async()=>{try{const plan=VillaPresentation.exportPlan(data,data.layouts[index],active,state.valid),blob=new Blob([plan.svg.replace('</svg>',`<text x="80" y="76" font-size="16" font-family="Arial">3D view: eye ${rules.eye} m / buildings ${rules.height} m / vertical ${rules.bottom} to ${rules.top} degrees / clear ${rules.clear*100}% / central ${rules.centralClear*100}%</text></svg>`)],{type:'image/svg+xml'}),url=URL.createObjectURL(blob),im=new Image();await new Promise((resolve,reject)=>{im.onload=resolve;im.onerror=reject;im.src=url;});const c=document.createElement('canvas');c.width=plan.width;c.height=plan.height;c.getContext('2d').drawImage(im,0,0);URL.revokeObjectURL(url);const png=await new Promise(resolve=>c.toBlob(resolve,'image/png')),link=document.createElement('a'),out=URL.createObjectURL(png);link.href=out;link.download=data.layouts[index].name+'-3d-'+active.filter(Boolean).length+'.png';link.click();setTimeout(()=>URL.revokeObjectURL(out),1000);}catch(e){$('status').textContent='Export failed: '+e.message;}};
 reset();

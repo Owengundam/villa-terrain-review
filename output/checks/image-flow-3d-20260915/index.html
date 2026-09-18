@@ -217,14 +217,14 @@ const TerrainEdit=(()=>{
   const ideal=downhill(u.center,pts,u.view);
   const dot=Math.max(-1,Math.min(1,u.view[0]*ideal[0]+u.view[1]*ideal[1]));
   return Math.acos(dot)*180/Math.PI;}
- /* Start fitting: MOVEMENT-ONLY legalization — slide villas along facade/view axes to
-   clear clearance/boundary conflicts, then shrink movements. Orientation is NOT touched
-   here (that is terrain-OK's job; re-running it here would duplicate the move). Removal
-   is NOT done here — ghosting stays with the view solver.
-   cfg: sideGap (m), maxMove (m). Returns new layout units + move log. Every accepted
-   move strictly reduces the total issue count, so fitting never worsens the layout. */
+  /* Start fitting: legalize the arrangement — slide villas along facade/view axes to
+   clear clearance/boundary conflicts, re-aim moved villas to the local downhill at
+   their new centre (a slide across contours can otherwise leave the arrow pointing
+   uphill), then shrink movements. Removal is NOT done here — ghosting stays with the
+   view solver. cfg: sideGap (m), maxMove (m), perpTol (deg). Every accepted change
+   strictly reduces (or keeps) the total issue count, so fitting never worsens it. */
  function fitLayout(l,boundary,pts,cfg={}){
-  const sideGap=cfg.sideGap??SIDE_GAP,maxMove=cfg.maxMove??12;
+  const sideGap=cfg.sideGap??SIDE_GAP,maxMove=cfg.maxMove??12,perpTol=cfg.perpTol??0;
   const units=l.units.map(u=>({...u,points:u.points.map(p=>p.slice()),center:u.center.slice()}));
   const moves=units.map(()=>({dx:0,dy:0,rot:0}));
   const centre=u=>u.points.reduce((a,p)=>[a[0]+p[0],a[1]+p[1]],[0,0]).map(v=>v/u.points.length);
@@ -289,6 +289,24 @@ const TerrainEdit=(()=>{
    }
    if(!repaired)break;
   }
+  // 3. Orientation repair: a moved villa can now sit where its (unchanged) view
+  //    disagrees with the local downhill — even pointing uphill. Re-aim every villa
+  //    beyond perpTol to the downhill at its CURRENT centre; keep the rotation only
+  //    if it does not increase conflicts/boundary issues.
+  const tol=cfg.perpTol??0;
+  units.forEach((u,i)=>{
+   const err=orientationError(u,pts);
+   if(err<=tol)return;
+   const view=downhill(u.center,pts,u.view);
+   const ang=Math.atan2(u.view[0]*view[1]-u.view[1]*view[0],u.view[0]*view[0]+u.view[1]*view[1]);
+   if(!Number.isFinite(ang)||Math.abs(ang)<1e-6)return;
+   const c=Math.cos(ang),s=Math.sin(ang);
+   const rotated={...u,points:u.points.map(p=>{const dx=p[0]-u.center[0],dy=p[1]-u.center[1];return [u.center[0]+dx*c-dy*s,u.center[1]+dx*s+dy*c];}),view,rotation:(u.rotation||0)+ang};
+   const trial=units.map((q,k)=>k===i?rotated:q);
+   const tg=geomCheck({units:trial},boundary,trial.map(()=>true),sideGap);
+   if(tg.conflicts.length+tg.issues.length<=issueCount()){
+    units[i]=rotated;moves[i].rot+=ang;
+   }});
   // 4. Shrinking: once legal, halve each remaining move while legality holds
   for(let round=0;round<6;round++){
    let any=false;
@@ -456,10 +474,13 @@ $('startFitting').onclick=()=>{
  data.layouts=reoriented;
  const l=data.layouts[index];
  const pts=TerrainEdit.samples(TerrainEdit.buildFromContours(data.contours));
- const cfg={sideGap:Number($('sideGap').value)||3,maxMove:12};
+ const cfg={sideGap:Number($('sideGap').value)||3,maxMove:12,perpTol};
  const beforeIssues=TerrainEdit.geomCheck(l,data.boundary,l.units.map(()=>true),cfg.sideGap);
  const fit=TerrainEdit.fitLayout(l,data.boundary,pts,cfg);
  data.layouts[index]={...l,units:fit.units,conflicts:[],outside:[]};
+ // Planar fitting reorients twice: once with the global apply() above, and once inside
+ // fitLayout after moving (a slide across contours changes the local downhill).
+ const reRotated=fit.moves.filter(m=>Math.abs(m.rot)>1e-4).length;
  // Stage B: refresh pad references for the moved villas; geometry issues that cannot
  // be moved away become ghosts (removal), which 3D view fitting can reinsert.
  let removed=0;
@@ -479,7 +500,7 @@ $('startFitting').onclick=()=>{
  state=View3D.inspect(data.layouts[index],active,fit.units.map(u=>u.reference),rules);
  draw();
  fittingBusy=false;$('startFitting').disabled=false;
- $('action-message').textContent=`Planar fitting (${data.layouts[index].name}): reoriented ${rotated} to terrain (±${perpTol}°), moved ${movedCount} villas (max ${maxMoved.toFixed(1)} m), ${removed} ghosted as unresolvable. Clearance ≥${cfg.sideGap} m.`+(fit.remaining.length?' Villas can be re-fitted in 3D view fitting.':' All footprint, boundary and clearance constraints pass.');
+ $('action-message').textContent=`Planar fitting (${data.layouts[index].name}): reoriented ${rotated} to terrain (±${perpTol}°; ${reRotated} re-aimed after moving), moved ${movedCount} villas (max ${maxMoved.toFixed(1)} m), ${removed} ghosted as unresolvable. Clearance ≥${cfg.sideGap} m.`+(fit.remaining.length?' Villas can be re-fitted in 3D view fitting.':' All footprint, boundary and clearance constraints pass.');
 };
 $('export').onclick=async()=>{try{const plan=VillaPresentation.exportPlan(data,data.layouts[index],active,state.valid),blob=new Blob([plan.svg.replace('</svg>',`<text x="80" y="76" font-size="16" font-family="Arial">3D view: eye ${rules.eye} m / buildings ${rules.height} m / vertical ${rules.bottom} to ${rules.top} degrees / clear ${rules.clear*100}% / central ${rules.centralClear*100}%</text></svg>`)],{type:'image/svg+xml'}),url=URL.createObjectURL(blob),im=new Image();await new Promise((resolve,reject)=>{im.onload=resolve;im.onerror=reject;im.src=url;});const c=document.createElement('canvas');c.width=plan.width;c.height=plan.height;c.getContext('2d').drawImage(im,0,0);URL.revokeObjectURL(url);const png=await new Promise(resolve=>c.toBlob(resolve,'image/png')),link=document.createElement('a'),out=URL.createObjectURL(png);link.href=out;link.download=data.layouts[index].name+'-3d-'+active.filter(Boolean).length+'.png';link.click();setTimeout(()=>URL.revokeObjectURL(out),1000);}catch(e){$('status').textContent='Export failed: '+e.message;}};
 reset();
