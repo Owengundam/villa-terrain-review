@@ -26,7 +26,7 @@ const READ=`(()=>{
 const readUp=()=>JSON.parse(run(READ)).filter(r=>r[2]);
 const viewsNow=()=>JSON.parse(run("JSON.stringify(data.layouts[index].units.map(u=>u.view))"));
 
-run("index=2;$('layout').value='2';reset();");
+run("index=2;$('layout').value='2';reset();$('perpTol').value='15';");  // the shipped default
 
 // 1. Terrain OK: saves contours + closes + landmass readout; no rotation, no recalc
 const viewsBefore=viewsNow();
@@ -48,18 +48,18 @@ assert(upBefore.length>0,'scenario must contain uphill arrows to reorient (found
 run("$('startFitting').onclick()");
 const viewsAfter=viewsNow();
 assert(JSON.stringify(viewsAfter)!==JSON.stringify(viewsBefore),'planar fitting reoriented the uphill villas');
-const flipped=new Set();
-viewsBefore.forEach((v,i)=>{if(Math.hypot(v[0]+viewsAfter[i][0],v[1]+viewsAfter[i][1])<1e-9)flipped.add(run(`data.layouts[index].units[${i}].id`));});
-const missed=upBefore.filter(id=>!flipped.has(id));
-assert.equal(missed.length,0,'every definitely-uphill villa must be flipped: '+missed.join(', '));
 const stillUp=readUp().filter(r=>r[1]>=2).map(r=>r[0]);
 assert.equal(stillUp.length,0,'no active villa may still read uphill after fitting: '+stillUp.join(', '));
+// the perpendicularity rule is now a stage action, not a report: tolerance 15° means no
+// ACTIVE villa may end further than that off the local contour normal
+const dev=JSON.parse(run(`JSON.stringify(TerrainEdit.perpReport(data.layouts[index],TerrainEdit.buildFromContours(data.contours),15,data.layouts[index].units.map(u=>u.active!==false)))`));
+assert.equal(dev.count,0,'every active villa must end within ±15° of the local contour normal: '+JSON.stringify(dev));
 assert(element('action-message').textContent.includes('Planar fitting'),'planar fitting reported');
-assert(/reoriented \d+ uphill villa/.test(element('action-message').textContent),'fitting reports the reorientation count');
+assert(/re-aimed \d+ long axis/.test(element('action-message').textContent)&&/faced \d+ uphill villa/.test(element('action-message').textContent),'fitting reports both the axes re-aimed and the uphill villas faced downhill');
 noWorker();
 const g=run("TerrainEdit.geomCheck({units:data.layouts[index].units},data.boundary,data.layouts[index].units.map(u=>u.active!==false),Number($('sideGap').value)||3)");
 assert(g.ok,'post-fitting geometry legal for active villas');
-console.log(`PASS planar fitting: ${upBefore.length} uphill arrow(s) [${upBefore.join(' ')}] flipped, 0 uphill left, geometry legal, no view recalc`);
+console.log(`PASS planar fitting: ${upBefore.length} uphill arrow(s) [${upBefore.join(' ')}] faced downhill, 0 uphill left, all active axes within ±15° of the local normal (worst ${dev.worst.toFixed(1)}°), geometry legal, no view recalc`);
 
 // 3. 3D view fitting naming
 assert(html.includes('>3D view fitting<'),'recalculate button renamed to 3D view fitting');

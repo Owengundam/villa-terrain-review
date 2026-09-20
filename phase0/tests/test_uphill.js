@@ -41,36 +41,41 @@ let flips=0,violations=[],missed=[];
 const pinned={};
 for(const idx of [2,3]){
   const tLayout=Date.now();
-  run(`index=${idx};$('layout').value=String(${idx});reset();`);
+  run(`index=${idx};$('layout').value=String(${idx});reset();$('perpTol').value='15';`);
   const before=views(),voteBefore=new Map(read().filter(r=>r[0]===idx).map(r=>[r[1],r[2]]));
   run("$('startFitting').onclick()");
   const after=views();
+  const now=read().filter(r=>r[0]===idx);
+  const voteAfter=new Map(now.map(r=>[r[1],r[2]]));
+  let rotated=0;
   before[idx].forEach((v,i)=>{
     const id=run(`data.layouts[${idx}].units[${i}].id`);
-    const flipped=Math.hypot(v[0]+after[idx][i][0],v[1]+after[idx][i][1])<1e-9;
-    const vote=voteBefore.get(id);
-    if(idx===2&&['V043','V068','V073','V078'].includes(id))pinned[id]=flipped;
-    if(!flipped)return;
-    flips++;
-    if(vote<=-2)violations.push(`${names[idx]}/${id} (vote ${vote})`);
+    const turned=Math.hypot(v[0]-after[idx][i][0],v[1]-after[idx][i][1])>1e-9;
+    if(turned)rotated++;
+    const b=voteBefore.get(id),a=voteAfter.get(id);
+    if(idx===2&&['V043','V068','V073','V078'].includes(id))pinned[id]={before:b,after:a};
+    // a reversal is the reported bug class: it read downhill and now reads uphill, whatever
+    // combination of flip and rotation produced it
+    if(b<=-2&&a>=2)violations.push(`${names[idx]}/${id} (${b} -> ${a})`);
   });
-  // every definitely-uphill villa of THIS arrangement must be flipped, and none may remain
-  const now=read().filter(r=>r[0]===idx);
-  for(const [li,id,vote] of now)if(vote>=2){
-    const i=run(`data.layouts[${idx}].units.findIndex(u=>u.id==='${id}')`);
-    const flipped=Math.hypot(before[idx][i][0]+after[idx][i][0],before[idx][i][1]+after[idx][i][1])<1e-9;
-    if(!flipped)missed.push(`${names[idx]}/${id}`);
-    if(flipped)violations.push(`${names[idx]}/${id} still reads uphill (vote ${vote}) after being flipped`);
-  }
-  console.log(`INFO ${names[idx]}: flipped ${before[idx].filter((v,i)=>Math.hypot(v[0]+after[idx][i][0],v[1]+after[idx][i][1])<1e-9).length}, definitely-uphill remaining ${now.filter(r=>r[2]>=2&&r[3]).length} (${((Date.now()-tLayout)/1000).toFixed(0)}s)`);
+  // every definitely-uphill villa of THIS arrangement must end up facing downhill
+  for(const [li,id,vote] of now)
+    if(vote>=2&&run(`data.layouts[${idx}].units.find(u=>u.id==='${id}').active!==false`))missed.push(`${names[idx]}/${id} (${vote})`);
+  flips+=rotated;
+  console.log(`INFO ${names[idx]}: re-aimed ${rotated} villa(s), definitely-uphill remaining ${now.filter(r=>r[2]>=2&&r[3]).length} (${((Date.now()-tLayout)/1000).toFixed(0)}s)`);
 }
-console.log(`INFO no-terrain-change flow: ${flips} villa(s) flipped across the arrangements run here in ${((Date.now()-t0)/1000).toFixed(0)}s`);
-assert.deepEqual(pinned,{V043:true,V068:true,V073:false,V078:false},'staggered-2: V043/V068 flipped (were uphill), V073/V078 left alone (were downhill): '+JSON.stringify(pinned));
-console.log('PASS pinned case: staggered-2 V073/V078 not reversed; V043/V068 flipped');
+console.log(`INFO no-terrain-change flow: ${flips} villa(s) re-aimed across the arrangements run here in ${((Date.now()-t0)/1000).toFixed(0)}s`);
+// the reported case, stated as reads: V043/V068 shipped pointing uphill and had to end
+// downhill; V073/V078 shipped fine and had to stay that way
+assert(pinned.V043&&pinned.V043.before>=2&&pinned.V043.after<=1,'V043 must be corrected: '+JSON.stringify(pinned.V043));
+assert(pinned.V068&&pinned.V068.before>=2&&pinned.V068.after<=1,'V068 must be corrected: '+JSON.stringify(pinned.V068));
+assert(pinned.V073&&pinned.V073.before<=1&&pinned.V073.after<=1,'V073 shipped fine and must not be reversed: '+JSON.stringify(pinned.V073));
+assert(pinned.V078&&pinned.V078.before<=1&&pinned.V078.after<=1,'V078 shipped fine and must not be reversed: '+JSON.stringify(pinned.V078));
+console.log('PASS pinned case: staggered-2 V073/V078 still read downhill (votes '+pinned.V073.after+'/'+pinned.V078.after+'); V043/V068 corrected ('+pinned.V043.before+'->'+pinned.V043.after+', '+pinned.V068.before+'->'+pinned.V068.after+')');
 assert.equal(violations.length,0,'no villa the labels call downhill may be reversed, and no flipped villa may still read uphill: '+violations.join(', '));
 console.log('PASS no downhill-reading villa was reversed; every flip lands the arrow downhill');
-assert.equal(missed.length,0,'every definitely-uphill villa must be flipped: '+missed.join(', '));
-console.log('PASS every definitely-uphill villa was flipped');
+assert.equal(missed.length,0,'every definitely-uphill villa must end facing downhill: '+missed.join(', '));
+console.log('PASS every definitely-uphill villa ends facing downhill');
 
 /* --- scenario 2: aggressive terrain edits, then fitting twice (full user flow) */
 const t1=Date.now();

@@ -24,7 +24,7 @@ console.log('PASS volume() responds directionally to the drag');
 
 // ---- fitLayout: shipped layout with generous settings stays put
 const pts=T.samples(lines);
-const fitted=T.fitLayout(report.layouts[0],report.boundary,pts,{sideGap:3,maxMove:12,perpTol:10});
+const fitted=T.fitLayout(report.layouts[0],report.boundary,lines,{sideGap:3,maxMove:12,perpTol:10});
 const moved=fitted.moves.filter(m=>Math.hypot(m.dx,m.dy)>0.05||Math.abs(m.rot)>1e-4).length;
 console.log('INFO shipped layout: reoriented/moved',moved,'of',fitted.units.length,'units; remaining issues:',fitted.remaining.length);
 assert(fitted.units.length===report.layouts[0].units.length,'fitLayout never adds/removes units');
@@ -47,7 +47,7 @@ for(let k=0;k<6&&k<tight.units.length;k++){
  u.points=u.points.map(p=>{const dx=p[0]-u.center[0],dy=p[1]-u.center[1];return [u.center[0]+dx*c-dy*s,u.center[1]+dx*s+dy*c];});
 }
 const beforeG=T.geomCheck(tight,report.boundary,tight.units.map(()=>true),3);
-const fittedTight=T.fitLayout(tight,report.boundary,pts,{sideGap:3,maxMove:12,perpTol:10});
+const fittedTight=T.fitLayout(tight,report.boundary,lines,{sideGap:3,maxMove:12,perpTol:10});
 const afterG=T.geomCheck({units:fittedTight.units},report.boundary,fittedTight.units.map(()=>true),3);
 console.log('INFO forced-rotation test: conflicts before=',beforeG.conflicts.length,'after fit=',afterG.conflicts.length,'boundary before=',beforeG.issues.filter(x=>x.type==='boundary').length,'after=',afterG.issues.filter(x=>x.type==='boundary').length);
 assert(afterG.conflicts.length<=beforeG.conflicts.length,'fitting never increases conflicts');
@@ -56,20 +56,20 @@ const movedT=fittedTight.moves.map(m=>Math.hypot(m.dx,m.dy));
 console.log('PASS fitLayout reduces conflicts (moved',movedT.filter(m=>m>0.05).length,'units, max',Math.max(0,...movedT).toFixed(1),'m)');
 
 // ---- fitLayout: strict sideGap demands more movement than loose
-const strict=T.fitLayout(report.layouts[0],report.boundary,pts,{sideGap:5,maxMove:20,perpTol:10});
-const loose=T.fitLayout(report.layouts[0],report.boundary,pts,{sideGap:2.5,maxMove:20,perpTol:10});
+const strict=T.fitLayout(report.layouts[0],report.boundary,lines,{sideGap:5,maxMove:20,perpTol:10});
+const loose=T.fitLayout(report.layouts[0],report.boundary,lines,{sideGap:2.5,maxMove:20,perpTol:10});
 const strictMoved=strict.moves.filter(m=>Math.hypot(m.dx,m.dy)>0.05).length;
 const looseMoved=loose.moves.filter(m=>Math.hypot(m.dx,m.dy)>0.05).length;
 console.log('INFO sideGap=5 moved',strictMoved,'units; sideGap=2.5 moved',looseMoved,'units');
 assert(strictMoved>=looseMoved,'stricter clearance requires more movement');
 
-// ---- perpTol is NOT consumed by fitLayout: the knob is currently a report threshold
-//      (the perpendicularity rotation is an open decision), so it must not steer fitting.
-//      When a rotation stage lands, replace this with the tolerance assertion.
-const strictO=T.fitLayout(report.layouts[0],report.boundary,pts,{sideGap:3,maxMove:12,perpTol:0});
-const looseO=T.fitLayout(report.layouts[0],report.boundary,pts,{sideGap:3,maxMove:12,perpTol:89});
+// ---- perpTol steers the re-aiming: a tighter tolerance rotates at least as many axes,
+//      and 0° rotates every axis that is not already exactly on the local normal.
+const strictO=T.fitLayout(report.layouts[0],report.boundary,lines,{sideGap:3,maxMove:12,perpTol:0});
+const looseO=T.fitLayout(report.layouts[0],report.boundary,lines,{sideGap:3,maxMove:12,perpTol:89});
 const strictR=strictO.moves.filter(m=>Math.abs(m.rot)>1e-4).length;
 const looseR=looseO.moves.filter(m=>Math.abs(m.rot)>1e-4).length;
-console.log('INFO perpTol=0 reoriented',strictR,'units; perpTol=89 reoriented',looseR,'units — inert by design for now');
-assert.equal(strictR,looseR,'perpTol must not change fitting while no rotation stage exists');
-console.log('PASS sideGap steers the fitting; perpTol is inert (report threshold only, rotation not implemented)');
+console.log('INFO perpTol=0 re-aimed',strictR,'units; perpTol=89 re-aimed',looseR,'units');
+assert(strictR>=looseR,'a tighter tolerance re-aims at least as many axes');
+assert(strictR>0,'a 0° tolerance re-aims axes on the shipped layout');
+console.log('PASS sideGap and perpTol both steer the fitting');

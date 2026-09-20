@@ -84,11 +84,12 @@ const TerrainEdit=(()=>{
   for(const q of pts){const dx=q[0]-p[0],dy=q[1]-p[1],d=dx*dx+dy*dy;if(d<best){best=d;z=q[2];}}
   return z;
  }
- function labelVote(u,pts,distances=[5,10,15,20,25,30,35,40,45]){
+ function labelVote(u,pts,dir,distances=[5,10,15,20,25,30,35,40,45]){
+  const d=dir||u.view;
   let vote=0,used=0;
-  for(const d of distances){
-   const f=nearestZ([u.center[0]+u.view[0]*d,u.center[1]+u.view[1]*d],pts);
-   const b=nearestZ([u.center[0]-u.view[0]*d,u.center[1]-u.view[1]*d],pts);
+  for(const s of distances){
+   const f=nearestZ([u.center[0]+d[0]*s,u.center[1]+d[1]*s],pts);
+   const b=nearestZ([u.center[0]-d[0]*s,u.center[1]-d[1]*s],pts);
    if(f===null||b===null)continue;
    vote+=Math.sign(f-b);used++;
   }
@@ -123,30 +124,77 @@ const TerrainEdit=(()=>{
    points:u.points.map(p=>{const dx=p[0]-u.center[0],dy=p[1]-u.center[1];return [u.center[0]+dx*c-dy*s,u.center[1]+dx*s+dy*c];}),
    rotation:(u.rotation||0)+ang};
  }
- /* Re-aim every villa that points uphill. Flips only — this stage never rotates an axis
-   onto the contour normal (that is what the perpendicular tolerance would gate; see
-   perpReport). A flip that would still leave the arrow uphill is refused. */
- function apply(data,lines){
-  const pts=samples(lines);
+ /* Rigid rotation about the villa centre for any angle: footprint and arrow turn together
+    (coupled orientation), the centre and the reference pad stay put. */
+ function rotateAbout(u,ang){
+  const c=Math.cos(ang),s=Math.sin(ang);
+  return {...u,view:[u.view[0]*c-u.view[1]*s,u.view[0]*s+u.view[1]*c],
+   points:u.points.map(p=>{const dx=p[0]-u.center[0],dy=p[1]-u.center[1];return [u.center[0]+dx*c-dy*s,u.center[1]+dx*s+dy*c];}),
+   rotation:(u.rotation||0)+ang};
+ }
+ /* Local contour frame: flat segment list over the control polylines, and the normal at a
+    point — the direction 90° to the nearest contour segment. The planning rule puts the long
+    axis ON that normal line; which way along it faces downhill is a separate decision. */
+ function lineSegments(lines){
+  const segs=[];
+  for(const l of lines){const p=l.controls||l.points;for(let k=0;k+1<p.length;k++)segs.push({z:l.z,a:p[k],b:p[k+1]});}
+  return segs;
+ }
+ function contourNormalAt(x,y,segs){
+  let best=Infinity,n=null;
+  for(const s of segs){
+   const d=segDist([x,y],s.a,s.b);
+   if(d<best){best=d;const dx=s.b[0]-s.a[0],dy=s.b[1]-s.a[1],m=Math.hypot(dx,dy);if(m>1e-9)n=[-dy/m,dx/m];}
+  }
+  return n;
+ }
+ /* Deviation of the long axis from the local contour normal, in degrees: 0 = the axis lies on
+    the normal (either sense), 90 = the axis runs along the contour. */
+ function axisDeviation(u,n){
+  const dot=Math.max(-1,Math.min(1,Math.abs(u.view[0]*n[0]+u.view[1]*n[1])));
+  return Math.acos(dot)*180/Math.PI;
+ }
+ /* Re-aim the long axis onto the local contour normal when it deviates by more than the
+    perpendicular tolerance: the smallest rotation about the centre that puts the axis on the
+    normal line, sense untouched (that is the flip's business). null = inside tolerance or no
+    contour in reach. */
+ function reaim(u,pts,segs,perpTol){
+  const n=contourNormalAt(u.center[0],u.center[1],segs);
+  if(!n)return null;
+  if(axisDeviation(u,n)<=perpTol+1e-9)return null;
+  const dot=u.view[0]*n[0]+u.view[1]*n[1];
+  const target=dot>=0?n:[-n[0],-n[1]];
+  const ang=Math.atan2(u.view[0]*target[1]-u.view[1]*target[0],Math.max(-1,Math.min(1,u.view[0]*target[0]+u.view[1]*target[1])));
+  return {unit:rotateAbout(u,ang),delta:ang};
+ }
+ /* Re-aim every villa: (a) face uphill arrows downhill — mandatory, a planning rule, not a
+    tolerance; (b) rotate every long axis further than the perpendicular tolerance off the
+    local contour normal onto that normal. Both are rigid about the centre. A flip that would
+    still leave the arrow uphill (degenerate spot) is refused. */
+ function apply(data,lines,perpTol=0){
+  const pts=samples(lines),segs=lineSegments(lines);
   return data.layouts.map(l=>({...l,units:l.units.map(u=>{
-   if(!pointsUphill(u,pts).uphill)return {...u,reference:elevation(u.center[0],u.center[1],pts)};
-   const f=flip(u);
-   const out=pointsUphill(f,pts).uphill?u:f; // degenerate spot: leave the villa as it is
+   let out=u;
+   if(pointsUphill(u,pts).uphill){const f=flip(u);if(!pointsUphill(f,pts).uphill)out=f;}
+   const r=reaim(out,pts,segs,perpTol);
+   if(r)out=r.unit;
    return {...out,reference:elevation(out.center[0],out.center[1],pts)};
   })}));}
- /* How far each ACTIVE arrow sits from its local contour normal, for the perpendicular
-   tolerance: 0° = the axis IS the contour normal (either sense; the uphill sense is the
-   flip's business), 90° = the axis runs along the contour and a flip cannot fix it.
-   Reported, never corrected here. */
+ /* How far each ACTIVE arrow sits from its local contour normal (the same reference reaim
+   aims at: 90° to the nearest contour segment), for the perpendicular tolerance:
+   0° = the axis IS the contour normal (either sense; the uphill sense is the flip's
+   business), 90° = the axis runs along the contour and no rotation level can help.
+   A level-scan reference would be wrong here — at some spots the nearest lower contour lies
+   laterally, up to 90° away from the local normal. */
  function perpReport(layout,lines,tol=0,active){
-  const pts=samples(lines),act=active||layout.units.map(u=>u.active!==false);
+  const segs=lineSegments(lines),act=active||layout.units.map(u=>u.active!==false);
   let count=0,total=0,worst=0;
   layout.units.forEach((u,i)=>{
    if(!act[i])return;
-   const d=levelDownhill(u.center[0],u.center[1],pts);
-   if(!d)return;
+   const n=contourNormalAt(u.center[0],u.center[1],segs);
+   if(!n)return;
    total++;
-   const dev=Math.acos(Math.max(-1,Math.min(1,Math.abs(u.view[0]*d[0]+u.view[1]*d[1]))))*180/Math.PI;
+   const dev=axisDeviation(u,n);
    worst=Math.max(worst,dev);
    if(dev>tol+1e-9)count++;});
   return {count,total,worst};}
@@ -213,24 +261,31 @@ const TerrainEdit=(()=>{
   if(!d)return 0;
   const dot=Math.max(-1,Math.min(1,u.view[0]*d[0]+u.view[1]*d[1]));
   return Math.acos(dot)*180/Math.PI;}
-  /* Start fitting: legalize the arrangement — slide villas along facade/view axes to
-   clear clearance/boundary conflicts, re-aim moved villas to the local downhill at
-   their new centre (a slide across contours can otherwise leave the arrow pointing
-   uphill), then shrink movements. Removal is NOT done here — ghosting stays with the
-   view solver. cfg: sideGap (m), maxMove (m), perpTol (deg). Every accepted change
-   strictly reduces (or keeps) the total issue count, so fitting never worsens it. */
- function fitLayout(l,boundary,pts,cfg={}){
+  /* Start fitting: legalize the arrangement — slide villas along facade/view axes to clear
+   clearance/boundary conflicts, re-aim the villas at their new centres (uphill arrows are
+   faced downhill; long axes further than perpTol off the local contour normal are rotated
+   onto it), then shrink movements and re-aim once more at the final positions. Removal is
+   NOT done here — ghosting stays with the view solver. cfg: sideGap (m), maxMove (m),
+   perpTol (deg). Every accepted slide strictly reduces the total issue count, so the slide
+   phase never makes the layout worse; flips and rotations are mandatory rule changes, and
+   whatever they break is either repaired by an immediate slide round or reported in
+   `remaining` for the page to ghost. `lines` is the contour control-line list (the same
+   input apply() takes); samples and the contour frame are derived from it. */
+ function fitLayout(l,boundary,lines,cfg={}){
   const sideGap=cfg.sideGap??SIDE_GAP,maxMove=cfg.maxMove??12,perpTol=cfg.perpTol??0;
+  const pts=samples(lines),segs=lineSegments(lines);
   const units=l.units.map(u=>({...u,points:u.points.map(p=>p.slice()),center:u.center.slice()}));
   const moves=units.map(()=>({dx:0,dy:0,rot:0}));
   const centre=u=>u.points.reduce((a,p)=>[a[0]+p[0],a[1]+p[1]],[0,0]).map(v=>v/u.points.length);
   const live=()=>geomCheck({units},boundary,units.map(()=>true),sideGap);
   // Conflict + boundary repair in one loop: every accepted move must strictly
   // reduce the total issue count, so fitting never makes the layout worse.
-  for(let pass=0;pass<80;pass++){
-   const g=live();
-   if(!g.conflicts.length&&!g.issues.length)break;
-   let repaired=false;
+  const slideRepair=()=>{
+   let anyRepaired=false;
+   for(let pass=0;pass<80;pass++){
+    const g=live();
+    if(!g.conflicts.length&&!g.issues.length)break;
+    let repaired=false;
    const pairs=[...g.conflicts];
    const boundaryIdx=g.issues.filter(x=>x.type==='boundary').map(x=>x.i);
    // Baseline issue count for this pass. Every candidate below is judged against it, and
@@ -286,52 +341,81 @@ const TerrainEdit=(()=>{
     if(repaired)break;
    }
    if(!repaired)break;
+   anyRepaired=true;
   }
-  // 3. Orientation repair: a moved villa can now sit where its (unchanged) view
-  //    disagrees with the local downhill — even pointing uphill. Authority is the
-  //    contour LEVEL scan (see levelDownhill): the point field dips between lines and
-  //    reversing a correctly-aimed villa is exactly the bug this replaces.
-  units.forEach((u,i)=>{
-   if(!pointsUphill(u,pts).uphill)return;
-   const rotated=flip(u);
-   if(pointsUphill(rotated,pts).uphill)return; // degenerate spot: leave it as it is
-   // Flipping an UPHILL villa is mandatory (planning rule), even if it introduces
-   // clearance conflicts — those are then resolved by another slide-repair pass below.
-   units[i]=rotated;moves[i].rot+=Math.PI;
-   const tg=geomCheck({units},boundary,units.map(()=>true),sideGap);
-   if(tg.conflicts.length||tg.issues.length){
-    // flip created conflicts: run one more slide-repair round immediately
-    for(const pass=0;pass<40;pass++){
-     const gg=geomCheck({units},boundary,units.map(()=>true),sideGap);
-     if(!gg.conflicts.length&&!gg.issues.length)break;
-     let fixedOne=false;
-     // per-pass baseline, not per candidate: `units` is unchanged until a move is accepted
-     // and every loop breaks immediately after that
-     const b2=gg.conflicts.length+gg.issues.length;
-     for(const [pi,pj] of gg.conflicts){
-      for(const [aa] of [[pi],[pj]]){
-       const uu=units[aa],vv=uu.view,ax=[vv[1],-vv[0]];
-       const dirs=[[ax[0],ax[1]],[-ax[0],-ax[1]],[vv[0],vv[1]],[-vv[0],-vv[1]]];
-       for(const [ux,uy] of dirs){
-        for(const step of [4,2,1,.5]){
-         const dx2=ux*step,dy2=uy*step;
-         if(Math.hypot(moves[aa].dx+dx2,moves[aa].dy+dy2)>maxMove)continue;
-         const tr2=units.map((q,k)=>k===aa?{...uu,center:[uu.center[0]+dx2,uu.center[1]+dy2],points:uu.points.map(p=>[p[0]+dx2,p[1]+dy2])}:q);
-         const tg2=geomCheck({units:tr2},boundary,tr2.map(()=>true),sideGap);
-         if(tg2.conflicts.length+tg2.issues.length<b2){
-          units[aa]=tr2[aa];moves[aa].dx+=dx2;moves[aa].dy+=dy2;fixedOne=true;break;
+  return anyRepaired;
+ };
+  // 3. Orientation repair at the villas' CURRENT positions: a moved villa can sit where its
+  //    (unchanged) view disagrees with the local contour frame. Two actions, both rigid about
+  //    the centre:
+  //      (a) face an uphill arrow downhill — a mandatory planning rule, not a tolerance;
+  //      (b) rotate a long axis further than perpTol off the local contour normal onto it.
+  //    Either can create clearance conflicts, so every change is followed by an immediate
+  //    slide-repair round; villas that still cannot be legalised are reported in `remaining`
+  //    and the page ghosts them.
+  const reorientUnits=()=>{
+   let changed=0;
+   units.forEach((u,i)=>{
+    let moved=false;
+    if(pointsUphill(u,pts).uphill){
+     const rotated=flip(u);
+     if(!pointsUphill(rotated,pts).uphill){units[i]=rotated;moves[i].rot+=Math.PI;moved=true;} // degenerate spot: leave it
+    }
+    const r=reaim(units[i],pts,segs,perpTol);
+    if(r){units[i]=r.unit;moves[i].rot+=r.delta;moved=true;}
+    if(!moved)return;
+    changed++;
+    const tg=geomCheck({units},boundary,units.map(()=>true),sideGap);
+    if(tg.conflicts.length||tg.issues.length){
+     // the flip/rotation created conflicts: run one more slide-repair round immediately
+     for(let pass=0;pass<40;pass++){
+      const gg=geomCheck({units},boundary,units.map(()=>true),sideGap);
+      if(!gg.conflicts.length&&!gg.issues.length)break;
+      let fixedOne=false;
+      // per-pass baseline, not per candidate: `units` is unchanged until a move is accepted
+      // and every loop breaks immediately after that
+      const b2=gg.conflicts.length+gg.issues.length;
+      for(const [pi,pj] of gg.conflicts){
+       for(const [aa] of [[pi],[pj]]){
+        const uu=units[aa],vv=uu.view,ax=[vv[1],-vv[0]];
+        const dirs=[[ax[0],ax[1]],[-ax[0],-ax[1]],[vv[0],vv[1]],[-vv[0],-vv[1]]];
+        for(const [ux,uy] of dirs){
+         for(const step of [4,2,1,.5]){
+          const dx2=ux*step,dy2=uy*step;
+          if(Math.hypot(moves[aa].dx+dx2,moves[aa].dy+dy2)>maxMove)continue;
+          const tr2=units.map((q,k)=>k===aa?{...uu,center:[uu.center[0]+dx2,uu.center[1]+dy2],points:uu.points.map(p=>[p[0]+dx2,p[1]+dy2])}:q);
+          const tg2=geomCheck({units:tr2},boundary,tr2.map(()=>true),sideGap);
+          if(tg2.conflicts.length+tg2.issues.length<b2){
+           units[aa]=tr2[aa];moves[aa].dx+=dx2;moves[aa].dy+=dy2;fixedOne=true;break;
+          }
          }
+         if(fixedOne)break;
         }
         if(fixedOne)break;
        }
        if(fixedOne)break;
       }
-      if(fixedOne)break;
+      if(!fixedOne)break;
      }
-     if(!fixedOne)break;
     }
-   }
-  });
+   });
+   return changed;
+  };
+  // 2. Alternate the two phases to convergence: aiming a villa at its contour normal can
+  //    break clearance, and sliding it to repair clearance moves it off the normal again, so
+  //    a single pass of each leaves a residual (11 of 19 active free-layout villas stayed
+  //    outside ±15° with fixed two-pass ordering). Bounded rounds; whatever is still off the
+  //    normal after them is reported (perpReport) rather than hidden.
+  slideRepair();
+  let reorientedTotal=0;
+  for(let round=0;round<4;round++){
+   const changed=reorientUnits();
+   reorientedTotal+=changed;
+   const g=live();
+   if(!g.conflicts.length&&!g.issues.length)break;   // settled
+   if(!slideRepair())break;                          // nothing moved: no point re-aiming again
+   if(!changed)break;
+  }
   // 4. Shrinking: once legal, halve each remaining move while legality holds
   for(let round=0;round<6;round++){
    let any=false;
@@ -344,11 +428,15 @@ const TerrainEdit=(()=>{
    });
    if(!any)break;
   }
+  // 5. Re-aim at the destination: shrinking translated villas again, and a slide across
+  //    contours changes the local contour frame (move ⇒ re-aim, never aim-then-move-and-forget).
+  reorientedTotal+=reorientUnits();
   const reference=units.map(u=>elevation(u.center[0],u.center[1],pts));
   const final=live();
   return {units:units.map((u,i)=>({...u,reference:reference[i]})),moves,
+          reoriented:reorientedTotal,
           remaining:final.issues,ok:!final.issues.length};
  }
- return {MAX,simplify,buildFromContours,samples,elevation,downhill,levelDownhill,nearestZ,labelVote,pointsUphill,flip,apply,perpReport,diff,volume,polyDist,pointInPoly,geomCheck,orientationError,fitLayout,SIDE_GAP};
+ return {MAX,simplify,buildFromContours,samples,elevation,downhill,levelDownhill,nearestZ,labelVote,pointsUphill,flip,rotateAbout,lineSegments,contourNormalAt,axisDeviation,reaim,apply,perpReport,diff,volume,polyDist,pointInPoly,geomCheck,orientationError,fitLayout,SIDE_GAP};
 })();
 if(typeof module!=='undefined')module.exports=TerrainEdit;

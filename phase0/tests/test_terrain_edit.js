@@ -145,3 +145,38 @@ assert.equal(typeof tieDecision.uphill,'boolean','tied labels still yield a deci
 const consensus=tieDecision.level===null?tieDecision.drop:(tieDecision.level&&tieDecision.drop);
 assert.equal(tieDecision.uphill,consensus,'tied labels decide by the physical consensus (level AND drop, drop alone if no lower level): level='+tieDecision.level+' drop='+tieDecision.drop);
 console.log('PASS orientation: tied labels (vote '+tieVote.vote+') fall back to level+drop -> '+tieDecision.uphill+' (level '+tieDecision.level+', drop '+tieDecision.drop+')');
+
+// 10. Perpendicularity: the axis is rotated onto the local contour normal beyond tolerance,
+//     rigidly about the centre, and the sense (downhill direction) is left to the flip.
+const segs=T.lineSegments(sLines);
+const nrm=T.contourNormalAt(200,30,segs);
+assert(Math.hypot(Math.abs(nrm[0]),Math.abs(nrm[1])-1)<1e-9,'nearest-segment normal is a unit vector');
+assert(Math.abs(nrm[0])<1e-9,'horizontal contours give a vertical normal');
+const skew=mk([200,30],[Math.sin(Math.PI/6),Math.cos(Math.PI/6)]);   // 30° off the normal
+assert(Math.abs(T.axisDeviation(skew,nrm)-30)<1e-6,'30° skew measured as 30°: '+T.axisDeviation(skew,nrm).toFixed(2));
+assert.equal(T.reaim(skew,sPts,segs,45),null,'inside a 45° tolerance nothing rotates');
+const aimed=T.reaim(skew,sPts,segs,15);
+assert(aimed,'outside a 15° tolerance the axis is re-aimed');
+assert(Math.abs(T.axisDeviation(aimed.unit,nrm))<1e-6,'re-aimed axis lies on the normal');
+assert(Math.abs(aimed.unit.view[0])<1e-6&&Math.abs(aimed.unit.view[1]-1)<1e-6,'view lands on the normal, sense preserved');
+assert(Math.abs(aimed.delta-Math.PI/6)<1e-9,'rotation is the smallest angle onto the normal');
+assert(Math.abs(aimed.unit.center[0]-skew.center[0])<1e-9&&Math.abs(aimed.unit.center[1]-skew.center[1])<1e-9,'centre unchanged');
+skew.points.forEach((p,i)=>{const r0=Math.hypot(p[0]-skew.center[0],p[1]-skew.center[1]),r1=Math.hypot(aimed.unit.points[i][0]-skew.center[0],aimed.unit.points[i][1]-skew.center[1]);assert(Math.abs(r0-r1)<1e-9,'re-aim is a rigid rotation about the centre');});
+const reversed=mk([200,30],[-Math.sin(Math.PI/6),-Math.cos(Math.PI/6)]);
+const aimedBack=T.reaim(reversed,sPts,segs,15);
+assert(aimedBack&&aimedBack.unit.view[1]<0,'the opposite sense is kept — re-aiming never flips the arrow');
+console.log('PASS perpendicularity: axis rotated onto the local contour normal beyond tolerance, rigid, sense preserved');
+
+// 11. apply(): flips uphill arrows (unconditional) AND re-aims out-of-tolerance axes (gated)
+const data={layouts:[{name:'T',units:[
+  mk([200,30],[Math.sin(Math.PI/6),-Math.cos(Math.PI/6)]),   // downhill but 30° off the normal
+  mk([200,30],[0,1])                                           // uphill, exactly on the normal
+]}]};
+const tol45=T.apply(data,sLines,45);
+assert(Math.abs(tol45[0].units[0].view[0]-Math.sin(Math.PI/6))<1e-9,'45° tolerance leaves the skewed downhill axis alone');
+assert(tol45[0].units[1].view[1]<0,'an uphill arrow is flipped whatever the tolerance');
+const tol0=T.apply(data,sLines,0);
+assert(Math.abs(T.axisDeviation(tol0[0].units[0],nrm))<1e-6,'0° tolerance aims the skewed axis at the normal');
+assert(tol0[0].units[0].view[1]<0,'re-aiming keeps the downhill sense');
+assert(tol0[0].units[1].view[1]<0,'the flipped villa is on the normal facing downhill');
+console.log('PASS apply(): uphill flips plus tolerance-gated axis re-aiming');
