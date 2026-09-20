@@ -1,18 +1,872 @@
-/* parallelPara: procedural initial population from site geometry + smoothed terrain.
-   No AI-image input, no image-derived seeds. Also hosts terrain smoothing (contour
-   simplification that preserves the broad hillside structure) and the rear-exclusion
-   strip rule. All geometry deterministic. */
+/* parallelPara — procedural initial population, rebuilt around an explicit row system.
+ *
+ *   Terrain/settings -> Populate (this module) -> inspect -> 3D view fitting (separate stage)
+ *
+ * Adopted geometry (PROJECT_GUIDE/DECISIONS_AND_HANDOFF.md): footprint 11 m wide (the axis
+ * that runs along a row) x 23 m deep (front/back = viewing direction); the front is the
+ * downhill end; an 11 x backClear rear exclusion strip sits immediately behind the rear
+ * facade, rotated with the villa; the side rule is the adopted directional clearance; every
+ * footprint lies fully inside the boundary (concave-safe) and overlaps no other footprint.
+ *
+ * Pipeline: settings() -> buildField() -> buildGuides() -> placeRow() -> generateLayout()
+ * (bounded deterministic search + row-based gap recovery) -> metrics() -> validate().
+ *
+ * Guidance and physics are deliberately separate: the SMOOTHED contours decide the preferred
+ * axis and where rows run; the UNSMOOTHED accepted contours decide which end is downhill
+ * (front-vs-back ground drop over the full 23 m depth). Smoothing never moves a reference
+ * elevation and is always recomputed from the source it is handed.
+ */
 const ParallelPara=(()=>{
- /* ---- terrain smoothing ----
-   Two stages, always recomputed from the ORIGINAL source (never from a previously
-   smoothed result). Stage 1: resample each contour at a fixed arc-length step that
-   grows with the smoothing level — this removes tiny kinks at the building scale
-   (the sampling cannot represent features smaller than the step). Stage 2: one
-   Chaikin corner-cut round per level to soften the resampled corners. Level 0 =
-   original polyline. Elevations and endpoints are preserved per line. */
+ 'use strict';
+ const VILLA={width:11,depth:23};
+ const DEFAULTS={sideGap:3,backClear:7,perpTol:15,margin:1.0,eps:1e-6,stationStep:3,cell:10};
+
+ /* ---------------- settings ---------------- */
+ /* Validate the selected inputs. Absent keys take the adopted default; keys present but
+    empty, non-numeric or out of range are ERRORS, so a cleared clearance field can never
+    silently become 0. Pitches are derived from the parameters (never a hard-coded
+    15/33/66): along = width + sideGap + margin, across = depth + backClear + margin.
+    `margin` is an implementation choice (a construction margin that makes the strict
+    inequalities hold numerically), not an adopted planning metric. */
+ function settings(input){
+  const i=input||{},errors=[];
+  const read=(k,label,def,min,max)=>{
+   const has=Object.prototype.hasOwnProperty.call(i,k)&&i[k]!==undefined&&i[k]!==null&&i[k]!=='';
+   if(!has){if(def===undefined){errors.push(label+' is required');return NaN;}return def;}
+   const n=Number(i[k]);
+   if(!Number.isFinite(n)){errors.push(label+' must be a number');return NaN;}
+   if(n<min||n>max){errors.push(label+' must be between '+min+' and '+max);return NaN;}
+   return n;};
+  const v={
+   sideGap:read('sideGap','Min side clearance',DEFAULTS.sideGap,0,30),
+   backClear:read('backClear','Backhouse clearance',DEFAULTS.backClear,0,30),
+   perpTol:read('perpTol','Perpendicular tolerance',DEFAULTS.perpTol,0,90),
+   margin:read('margin','construction margin',DEFAULTS.margin,0.01,10),
+   width:read('width','villa width',VILLA.width,1,60),
+   depth:read('depth','villa depth',VILLA.depth,1,60),
+   eps:DEFAULTS.eps,stationStep:DEFAULTS.stationStep,cell:DEFAULTS.cell};
+  v.alongPitch=v.width+v.sideGap+v.margin;
+  v.acrossPitch=v.depth+v.backClear+v.margin;
+  return {values:v,errors,ok:!errors.length};
+ }
+
+ /* ---------------- geometry primitives ---------------- */
+ function segDist(p,a,b){const dx=b[0]-a[0],dy=b[1]-a[1],l2=dx*dx+dy*dy;let t=l2?((p[0]-a[0])*dx+(p[1]-a[1])*dy)/l2:0;t=Math.max(0,Math.min(1,t));return Math.hypot(p[0]-(a[0]+t*dx),p[1]-(a[1]+t*dy));}
+ function pointInPoly(p,poly){let inside=false;
+  for(let i=0,j=poly.length-1;i<poly.length;j=i++){
+   const xi=poly[i][0],yi=poly[i][1],xj=poly[j][0],yj=poly[j][1];
+   if(((yi>p[1])!==(yj>p[1]))&&(p[0]<(xj-xi)*(p[1]-yi)/(yj-yi)+xi))inside=!inside;}
+  return inside;}
+ function ptPolyDist(p,poly){let best=Infinity;
+  for(let k=0;k<poly.length;k++)best=Math.min(best,segDist(p,poly[k],poly[(k+1)%poly.length]));
+  return best;}
+ function polyDist(p1,p2){
+  for(const p of p1)if(ptPolyDist(p,p2)===0)return 0;
+  for(const p of p2)if(ptPolyDist(p,p1)===0)return 0;
+  let best=Infinity;
+  for(const p of p1)best=Math.min(best,ptPolyDist(p,p2));
+  for(const p of p2)best=Math.min(best,ptPolyDist(p,p1));
+  return best;}
+ function rotatePoints(points,center,ang){
+  const c=Math.cos(ang),s=Math.sin(ang);
+  return points.map(p=>{const dx=p[0]-center[0],dy=p[1]-center[1];return [center[0]+dx*c-dy*s,center[1]+dx*s+dy*c];});}
+ function rotate(v,a){const c=Math.cos(a),s=Math.sin(a);return [v[0]*c-v[1]*s,v[0]*s+v[1]*c];}
+ function rect(center,view,w,d){
+  const side=[view[1],-view[0]];
+  return [[-w/2*side[0]-d/2*view[0],-w/2*side[1]-d/2*view[1]],
+          [w/2*side[0]-d/2*view[0],w/2*side[1]-d/2*view[1]],
+          [w/2*side[0]+d/2*view[0],w/2*side[1]+d/2*view[1]],
+          [-w/2*side[0]+d/2*view[0],-w/2*side[1]+d/2*view[1]]].map(p=>[center[0]+p[0],center[1]+p[1]]);}
+ function rectangle(center,view,w,d){
+  return rect(center,view,arguments.length>2?w:VILLA.width,arguments.length>3?d:VILLA.depth);}
+ function segCross(a,b,c,d){
+  const cr=(o,p,q)=>(p[0]-o[0])*(q[1]-o[1])-(p[1]-o[1])*(q[0]-o[0]);
+  const d1=cr(a,b,c),d2=cr(a,b,d),d3=cr(c,d,a),d4=cr(c,d,b);
+  return ((d1>0&&d2<0)||(d1<0&&d2>0))&&((d3>0&&d4<0)||(d3<0&&d4>0));}
+ function polysOverlap(a,b){
+  for(let i=0;i<a.length;i++){const a1=a[i],a2=a[(i+1)%a.length];
+   for(let j=0;j<b.length;j++){const b1=b[j],b2=b[(j+1)%b.length];
+    if(segCross(a1,a2,b1,b2))return true;}}
+  if(a.some(p=>pointInPoly(p,b)))return true;
+  if(b.some(p=>pointInPoly(p,a)))return true;
+  return false;}
+ /* Concave-safe containment. Vertices alone are not enough: a footprint edge can leave and
+    re-enter a concave boundary between two inside vertices, so we also require that no
+    footprint edge properly crosses a boundary edge, that every edge midpoint is inside, and
+    that no boundary vertex lies strictly inside the footprint. */
+ function polyInsideBoundary(poly,boundary){
+  if(!boundary||boundary.length<3)return true;
+  for(const p of poly)if(!pointInPoly(p,boundary))return false;
+  for(let i=0;i<poly.length;i++){
+   const a=poly[i],b=poly[(i+1)%poly.length];
+   for(let j=0;j<boundary.length;j++){
+    const c=boundary[j],d=boundary[(j+1)%boundary.length];
+    if(segCross(a,b,c,d))return false;}
+   if(!pointInPoly([(a[0]+b[0])/2,(a[1]+b[1])/2],boundary))return false;}
+  for(const c of boundary)if(pointInPoly(c,poly))return false;
+  return true;}
+ /* ---------------- elevation / guidance field ---------------- */
+ /* Built from contour polylines only. zAt() brackets the two nearest DISTINCT levels and
+    interpolates linearly between them, so the field is monotone between two contour lines
+    and no dip appears between them. normalAt() averages the tangents of the nearest
+    same-level segments (small radius, so a row does not chase single-vertex zigzags) and
+    orients the normal toward the higher terrain. facing() returns that uphill normal plus
+    the downhill-ward direction (the preferred facing). */
+ function buildField(lines,par){
+  const cell=(par&&par.cell)||DEFAULTS.cell,segs=[],grid=new Map();
+  for(const l of lines||[]){
+   const pts=l.points||l.controls||[];
+   for(let i=0;i+1<pts.length;i++){
+    const a=pts[i],b=pts[i+1],dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy);
+    if(len<1e-9)continue;
+    segs.push({a,b,z:l.z,len,tx:dx/len,ty:dy/len});}}
+  segs.forEach((s,idx)=>{
+   const x0=Math.min(s.a[0],s.b[0]),x1=Math.max(s.a[0],s.b[0]);
+   const y0=Math.min(s.a[1],s.b[1]),y1=Math.max(s.a[1],s.b[1]);
+   for(let i=Math.floor(x0/cell);i<=Math.floor(x1/cell);i++)for(let j=Math.floor(y0/cell);j<=Math.floor(y1/cell);j++){
+    const k=i+','+j;if(!grid.has(k))grid.set(k,[]);grid.get(k).push(idx);}});
+  function segmentDist(s,x,y){
+   const dx=s.b[0]-s.a[0],dy=s.b[1]-s.a[1];
+   const t=Math.max(0,Math.min(1,((x-s.a[0])*dx+(y-s.a[1])*dy)/(dx*dx+dy*dy||1)));
+   return Math.hypot(x-(s.a[0]+t*dx),y-(s.a[1]+t*dy));}
+  function nearSegments(x,y,radius){
+   const ci=Math.floor(x/cell),cj=Math.floor(y/cell),rings=Math.ceil(radius/cell),out=[],seen=new Set();
+   for(let r=0;r<=rings;r++){
+    for(let i=ci-r;i<=ci+r;i++)for(let j=cj-r;j<=cj+r;j++){
+     if(Math.max(Math.abs(i-ci),Math.abs(j-cj))!==r)continue;
+     const list=grid.get(i+','+j);if(!list)continue;
+     for(const idx of list){if(seen.has(idx))continue;seen.add(idx);
+      const s=segs[idx],d=segmentDist(s,x,y);
+      if(d<=radius)out.push({s,d});}}}
+   out.sort((a,b)=>a.d-b.d);
+   return out;}
+  /* Nearest segment per level, expanding rings only as far as needed: the search stops as
+     soon as the two nearest DISTINCT levels are bracketed (the ring radius has passed the
+     second level's distance), which keeps elevation reads cheap — they are the hot path in
+     placement, where thousands of candidate positions are tested. */
+  function nearestLevels(x,y,maxRadius){
+   const ci=Math.floor(x/cell),cj=Math.floor(y/cell),best=new Map(),seen=new Set();
+   const rings=Math.ceil((maxRadius===undefined?80:maxRadius)/cell);
+   for(let r=0;r<=rings;r++){
+    for(let i=ci-r;i<=ci+r;i++)for(let j=cj-r;j<=cj+r;j++){
+     if(Math.max(Math.abs(i-ci),Math.abs(j-cj))!==r)continue;
+     const list=grid.get(i+','+j);
+     if(!list)continue;
+     for(const idx of list){
+      if(seen.has(idx))continue;
+      seen.add(idx);
+      const s=segs[idx],d=segmentDist(s,x,y),key=s.z.toFixed(3);
+      if(!best.has(key)||best.get(key).d>d)best.set(key,{z:s.z,d});}}
+    if(best.size>=2){
+     const arr=[...best.values()].sort((a,b)=>a.d-b.d);
+     const z1=arr[0].z;
+     let second=null;
+     for(const v of arr)if(Math.abs(v.z-z1)>0.01){second=v;break;}
+     if(second&&r*cell>=second.d)break;}}
+   return [...best.values()].sort((a,b)=>a.d-b.d);}
+  function zAt(x,y){
+   const lv=nearestLevels(x,y,80);
+   if(!lv.length)return null;
+   const z1=lv[0].z,d1=lv[0].d;
+   let other=null;
+   for(let i=1;i<lv.length;i++)if(Math.abs(lv[i].z-z1)>0.01){other=lv[i];break;}
+   if(!other)return z1;
+   if(d1+other.d<1e-9)return z1;
+   return z1+(other.z-z1)*(d1/(d1+other.d));}
+  function tangentAt(x,y,radius){
+   const near=nearSegments(x,y,radius===undefined?12:radius);
+   if(!near.length)return null;
+   const z0=near[0].s.z;
+   let sx=near[0].s.tx,sy=near[0].s.ty,tx=near[0].s.tx,ty=near[0].s.ty;
+   const w0=1/(near[0].d+0.5);sx*=w0;sy*=w0;
+   for(let i=1;i<near.length;i++){
+    const s=near[i].s;
+    if(Math.abs(s.z-z0)>0.01)break;
+    let dx=s.tx,dy=s.ty;
+    if(dx*tx+dy*ty<0){dx=-dx;dy=-dy;}
+    const w=1/(near[i].d+0.5);sx+=dx*w;sy+=dy*w;}
+   const m=Math.hypot(sx,sy);
+   return m<1e-9?null:[sx/m,sy/m];}
+  function normalAt(x,y){
+   const t=tangentAt(x,y);
+   if(!t)return null;
+   let n=[-t[1],t[0]];
+   const here=zAt(x,y);
+   if(here!==null){
+    const up=zAt(x+n[0]*3,y+n[1]*3);
+    if(up!==null&&up<here)n=[-n[0],-n[1]];}
+   return n;}
+  function facing(x,y){
+   const n=normalAt(x,y);
+   return n?{uphill:n,downhill:[-n[0],-n[1]]}:null;}
+  return {segs,grid,segmentDist,nearSegments,nearestLevels,zAt,tangentAt,normalAt,facing};}
+ /* Front-vs-back ground drop over the FULL depth (established physical check — not a point
+    gradient), sampled at three lateral offsets across the footprint and averaged. Positive
+    drop = the front end is lower = the villa faces downhill. */
+ function groundDrop(field,center,view,depth,width){
+  if(!field||!field.zAt)return {drop:null,ok:false,samples:0};
+  const side=[view[1],-view[0]],half=depth/2,lat=[-width/4,0,width/4];
+  let sum=0,n=0,front=null,rear=null;
+  for(const l of lat){
+   const bx=center[0]+side[0]*l,by=center[1]+side[1]*l;
+   const fz=field.zAt(bx+view[0]*half,by+view[1]*half);
+   const rz=field.zAt(bx-view[0]*half,by-view[1]*half);
+   if(fz===null||rz===null)continue;
+   sum+=rz-fz;n++;
+   if(front===null)front=fz;
+   if(rear===null)rear=rz;}
+  if(!n)return {drop:null,ok:false,samples:0};
+  const drop=sum/n;
+  return {drop,ok:drop>0,front,rear,samples:n};}
+ /* ---------------- clearance predicates ---------------- */
+ /* Rear exclusion strip: 11 x clear rectangle immediately behind the rear facade, rotated
+    with the villa. Built from centre/view/width/depth — never from stored corners — so the
+    footprint, the front arrow and the strip cannot drift apart. */
+ function rearStrip(u,clear){
+  const v=u.view,side=[v[1],-v[0]];
+  const w=(u.width||VILLA.width)/2,d=(u.depth||VILLA.depth)/2;
+  const rA=[u.center[0]-v[0]*d-side[0]*w,u.center[1]-v[1]*d-side[1]*w];
+  const rB=[u.center[0]-v[0]*d+side[0]*w,u.center[1]-v[1]*d+side[1]*w];
+  return [rA,rB,[rB[0]-v[0]*clear,rB[1]-v[1]*clear],[rA[0]-v[0]*clear,rA[1]-v[1]*clear]];}
+ function stripIntrusion(strip,poly){
+  for(const p of strip)if(pointInPoly(p,poly))return true;
+  for(const p of poly)if(pointInPoly(p,strip))return true;
+  return polysOverlap(strip,poly);}
+ /* B's footprint vs A's strip and A's footprint vs B's strip — both directions are errors.
+    Rear strips MAY overlap each other; this is not a 14 m separation and not an all-round
+    setback, and the strip is not required to lie inside the site. */
+ function rearConflict(a,b,clear){
+  if(stripIntrusion(rearStrip(a,clear),b.points))return 'A';
+  if(stripIntrusion(rearStrip(b,clear),a.points))return 'B';
+  return null;}
+ /* Adopted directional side clearance. Two footprints are side-clear when EITHER holds, with
+    a strict margin:
+      (a) their plain polygon distance exceeds the gap, or
+      (b) their projections onto at least ONE of the two villas' own side axes are separated
+          by more than the gap (overlapping intervals give 0).
+    (b) deliberately needs only one frame: on a curved row the two frames legitimately
+    disagree (each villa measures against its own heading) and requiring both is the older,
+    overly restrictive rule that discarded valid curved-row pairs. Front-to-back neighbours
+    (one behind another) are governed by the rear-strip rule and normally pass (a) too.
+    Returns the measurements so callers can report why a pair passed or failed. */
+ function sideClearance(a,b,gap,eps){
+  const e=eps===undefined?DEFAULTS.eps:eps;
+  const out={ok:false,gap,polyGap:polyDist(a.points,b.points),sep:[]};
+  if(out.polyGap>gap+e){out.ok=true;return out;}
+  for(const u of [a,b]){
+   const v=u.view,side=[v[1],-v[0]];
+   const proj=p=>(p[0]-u.center[0])*side[0]+(p[1]-u.center[1])*side[1];
+   const pa=a.points.map(proj),pb=b.points.map(proj);
+   const aMin=Math.min.apply(null,pa),aMax=Math.max.apply(null,pa);
+   const bMin=Math.min.apply(null,pb),bMax=Math.max.apply(null,pb);
+   const sep=Math.max(aMin-bMax,bMin-aMax);
+   out.sep.push(Number(sep.toFixed(3)));
+   if(sep>gap+e)out.ok=true;}
+  return out;}
+ function sideGapOK(a,b,gap,tol){return sideClearance(a,b,gap===undefined?DEFAULTS.sideGap:gap,tol).ok;}
+ /* ---------------- row guides ---------------- */
+ /* Exact arc-length stations along a polyline. Every offset, phase and placement is measured
+    on this sampling, never by snapping to whichever contour vertex happens to be nearby. */
+ function stations(points,step){
+  const st=step||DEFAULTS.stationStep;
+  if(!points||points.length<2)return [];
+  const out=[{x:points[0][0],y:points[0][1],s:0}];
+  let acc=0,next=st;
+  for(let i=1;i<points.length;i++){
+   const a=points[i-1],b=points[i],dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy);
+   if(len<1e-9)continue;
+   const ux=dx/len,uy=dy/len,segStart=acc,segEnd=acc+len;
+   while(next<=segEnd+1e-9){
+    const d=next-segStart;
+    out.push({x:a[0]+ux*d,y:a[1]+uy*d,s:next});
+    next+=st;}
+   acc=segEnd;}
+  const last=points[points.length-1];
+  if(out[out.length-1].s<acc-1e-9)out.push({x:last[0],y:last[1],s:acc});
+  return out;}
+ /* Discrete curvature (1/m) at each station from the turn between neighbouring stations. */
+ function curvature(list){
+  for(let i=0;i<list.length;i++){
+   const a=list[Math.max(0,i-1)],b=list[Math.min(list.length-1,i+1)];
+   let k=0;
+   if(i>0&&i+1<list.length){
+    const v1=[list[i].x-a.x,list[i].y-a.y],v2=[b.x-list[i].x,b.y-list[i].y];
+    const m1=Math.hypot(v1[0],v1[1]),m2=Math.hypot(v2[0],v2[1]);
+    if(m1>1e-9&&m2>1e-9){
+     const cross=(v1[0]*v2[1]-v1[1]*v2[0])/(m1*m2);
+     const ang=Math.asin(Math.max(-1,Math.min(1,cross)));
+     k=Math.abs(ang)/((m1+m2)/2);}}
+   list[i].curv=k;}
+  return list;}
+ /* Tangent and uphill-oriented normal at every station of a spine, from a WINDOW of
+    neighbouring stations (±win): the traced contours carry vertex-level noise, and a
+    one-step tangent turns sharply at every wiggle, which would fragment rows and jitter the
+    headings. The normal is oriented by the field (toward higher ground), so offsetting does
+    not depend on the input point order — a reversed or shuffled contour yields the same
+    guides. */
+ function spineNormals(list,field,win){
+  const W=win===undefined?3:win;
+  for(let i=0;i<list.length;i++){
+   const a=list[Math.max(0,i-W)],b=list[Math.min(list.length-1,i+W)];
+   let dx=b.x-a.x,dy=b.y-a.y;
+   const m=Math.hypot(dx,dy)||1;dx/=m;dy/=m;
+   let n=[-dy,dx];
+   if(field&&field.zAt){
+    const here=field.zAt(list[i].x,list[i].y),up=field.zAt(list[i].x+n[0]*3,list[i].y+n[1]*3);
+    if(here!==null&&up!==null&&up<here)n=[-n[0],-n[1]];}
+   list[i].tx=dx;list[i].ty=dy;list[i].nx=n[0];list[i].ny=n[1];}
+  return list;}
+ /* Offset a spine sideways (positive = uphill). The result is cut where the offset would fold
+    (|dist| * curvature >= maxFold), where it leaves the boundary, and where it crosses
+    itself — a row never loops into itself, never branches and never leaves the site. */
+ function offsetStations(list,dist,opts){
+  const o=opts||{},boundary=o.boundary,maxFold=o.maxFold===undefined?0.9:o.maxFold;
+  const pieces=[];let cur=[];
+  for(const p of list){
+   const fold=p.curv!==undefined&&Math.abs(dist*p.curv)>=maxFold;
+   const x=p.x+p.nx*dist,y=p.y+p.ny*dist;
+   const outside=boundary&&boundary.length>=3&&!pointInPoly([x,y],boundary);
+   if(fold||outside){if(cur.length>=2)pieces.push(cur);cur=[];continue;}
+   cur.push({x,y,s:p.s,tx:p.tx,ty:p.ty});}
+  if(cur.length>=2)pieces.push(cur);
+  const out=[];
+  for(const pc of pieces){
+   const cuts=selfCuts(pc);let start=0;
+   for(const c of cuts){
+    if(c-start>=2)out.push(pc.slice(start,c));
+    start=c;}
+   if(pc.length-start>=2)out.push(pc.slice(start));}
+  return out;}
+ function selfCuts(pc){
+  const cuts=[];
+  for(let i=0;i+1<pc.length;i++)for(let j=i+2;j+1<pc.length;j++){
+   if(i+1===j)continue;
+   if(segCross([pc[i].x,pc[i].y],[pc[i+1].x,pc[i+1].y],[pc[j].x,pc[j].y],[pc[j+1].x,pc[j+1].y]))cuts.push(j);}
+  return cuts;}
+ function guidePointAt(g,s){
+  const n=g.nodes;
+  if(!n.length)return null;
+  if(s<=n[0].s)return {x:n[0].x,y:n[0].y,tx:n[0].tx,ty:n[0].ty};
+  const last=n[n.length-1];
+  if(s>=last.s)return {x:last.x,y:last.y,tx:last.tx,ty:last.ty};
+  let lo=0,hi=n.length-1;
+  while(hi-lo>1){const mid=(lo+hi)>>1;if(n[mid].s<=s)lo=mid;else hi=mid;}
+  const a=n[lo],b=n[hi],seg=b.s-a.s,frac=seg>1e-9?(s-a.s)/seg:0;
+  return {x:a.x+(b.x-a.x)*frac,y:a.y+(b.y-a.y)*frac,tx:a.tx+(b.tx-a.tx)*frac,ty:a.ty+(b.ty-a.ty)*frac};}
+ function arcOf(g,u){
+  let best=g.nodes.length?g.nodes[0].s:0,bd=Infinity;
+  for(const n of g.nodes){const d=Math.hypot(n.x-u.center[0],n.y-u.center[1]);if(d<bd){bd=d;best=n.s;}}
+  return best;}
+ /* Cut a piece into separate rows where the terrain genuinely turns: the heading drifts more
+    than maxTurn (implementation choice, default 60°) from the row's own starting heading.
+    Gradual bending — the normal case on this hillside — is kept, and vertex noise does not
+    trigger a split because the headings are window-averaged. */
+ function splitByTurn(piece,par){
+  const maxTurn=(par&&par.maxTurnDeg?par.maxTurnDeg:60)*Math.PI/180;
+  const out=[];let start=0;
+  for(let i=1;i<piece.length;i++){
+   const dot=Math.max(-1,Math.min(1,piece[i].tx*piece[start].tx+piece[i].ty*piece[start].ty));
+   if(Math.acos(dot)>maxTurn){
+    if(i-start>=3)out.push(piece.slice(start,i));
+    start=i;}}
+  if(piece.length-start>=3)out.push(piece.slice(start));
+  if(!out.length)out.push(piece);
+  return out;}
+ /* Build the individual-row system used for the placement: villas sit on these curves, one
+    row per curve. Every smoothed contour line is a spine; its uphill and downhill offsets at
+    multiples of the across-row pitch are candidate rows, accepted greedily (longest spine
+    first, nearest offsets first) while they keep at least a legal distance from every
+    accepted row. Regions therefore keep their own terrain direction instead of one global
+    grid, no contour level is treated as a mandatory row, and no contour segment boundary
+    restarts the placement rhythm. */
+ function buildGuides(field,boundary,par,lines){
+  const pitch=par.acrossPitch,minSep=par.depth+par.backClear+0.5,minRow=Math.max(par.alongPitch*1.2,20);
+  const spines=[];
+  for(const l of lines||[]){
+   const pts=l.points||l.controls||[];
+   const st=spineNormals(stations(pts,par.stationStep),field);
+   if(st.length<2)continue;
+   curvature(st);
+   const len=st[st.length-1].s;
+   if(len<par.alongPitch)continue;
+   spines.push({z:l.z,st,len});}
+  spines.sort((a,b)=>b.len-a.len||a.z-b.z||a.st[0].x-b.st[0].x||a.st[0].y-b.st[0].y);
+  const cell=Math.max(minSep,1),hash=new Map(),accepted=[],dropped=[];
+  const addSample=(x,y)=>{const k=Math.floor(x/cell)+','+Math.floor(y/cell);if(!hash.has(k))hash.set(k,[]);hash.get(k).push([x,y]);};
+  const tooClose=(x,y)=>{
+   const ci=Math.floor(x/cell),cj=Math.floor(y/cell);
+   for(let i=ci-1;i<=ci+1;i++)for(let j=cj-1;j<=cj+1;j++){
+    const l=hash.get(i+','+j);if(!l)continue;
+    for(const p of l)if(Math.hypot(p[0]-x,p[1]-y)<minSep)return true;}
+   return false;};
+  const maxOff=4,offsets=[];
+  for(let k=0;k<=maxOff;k++){if(k){offsets.push(k);offsets.push(-k);}else offsets.push(0);}
+  for(let si=0;si<spines.length;si++){
+   const sp=spines[si];
+   for(const off of offsets){
+    const dist=off*pitch;
+    for(const piece of offsetStations(sp.st,dist,{boundary,maxFold:0.9})){
+     if(piece[piece.length-1].s-piece[0].s<minRow)continue;
+     const stride=Math.max(1,Math.floor(piece.length/10));
+     let close=false;
+     for(let i=0;i<piece.length;i+=stride)if(tooClose(piece[i].x,piece[i].y)){close=true;break;}
+     if(close){dropped.push({reason:'tooClose',level:sp.z,offset:dist});continue;}
+     for(const part of splitByTurn(piece,par)){
+      const len=part[part.length-1].s-part[0].s;
+      if(len<minRow)continue;
+      for(let i=0;i<part.length;i+=stride)addSample(part[i].x,part[i].y);
+      accepted.push({family:si,level:sp.z,offset:dist,nodes:part,length:len});}}}}
+  accepted.sort((a,b)=>a.level-b.level||a.offset-b.offset||a.nodes[0].x-b.nodes[0].x||a.nodes[0].y-b.nodes[0].y);
+  accepted.forEach((g,i)=>{g.id='R'+String(i+1).padStart(2,'0');});
+  const familyAxis=new Map();
+  for(const g of accepted){
+   if(familyAxis.has(g.family))continue;
+   let sx=0,sy=0;
+   for(const n of g.nodes){sx+=n.tx;sy+=n.ty;}
+   const m=Math.hypot(sx,sy);
+   familyAxis.set(g.family,m>1e-9?[sx/m,sy/m]:null);}
+  for(const g of accepted)g.famAxis=familyAxis.get(g.family);
+  return {guides:accepted,dropped};}
+ /* ---------------- placement ---------------- */
+ function makeIndex(cell){
+  const map=new Map(),keyOf=(x,y)=>Math.floor(x/cell)+','+Math.floor(y/cell);
+  return {cell,map,
+   add(u){
+    const k=keyOf(u.center[0],u.center[1]);
+    if(!map.has(k))map.set(k,[]);
+    const l=map.get(k);
+    if(l.indexOf(u)<0)l.push(u);},
+   remove(u){
+    const l=map.get(keyOf(u.center[0],u.center[1]));
+    if(!l)return;
+    const i=l.indexOf(u);
+    if(i>=0)l.splice(i,1);},
+   near(x,y,radius){
+    const out=[],r=Math.ceil(radius/cell),ci=Math.floor(x/cell),cj=Math.floor(y/cell);
+    for(let i=ci-r;i<=ci+r;i++)for(let j=cj-r;j<=cj+r;j++){
+     const l=map.get(i+','+j);if(!l)continue;
+     for(const u of l)if(Math.hypot(u.center[0]-x,u.center[1]-y)<=radius)out.push(u);}
+    return out;}};}
+ function withinTol(view,normal,tolDeg){
+  const dot=Math.abs(view[0]*normal[0]+view[1]*normal[1]);
+  return Math.acos(Math.max(-1,Math.min(1,dot)))*180/Math.PI<=tolDeg+1e-9;}
+ /* Full geometric test of one candidate against the boundary and everything already placed.
+    Returns null when acceptable, otherwise the violated requirement. */
+ function checkCandidate(center,view,ctx){
+  const par=ctx.par,poly=rect(center,view,par.width,par.depth);
+  if(!polyInsideBoundary(poly,ctx.boundary))return {reason:'boundary',poly};
+  const me={center:center.slice(),view:view.slice(),points:poly,width:par.width,depth:par.depth};
+  const near=ctx.index.near(center[0],center[1],par.acrossPitch+par.depth+par.width);
+  for(const o of near){
+   if(polysOverlap(poly,o.points))return {reason:'overlap',other:o};
+   if(!sideClearance(me,o,par.sideGap,par.eps).ok)return {reason:'side',other:o};
+   if(stripIntrusion(rearStrip(o,par.backClear),poly))return {reason:'rear',other:o};
+   if(stripIntrusion(rearStrip(me,par.backClear),o.points))return {reason:'rear',other:o};}
+  return null;}
+ /* One placement on a guide at arc position s, with bounded row-preserving repairs in order of
+    increasing cost: slide along the row, shift slightly across it, re-aim within the
+    perpendicular tolerance, and finally redistribute the tail of the row. The heading's AXIS
+    stays within perpTol of the local contour normal; its SENSE is decided by the front-vs-back
+    ground drop (the physical rule), and the whole villa is turned, never just its arrow.
+    Degenerate terrain (no normal at all) falls back to the row's own heading — documented,
+    row-consistent recovery — and the unit records which it used. */
+ function attemptPlacement(g,s,ctx,rowUnits){
+  const par=ctx.par,q0=guidePointAt(g,s);
+  if(!q0)return {ok:false,reason:'unexplored'};
+  const face=ctx.field.facing(q0.x,q0.y);
+  const tail=rowUnits.length?rowUnits[rowUnits.length-1].view:null;
+  const axis=face?face.downhill:(tail?tail.slice():null);
+  if(!axis)return {ok:false,reason:'direction'};
+  const tol=par.perpTol*Math.PI/180;
+  const turns=[0,tol/3,-tol/3,2*tol/3,-2*tol/3,tol,-tol];
+  const slides=[0,0.75,-0.75,1.5,-1.5,2.5,-2.5,par.alongPitch/3,-par.alongPitch/3];
+  const across=[0,0.75,-0.75,1.5,-1.5];
+  /* candidates in order of increasing intervention: the undisturbed position first, then
+     small slides, shifts and re-aims — so an ordinary villa is placed with no adjustment at
+     all and the budget is spent only where it is needed */
+  const cands=[];
+  for(const turn of turns)for(const ds of slides)for(const da of across)
+   cands.push({turn,ds,da,cost:turn*turn*4000+Math.abs(ds)+Math.abs(da)*1.5});
+  cands.sort((a,b)=>a.cost-b.cost);
+  const tally={};
+  const note=r=>{tally[r]=(tally[r]||0)+1;};
+  for(const cand of cands.slice(0,64)){
+   const turn=cand.turn,ds=cand.ds,da=cand.da;
+   const q=guidePointAt(g,s+ds);
+   if(!q)continue;
+   const t=Math.hypot(q.tx,q.ty)||1,side=[q.ty/t,-q.tx/t];
+   const view=rotate(axis,turn);
+   if(face&&!withinTol(view,face.downhill,par.perpTol))continue;
+   const center=[q.x+side[0]*da,q.y+side[1]*da];
+   let drop=groundDrop(ctx.dropField,center,view,par.depth,par.width),useView=view;
+   if(!drop.ok){
+    const flipped=[-view[0],-view[1]];
+    const d2=groundDrop(ctx.dropField,center,flipped,par.depth,par.width);
+    if(d2.ok){useView=flipped;drop=d2;}
+    else if(tail&&(!face||withinTol(tail,face.downhill,par.perpTol))){
+     // row-consistent recovery: follow this row's own heading, still inside the tolerance
+     const d3=groundDrop(ctx.dropField,center,tail,par.depth,par.width);
+     if(d3.ok){useView=tail.slice();drop=d3;}
+     else{note('direction');continue;}}
+    else{note('direction');continue;}}
+   const bad=checkCandidate(center,useView,ctx);
+   if(bad){note(bad.reason);continue;}
+   return {ok:true,center,view:useView,drop,turn,turnDeg:Number((turn*180/Math.PI).toFixed(2)),ds,da,axis:face?'normal':'row'};}
+  const grouped=redistribute(g,s,ctx,rowUnits,axis);
+  if(grouped)return grouped;
+  return {ok:false,reason:dominantReason(tally),tally};}
+ const REASON_ORDER=['boundary','overlap','side','rear','direction','unexplored','geometry'];
+ function dominantReason(tally){
+  let best=null,bestN=0;
+  for(const r of REASON_ORDER)if((tally[r]||0)>bestN){best=r;bestN=tally[r];}
+  return best||'geometry';}
+ /* Row-preserving group repair: shift the last one or two villas of the row along the row
+    (their order and rhythm kept) to open space, then place the candidate in the gap. Each
+    moved villa is re-checked against everything else AND against the other moved villas —
+    re-adding them one at a time, so a shift can never buy a conflict — and the whole thing is
+    rolled back if it does not work. */
+ function redistribute(g,s,ctx,rowUnits,axis){
+  const par=ctx.par,lo=g.nodes[0].s,hi=g.nodes[g.nodes.length-1].s;
+  if(!rowUnits.length)return null;
+  const tail=rowUnits.slice(-Math.min(2,rowUnits.length));
+  for(const push of [1.5,2.5,-1.5,-2.5]){
+   const plan=[];
+   let ok=true;
+   for(const u of tail){
+    const at=arcOf(g,u)+push;
+    if(at<lo||at>hi){ok=false;break;}
+    const q=guidePointAt(g,at);
+    if(!q){ok=false;break;}
+    if(!groundDrop(ctx.dropField,[q.x,q.y],u.view,par.depth,par.width).ok){ok=false;break;}
+    plan.push({u,center:[q.x,q.y]});}
+   if(ok){
+    const saved=tail.map(u=>({u,c:u.center.slice(),p:u.points}));
+    for(const u of tail)ctx.index.remove(u);
+    let clean=true;
+    for(const step of plan){
+     step.u.center=step.center;
+     step.u.points=rect(step.u.center,step.u.view,par.width,par.depth);
+     if(checkCandidate(step.u.center,step.u.view,ctx)){clean=false;break;}
+     ctx.index.add(step.u);}
+    if(clean){
+     const q=guidePointAt(g,s+push*0.4);
+     if(q){
+      let view=axis.slice();
+      let d=groundDrop(ctx.dropField,[q.x,q.y],view,par.depth,par.width);
+      if(!d.ok){
+       view=[-view[0],-view[1]];
+       d=groundDrop(ctx.dropField,[q.x,q.y],view,par.depth,par.width);}
+      if(d.ok&&!checkCandidate([q.x,q.y],view,ctx)){
+       for(const u of tail)ctx.index.add(u);
+       return {ok:true,center:[q.x,q.y],view,drop:d,repaired:'redistribute',axis:'row'};}}}
+    for(const rec of saved){rec.u.center=rec.c;rec.u.points=rec.p;}
+    for(const u of tail)ctx.index.add(u);}}
+  return null;}
+ /* Walk one row, one attempt per along-row pitch, in the traversal direction, starting from a
+    phase that keeps the rows aligned with each other. Three consecutive misses abandon the
+    row (its end may legitimately run out of room); gap recovery revisits those places later. */
+ function placeRow(g,ctx,phase,dir){
+  const par=ctx.par,pitch=par.alongPitch,lo=g.nodes[0].s,hi=g.nodes[g.nodes.length-1].s;
+  if(hi-lo<pitch*0.8)return [];
+  const start=alignStart(g,phase,g.famAxis,par,dir);
+  const rowUnits=[];
+  let misses=0;
+  for(let k=0;k<300;k++){
+   const s=start+dir*k*pitch;
+   if(s<lo-1e-9||s>hi+1e-9)break;
+   ctx.attempts++;
+   const res=attemptPlacement(g,s,ctx,rowUnits);
+   if(res.ok){
+    const id='V'+String(ctx.units.length+1).padStart(3,'0');
+    const u={id,name:id,center:res.center,view:res.view,
+     points:rect(res.center,res.view,par.width,par.depth),
+     row:g.id,family:g.family,order:rowUnits.length,reference:null,active:true,
+     heading:Number((Math.atan2(res.view[1],res.view[0])*180/Math.PI).toFixed(3)),
+     drop:res.drop&&res.drop.drop!==null?Number(res.drop.drop.toFixed(3)):null,
+     repaired:res.repaired||null,axis:res.axis||'normal'};
+    ctx.units.push(u);ctx.index.add(u);rowUnits.push(u);
+    misses=0;}
+   else{
+    ctx.rejects.byReason[res.reason]=(ctx.rejects.byReason[res.reason]||0)+1;
+    if(ctx.rejects.details.length<60)ctx.rejects.details.push({row:g.id,at:Number(s.toFixed(1)),reason:res.reason});
+    misses++;
+    if(misses>2)break;}
+   if(ctx.units.length>=ctx.maxUnits)break;}
+  return rowUnits;}
+ /* Shared alignment: each row's phase is measured against the family's own axis, not against
+    the row's arc origin, so neighbouring rows keep a recognisable shared alignment instead of
+    drifting into a systematic half-pitch stagger. */
+ function alignStart(g,phase,famAxis,par,dir){
+  const n=g.nodes;
+  if(!n.length)return 0;
+  const pitch=par.alongPitch,u=famAxis||[n[0].tx,n[0].ty];
+  const lo=n[0].s,hi=n[n.length-1].s,target=((phase%pitch)+pitch)%pitch;
+  let first=null,last=null;
+  for(let s=lo;s<=hi;s+=1){
+   const q=guidePointAt(g,s);
+   const proj=q.x*u[0]+q.y*u[1],frac=((proj%pitch)+pitch)%pitch;
+   const hit=Math.abs(frac-target)<0.5||Math.abs(frac-target)>pitch-0.5;
+   if(hit){if(first===null)first=s;last=s;}}
+  if(first===null)return dir>0?lo:hi;
+  return dir>0?first:last;}
+ /* ---------------- generation + bounded search ---------------- */
+ /* One complete alternative: every row walked with the same along-row phase and the same
+    traversal direction. Alternatives are compared whole — never concatenated. */
+ function runVariant(guides,boundary,field,dropField,par,phase,dir,maxUnits){
+  const ctx={units:[],index:makeIndex(Math.max(par.alongPitch,par.acrossPitch)),
+   rejects:{byReason:{},details:[]},attempts:0,par,boundary,field,dropField,maxUnits};
+  for(const g of guides)placeRow(g,ctx,phase,dir);
+  return {units:ctx.units,rejects:ctx.rejects,attempts:ctx.attempts,phase,dir};}
+ /* Row bookkeeping for the output data: membership and ordering, plus the guide geometry so
+    the viewer can overlay it. */
+ function rowsOf(units,guides,par){
+  const groups=new Map();
+  for(const u of units){
+   if(!groups.has(u.row))groups.set(u.row,[]);
+   groups.get(u.row).push(u);}
+  return guides.map(g=>({
+   id:g.id,family:g.family,level:g.level,offset:g.offset,
+   length:Number((g.nodes[g.nodes.length-1].s-g.nodes[0].s).toFixed(2)),
+   nodes:g.nodes.map(n=>({x:Number(n.x.toFixed(3)),y:Number(n.y.toFixed(3)),s:Number(n.s.toFixed(3))})),
+   units:(groups.get(g.id)||[]).slice().sort((a,b)=>a.order-b.order).map(u=>u.id)}));}
+ /* Generate a full arrangement. Bounded, deterministic search over complete alternatives
+    (along-row phase x traversal direction), then a row-based gap-recovery pass on the winner.
+    Identical inputs and settings always produce identical output: no randomness, no clock. */
+ function generateLayout(data,opts){
+  const t0=Date.now();
+  const st=settings(opts);
+  if(!st.ok)return {ok:false,error:st.errors.join('; '),errors:st.errors,units:[],rows:[]};
+  const par=st.values;
+  par.maxUnits=(opts&&Number.isFinite(Number(opts.maxUnits)))?Math.max(1,Number(opts.maxUnits)):300;
+  const boundary=(data&&data.boundary)||[];
+  if(boundary.length<3)return {ok:false,error:'no site boundary available',units:[],rows:[]};
+  const smoothed=(opts&&opts.smoothed)||(data&&data.contours)||[];
+  if(!smoothed.length)return {ok:false,error:'no contour lines to generate from',units:[],rows:[]};
+  const terrain=(opts&&opts.terrainLines)||smoothed;
+  const field=buildField(smoothed,par);
+  const dropField=buildField(terrain,par);
+  const built=buildGuides(field,boundary,par,smoothed);
+  if(!built.guides.length)return {ok:false,error:'no row guides could be derived from this terrain',units:[],rows:[]};
+  const variants=[];
+  for(const phase of [0,par.alongPitch/3,2*par.alongPitch/3])for(const dir of [1,-1]){
+   const v=runVariant(built.guides,boundary,field,dropField,par,phase,dir,par.maxUnits);
+   const rows=rowsOf(v.units,built.guides,par);
+   const validation=validate({units:v.units,rows},boundary,par);
+   const met=metrics({units:v.units,rows},boundary,field,par,{rejects:v.rejects,attempts:v.attempts,validation});
+   variants.push({units:v.units,rows,rejects:v.rejects,attempts:v.attempts,validation,metrics:met,phase,dir});}
+  const viable=variants.filter(v=>v.validation.ok);
+  const pool=viable.length?viable:variants.slice();
+  /* priority: hard requirements pass (viable first) -> more villas -> less unnecessary
+     spacing -> less heading jitter -> deterministic tie-break. No weighted score, so extra
+     villas can never buy a broken constraint. */
+  pool.sort((a,b)=>b.units.length-a.units.length||
+   a.metrics.spacing.extraSpacing-b.metrics.spacing.extraSpacing||
+   a.metrics.heading.jitter-b.metrics.heading.jitter||
+   a.phase-b.phase||a.dir-b.dir);
+  const winner=pool[0];
+  const units=winner.units;
+  const recovery=recover({units},boundary,field,dropField,par,built.guides);
+  /* Safety net. Placement and repair already enforce every requirement, but the delivered
+     layout is judged by the INDEPENDENT validator, so anything it still rejects is removed
+     here — and reported, never silently accepted. */
+  const holder={units};
+  const pruned=prune(holder,boundary,par);
+  const rows=rowsOf(holder.units,built.guides,par);
+  const layout={units:holder.units,rows,params:par};
+  const validation=validate(layout,boundary,par);
+  const met=metrics(layout,boundary,field,par,{rejects:winner.rejects,attempts:winner.attempts,validation,gaps:recovery.failed});
+  return {ok:validation.ok,error:validation.ok?null:'generated layout failed independent validation',
+   units:layout.units,rows,params:par,validation,metrics:met,rejects:winner.rejects,recovery,pruned,
+   budget:{variants:variants.length,attempts:winner.attempts,recoveryTries:recovery.tried,
+    viableVariants:viable.length,counts:variants.map(v=>({phase:Number(v.phase.toFixed(1)),dir:v.dir,units:v.units.length,ok:v.validation.ok}))},
+   guides:{count:built.guides.length,dropped:built.dropped.length},
+   elapsedMs:Date.now()-t0};}
+ /* Remove villas the independent validator rejects (safety net, reported by the caller). */
+ function prune(layout,boundary,par,maxRounds){
+  const removed=[];
+  for(let round=0;round<(maxRounds||6);round++){
+   const res=validate(layout,boundary,par);
+   if(res.ok)break;
+   const bad=new Set();
+   for(const iss of res.issues){
+    if(iss.type==='overlap'||iss.type==='side'||iss.type==='rear'){if(iss.b)bad.add(iss.b);}
+    else if(iss.id)bad.add(iss.id);}
+   if(!bad.size)break;
+   layout.units=layout.units.filter(u=>{
+    if(bad.has(u.id)){removed.push(u.id);return false;}
+    return true;});}
+  return removed;}
+ /* Gap recovery, row-based (never random point filling): row ends, oversized internal gaps
+    where a small collective shift could make another legal villa fit, and rows the initial
+    pass abandoned. Every attempt goes through the same repair path as placement. */
+ function recover(layout,boundary,field,dropField,par,guides){
+  const out={added:[],tried:0,failed:[]};
+  const ctx={units:layout.units,index:makeIndex(Math.max(par.alongPitch,par.acrossPitch)),
+   rejects:{byReason:{},details:[]},attempts:0,par,boundary,field,dropField,maxUnits:par.maxUnits+40};
+  for(const u of layout.units)ctx.index.add(u);
+  for(const g of guides){
+   const list=layout.units.filter(u=>u.row===g.id).slice().sort((a,b)=>a.order-b.order);
+   const lo=g.nodes[0].s,hi=g.nodes[g.nodes.length-1].s;
+   const marks=[lo].concat(list.map(u=>arcOf(g,u)),[hi]).sort((a,b)=>a-b);
+   for(let i=0;i+1<marks.length;i++){
+    const gap=marks[i+1]-marks[i];
+    if(gap<par.alongPitch*1.6)continue;
+    for(const s of [marks[i]+gap/2,marks[i]+par.alongPitch*0.75,marks[i+1]-par.alongPitch*0.75]){
+     if(s<lo||s>hi)continue;
+     out.tried++;
+     const before=list.filter(u=>arcOf(g,u)<s);
+     const res=attemptPlacement(g,s,ctx,before);
+     if(res.ok){
+      const id='V'+String(ctx.units.length+1).padStart(3,'0');
+      const u={id,name:id,center:res.center,view:res.view,
+       points:rect(res.center,res.view,par.width,par.depth),
+       row:g.id,family:g.family,order:before.length,reference:null,active:true,
+       heading:Number((Math.atan2(res.view[1],res.view[0])*180/Math.PI).toFixed(3)),
+       drop:res.drop&&res.drop.drop!==null?Number(res.drop.drop.toFixed(3)):null,
+       repaired:res.repaired||null,recovered:true,axis:res.axis||'normal'};
+      const after=list.filter(x=>arcOf(g,x)>=s);
+      after.forEach(x=>{x.order+=1;});
+      list.length=0;
+      list.push.apply(list,before.concat([u],after));
+      ctx.units.push(u);ctx.index.add(u);
+      out.added.push(u.id);
+      break;}
+     out.failed.push({row:g.id,at:Number(s.toFixed(1)),reason:res.reason});}}}
+  return out;}
+ /* ---------------- metrics: what "good" means ---------------- */
+ /* Spacing statistics use meaningful neighbours only (consecutive villas within a row for the
+    side gaps, nearest villa across rows for the rear gaps) — never an average over every
+    pair. Heading smoothness is judged against the terrain's own change of direction, so a
+    coherent curved row is not penalised for being curved. */
+ function metrics(layout,boundary,field,par,extra){
+  const units=layout.units||[],rows=layout.rows||[],groups=new Map();
+  for(const u of units){
+   if(!groups.has(u.row))groups.set(u.row,[]);
+   groups.get(u.row).push(u);}
+  const rowLists=[...groups.values()].map(l=>l.slice().sort((a,b)=>a.order-b.order));
+  const angle=(a,b)=>Math.acos(Math.max(-1,Math.min(1,a[0]*b[0]+a[1]*b[1])))*180/Math.PI;
+  let orWorst=0,orSum=0,orN=0,orBeyond=0;
+  for(const u of units){
+   const n=(field&&field.normalAt)?field.normalAt(u.center[0],u.center[1]):null;
+   if(!n)continue;
+   const d=angle(u.view,n),dev=Math.min(d,180-d); // axis deviation, sense-free
+   orWorst=Math.max(orWorst,dev);orSum+=dev;orN++;
+   if(dev>par.perpTol+1e-6)orBeyond++;}
+  let headWorst=0,headSum=0,headN=0,exWorst=0,exSum=0,baseSum=0,breaks=0;
+  const sideGaps=[],rearGaps=[];
+  for(const list of rowLists){
+   for(let i=0;i+1<list.length;i++){
+    const a=list[i],b=list[i+1],d=angle(a.view,b.view);
+    headWorst=Math.max(headWorst,d);headSum+=d;headN++;
+    let base=0;
+    if(field&&field.normalAt){
+     const na=field.normalAt(a.center[0],a.center[1]),nb=field.normalAt(b.center[0],b.center[1]);
+     if(na&&nb)base=Math.min(angle(na,nb),angle(na,[-nb[0],-nb[1]]));}
+    baseSum+=base;
+    const ex=Math.max(0,d-base);
+    exWorst=Math.max(exWorst,ex);exSum+=ex;
+    sideGaps.push(polyDist(a.points,b.points));
+    if(Math.hypot(b.center[0]-a.center[0],b.center[1]-a.center[1])>par.alongPitch*1.6)breaks++;}}
+  for(const u of units){
+   let best=Infinity;
+   for(const v of units){
+    if(v.row===u.row)continue;
+    const d=Math.hypot(v.center[0]-u.center[0],v.center[1]-u.center[1]);
+    if(d<best)best=d;}
+   if(best<Infinity&&best<par.acrossPitch*1.8)rearGaps.push(best-par.depth/2);}
+  const used=rowLists.filter(l=>l.length).length;
+  const potential=rows.reduce((s,g)=>s+(g.length||0)/par.alongPitch,0);
+  return {
+   count:units.length,
+   rows:{guides:rows.length,used,maxPerRow:Math.max(0,...rowLists.map(l=>l.length)),
+    meanPerRow:used?Number((units.length/used).toFixed(2)):0},
+   violations:extra&&extra.validation?extra.validation.issues.length:null,
+   issues:(extra&&extra.validation?extra.validation.issues:[]).slice(0,25),
+   orientation:{worst:Number(orWorst.toFixed(2)),mean:orN?Number((orSum/orN).toFixed(2)):0,
+    beyondTolerance:orBeyond,tolerance:par.perpTol},
+   heading:{worst:Number(headWorst.toFixed(2)),mean:headN?Number((headSum/headN).toFixed(2)):0,
+    excessWorst:Number(exWorst.toFixed(2)),excessMean:headN?Number((exSum/headN).toFixed(2)):0,
+    terrainTurnMean:headN?Number((baseSum/headN).toFixed(2)):0},
+   spacing:{side:summ(sideGaps),rear:summ(rearGaps),
+    alongPitch:Number(par.alongPitch.toFixed(2)),acrossPitch:Number(par.acrossPitch.toFixed(2)),
+    potentialVillas:Number(potential.toFixed(1)),
+    extraSpacing:Number(Math.max(0,(potential-units.length)*par.alongPitch).toFixed(1))},
+   breaks,unexplainedGaps:extra&&extra.gaps?extra.gaps.length:0,
+   rejects:(extra&&extra.rejects)||{byReason:{},details:[]},
+   placementAttempts:(extra&&extra.attempts)||0};}
+ function summ(a){
+  if(!a.length)return {min:null,mean:null,max:null,n:0};
+  const s=a.slice().sort((x,y)=>x-y),sum=a.reduce((p,c)=>p+c,0);
+  return {min:Number(s[0].toFixed(2)),mean:Number((sum/a.length).toFixed(2)),
+   max:Number(s[s.length-1].toFixed(2)),n:a.length};}
+
+ /* ---------------- independent validation ---------------- */
+ /* Rebuilds every footprint, rear strip and relationship from the OUTPUT data (centre, view,
+    width, depth) rather than trusting stored corners, and restates the clearance predicate
+    independently of the placement code so the same bug cannot approve itself twice. */
+ function validate(layout,boundary,parIn){
+  const st=settings(parIn||{});
+  const par=st.ok?st.values:Object.assign({},DEFAULTS,parIn||{});
+  const units=(layout&&layout.units)||[],issues=[];
+  const polies=units.map(u=>rect(u.center,u.view,par.width,par.depth));
+  units.forEach((u,i)=>{
+   if(u.points&&u.points.length===4){
+    for(let k=0;k<4;k++){
+     if(Math.hypot(u.points[k][0]-polies[i][k][0],u.points[k][1]-polies[i][k][1])>1e-6){
+      issues.push({type:'stale-geometry',id:u.id});
+      break;}}}
+   const m=Math.hypot(u.view[0],u.view[1]);
+   if(Math.abs(m-1)>1e-6)issues.push({type:'view-not-unit',id:u.id});
+   if(boundary&&boundary.length>=3&&!polyInsideBoundary(polies[i],boundary))issues.push({type:'boundary',id:u.id});});
+  for(let i=0;i<units.length;i++)for(let j=i+1;j<units.length;j++){
+   const a=units[i],b=units[j];
+   if(polysOverlap(polies[i],polies[j])){issues.push({type:'overlap',a:a.id,b:b.id});continue;}
+   const gap=polyDist(polies[i],polies[j]);
+   if(gap<=par.sideGap+par.eps){
+    let ok=false;
+    for(const k of [i,j]){
+     const v=units[k].view,side=[v[1],-v[0]],c=units[k].center;
+     const proj=p=>(p[0]-c[0])*side[0]+(p[1]-c[1])*side[1];
+     const pa=polies[i].map(proj),pb=polies[j].map(proj);
+     const sep=Math.max(Math.min.apply(null,pa)-Math.max.apply(null,pb),
+                        Math.min.apply(null,pb)-Math.max.apply(null,pa));
+     if(sep>par.sideGap+par.eps)ok=true;}
+    if(!ok)issues.push({type:'side',a:a.id,b:b.id,gap:Number(gap.toFixed(3))});}
+   const sa=rearStrip({center:a.center,view:a.view,width:par.width,depth:par.depth},par.backClear);
+   const sb=rearStrip({center:b.center,view:b.view,width:par.width,depth:par.depth},par.backClear);
+   if(stripIntrusion(sa,polies[j]))issues.push({type:'rear',a:a.id,b:b.id,which:'A'});
+   else if(stripIntrusion(sb,polies[i]))issues.push({type:'rear',a:b.id,b:a.id,which:'B'});}
+  if(layout&&layout.rows){
+   const ids=new Set(layout.rows.map(r=>r.id)),seen=new Set();
+   for(const u of units){
+    if(!u.row)issues.push({type:'row-missing',id:u.id});
+    else{
+     if(!ids.has(u.row))issues.push({type:'row-unknown',id:u.id,row:u.row});
+     const g=layout.rows.find(r=>r.id===u.row);
+     if(g&&g.units&&g.units.indexOf(u.id)<0)issues.push({type:'row-membership',id:u.id,row:u.row});}
+    const key=u.row+'#'+u.order;
+    if(seen.has(key))issues.push({type:'row-order-duplicate',row:u.row,order:u.order});
+    seen.add(key);}}
+  return {ok:!issues.length,issues,count:units.length,params:par};}
+ /* kept API: verify(units,boundary,sideGap,backClear) */
+ function verify(units,boundary,sideGap,backClear){
+  const res=validate({units},boundary,{sideGap,backClear});
+  return {issues:res.issues,ok:res.ok,count:units.length};}
+ /* kept API: generate(data,opts) -> units */
+ function generate(data,opts){
+  const res=generateLayout(data,opts);
+  return res.units||[];}
+ /* kept API: downhill-ward unit vector at a point, or null when the terrain says nothing */
+ function downhillAt(x,y,lines){
+  const f=buildField(lines||[],DEFAULTS);
+  const face=f.facing(x,y);
+  return face?face.downhill:null;}
+
+ /* ---------------- terrain smoothing ---------------- */
  function resample(points,step){
   if(points.length<3||step<=0)return points.map(p=>p.slice());
-  const out=[points[0].slice()];let acc=0;
+  const out=[points[0].slice()];
+  let acc=0;
   for(let i=1;i<points.length;i++){
    const a=points[i-1],b=points[i],d=Math.hypot(b[0]-a[0],b[1]-a[1]);
    acc+=d;
@@ -27,215 +881,25 @@ const ParallelPara=(()=>{
    for(let i=0;i+1<p.length;i++){
     const a=p[i],b=p[i+1];
     out.push([a[0]*0.75+b[0]*0.25,a[1]*0.75+b[1]*0.25]);
-    out.push([a[0]*0.25+b[0]*0.75,a[1]*0.25+b[1]*0.75]);
-   }
+    out.push([a[0]*0.25+b[0]*0.75,a[1]*0.25+b[1]*0.75]);}
    out.push(p[p.length-1].slice());
-   p=out;
-  }
+   p=out;}
   return p;}
+ /* Guidance-only smoothing, always recomputed from the source handed in. The caller passes
+    the ACCEPTED terrain contours — never a previously smoothed result, and never the shipped
+    contours while the user is looking at an edited terrain. */
  function smoothContours(contours,level){
-  const lvl=Math.max(0,Math.min(6,Math.round(level))); // 0..6
+  const lvl=Math.max(0,Math.min(6,Math.round(level||0)));
   if(!lvl)return contours.map(c=>({...c,points:c.points.map(p=>p.slice())}));
-  const step=2+lvl*2; // 4..14 m resample step: building-scale smoothing
-  return contours.map(c=>({...c,points:chaikin(resample(c.points,step),1)}));
- }
- /* Downhill direction from the SMOOTHED field: nearest two distinct-level points on the
-   smoothed polylines; downhill = from the higher level toward the lower. Deterministic
-   fallback when the two nearest levels tie: use the second-nearest distinct level. */
- function downhillAt(x,y,smoothedLines){
-  const cand=[];
-  for(const l of smoothedLines){
-   const pts=l.controls||l.points; // accept both line formats
-   for(const p of pts){
-    const d=(p[0]-x)*(p[0]-x)+(p[1]-y)*(p[1]-y);
-    cand.push([d,l.z,p]);}}
-  cand.sort((a,b)=>a[0]-b[0]);
-  // The nearest level group defines the local height; then find the nearest level
-  // BELOW it (scan past any higher/equal groups). 1 cm tie groups equal levels.
-  let here=null,lower=null;
-  for(const [d,z] of cand){
-   if(here===null){here=z;continue;}
-   if(z<here-0.01){lower=z;break;}
-   // equal or higher level: still looking for a lower one
-  }
-  if(here===null||lower===null)return null; // no lower contour found: caller falls back
-  // average direction toward the 3 nearest samples of the lower level
-  const lowerPts=[];
-  for(const [d,z,p] of cand){
-   if(Math.abs(z-lower)<=0.01)lowerPts.push([d,p]);
-   if(lowerPts.length>=3)break;}
-  let vx=0,vy=0;
-  for(const [d,p] of lowerPts){
-   const dd=Math.hypot(p[0]-x,p[1]-y)||1;
-   vx+=(p[0]-x)/dd;vy+=(p[1]-y)/dd;}
-  const m=Math.hypot(vx,vy);
-  if(m<1e-6)return null;
-  return [vx/m,vy/m];}
- /* ---- geometry helpers ---- */
- function rotatePoints(points,center,ang){
-  const c=Math.cos(ang),s=Math.sin(ang);
-  return points.map(p=>{const dx=p[0]-center[0],dy=p[1]-center[1];return [center[0]+dx*c-dy*s,center[1]+dx*s+dy*c];});}
- function pointInPoly(p,poly){let inside=false;
-  for(let i=0,j=poly.length-1;i<poly.length;j=i++){
-   const xi=poly[i][0],yi=poly[i][1],xj=poly[j][0],yj=poly[j][1];
-   if(((yi>p[1])!==(yj>p[1]))&&(p[0]<(xj-xi)*(p[1]-yi)/(yj-yi)+xi))inside=!inside;}
-  return inside;}
- function segDist(p,a,b){const dx=b[0]-a[0],dy=b[1]-a[1],l2=dx*dx+dy*dy;let t=l2?((p[0]-a[0])*dx+(p[1]-a[1])*dy)/l2:0;t=Math.max(0,Math.min(1,t));return Math.hypot(p[0]-(a[0]+t*dx),p[1]-(a[1]+t*dy));}
- function ptPolyDist(p,poly){let best=Infinity;
-  for(let k=0;k<poly.length;k++)best=Math.min(best,segDist(p,poly[k],poly[(k+1)%poly.length]));
-  return best;}
- function polyDist(p1,p2){
-  for(const p of p1)if(ptPolyDist(p,p2)===0)return 0;
-  for(const p of p2)if(ptPolyDist(p,p1)===0)return 0;
-  let best=Infinity;
-  for(const p of p1)best=Math.min(best,ptPolyDist(p,p2));
-  for(const p of p2)best=Math.min(best,ptPolyDist(p,p1));
-  return best;}
- /* Directional side clearance: strict >3 m gap. Faithful implementation of the
-   directional rule: the pair must be separated by >3 m along at least one villa's
-   local side axis OR have >3 m polygon distance overall. Villas separated
-   front-to-back (one behind another) are governed by the rear-strip rule, not the
-   side rule — on curved rows their side-axis projections legitimately overlap. */
- function sideGapOK(a,b,gap=3,tol=1e-6){
-  // actual 3D-equivalent plan separation: if polygons are farther apart than the gap
-  // in plain distance, the side rule is satisfied regardless of direction
-  if(polyDist(a.points,b.points)>gap+tol)return true;
-  const frames=[a,b];
-  for(const u of frames){
-   const v=u.view,side=[v[1],-v[0]];
-   const pa=a.points.map(p=>[(p[0]-u.center[0])*side[0]+(p[1]-u.center[1])*side[1],(p[0]-u.center[0])*v[0]+(p[1]-u.center[1])*v[1]]);
-   const pb=b.points.map(p=>[(p[0]-u.center[0])*side[0]+(p[1]-u.center[1])*side[1],(p[0]-u.center[0])*v[0]+(p[1]-u.center[1])*v[1]]);
-   const aMin=Math.min(...pa.map(p=>p[0])),aMax=Math.max(...pa.map(p=>p[0]));
-   const bMin=Math.min(...pb.map(p=>p[0])),bMax=Math.max(...pb.map(p=>p[0]));
-   const sep=Math.max(aMin-bMax,bMin-aMax); // positive when separated along side axis
-   if(sep>gap+tol)return true;}
-  return false;}
- /* Rear exclusion strip: rectangle behind the rear facade, full width, `clear` deep.
-   Intrusion test: any corner of the other footprint inside the strip, or any strip
-   corner inside the other footprint, or actual polygon intersection via distance 0. */
- function rearStrip(u,clear){
-  const v=u.view; // view points downhill = front direction; rear is opposite
-  const rear=[-v[0],-v[1]];
-  // rear facade corners: the two footprint corners at the -view end (projection onto view)
-  const back=u.points.filter(p=>(p[0]-u.center[0])*v[0]+(p[1]-u.center[1])*v[1]<0);
-  const r1=back[0],r2=back[1];
-  const s1=[r1[0]+rear[0]*clear,r1[1]+rear[1]*clear];
-  const s2=[r2[0]+rear[0]*clear,r2[1]+rear[1]*clear];
-  return [r1.slice(),r2.slice(),s2,s1];}
- function stripIntrusion(strip,poly){
-  for(const p of strip)if(pointInPoly(p,poly))return true;
-  for(const p of poly)if(pointInPoly(p,strip))return true;
-  return polyDist(strip,poly)===0;}
- function rearConflict(a,b,clear,tol=1e-6){
-  // B intrudes into A's strip AND A into B's strip — check both directions.
-  const stripA=rearStrip(a,clear);
-  if(stripIntrusion(stripA,b.points))return 'A';
-  const stripB=rearStrip(b,clear);
-  if(stripIntrusion(stripB,a.points))return 'B';
-  return null;}
- /* ---- parallelPara generation ----
-   Rows follow the smoothed contours: seed points walk the smoothed line of the row's
-   level; villa headings = local downhill from the smoothed field; positions slide
-   along the row to satisfy clearances. Deterministic. */
- function rectangle(center,view,w=11,d=23){
-  const side=[view[1],-view[0]];
-  return [[-w/2*side[0]-d/2*view[0],-w/2*side[1]-d/2*view[1]],
-          [w/2*side[0]-d/2*view[0],w/2*side[1]-d/2*view[1]],
-          [w/2*side[0]+d/2*view[0],w/2*side[1]+d/2*view[1]],
-          [-w/2*side[0]+d/2*view[0],-w/2*side[1]+d/2*view[1]]].map(p=>[center[0]+p[0],center[1]+p[1]]);}
- function generate(data,opts){
-  const {smoothed,sideGap=3,backClear=7}=opts;
-  const boundary=data.boundary;
-  const inside=poly=>poly.every(p=>pointInPoly(p,boundary));
-  // group smoothed contours into rows by level, walk each as a row spine
-  const rows=[];
-  const byLevel=new Map();
-  for(const c of smoothed)if(!byLevel.has(c.z))byLevel.set(c.z,[]);
-  for(const c of smoothed)byLevel.get(c.z).push(c);
-  const levels=[...byLevel.keys()].sort((a,b)=>a-b);
-  let rowIdx=0;const units=[];const rowMeta=[];
-  // villa orientation = smoothed-field downhill; fall back to neighbour row direction
-  const headingAt=(x,y,rowsSoFar)=>{
-   let d=downhillAt(x,y,smoothed);
-   if(d)return d;
-   if(rowsSoFar.length){const last=rowsSoFar[rowsSoFar.length-1];if(last.length)return last[last.length-1].view.slice();}
-   return [0,-1];};
-  const occupied=[];
-  const conflictFree=(poly,view)=>{
-   if(!inside(poly))return false;
-   const me={center:[poly.reduce((s,p)=>s+p[0],0)/4,poly.reduce((s,p)=>s+p[1],0)/4],view:view.slice(),points:poly};
-   for(const o of occupied){
-    if(polyDist(poly,o.points)===0)return false;
-    if(!sideGapOK(me,o,sideGap))return false;
-    if(stripIntrusion(rearStrip(o,backClear),poly))return false;
-    if(stripIntrusion(rearStrip(me,backClear),o.points))return false;}
-   return true;};
-  // Multiple downhill offsets per level: bands every ~33 m (23 depth + 7 rear + 3
-  // clearance) from each contour spine. Conflict checks filter overlaps between
-  // neighbouring levels' bands; passing all bands would double-place, but the
-  // conflict check prevents that — later levels simply fill the gaps left open.
-  for(let li=0;li<levels.length;li++){
-   const z=levels[li];
-   // use ALL contours of this level as spines (not just the longest)
-   for(const line of byLevel.get(z)){
-    const spine=line.points;
-    if(spine.length<2)continue;
-    // cumulative arc length along the spine for even stepping
-    const arc=[0];
-    for(let k=1;k<spine.length;k++)arc.push(arc[k-1]+Math.hypot(spine[k][0]-spine[k-1][0],spine[k][1]-spine[k-1][1]));
-    const total=arc[arc.length-1];
-    if(total<10)continue;
-    for(const rowOff of [0,33,66]){
-     let placedInRow=0;
-     const STEP=15; // 11 m width + 3 m clearance + 1 m margin between villa centres
-     // Nudge candidate positions inside: when the rectangle pokes out of the boundary,
-     // slide it back along the downhill axis (up to 6 m in 1.5 m steps) before giving up.
-     for(let d=STEP/2;d<total-STEP/2;d+=STEP){
-      let k=arc.findIndex(a=>a>=d);if(k<1)k=1;
-      const base=spine[k];
-      const view=headingAt(base[0],base[1],occupied);
-      if(!view)continue;
-      const k2=Math.min(k+1,spine.length-1);
-      const tangent=[Math.sign(spine[k2][0]-base[0]||1),Math.sign(spine[k2][1]-base[1]||1)];
-      for(const slide of [0,2,-2,4,-4,6,-6,8,-8,10,-10]){
-       const sx=base[0]+tangent[0]*slide,sy=base[1]+tangent[1]*slide;
-       const vh=headingAt(sx,sy,occupied);
-       if(!vh)continue;
-       // try the offset position, then slide BACK uphill (opposite the view) up to 6 m
-       // so edge-of-boundary candidates pull inside instead of being discarded
-       for(const back of [0,1.5,3,4.5,6]){
-        const center=[sx+vh[0]*(rowOff-back),sy+vh[1]*(rowOff-back)];
-        const poly=rectangle(center,vh);
-        if(!conflictFree(poly,vh))continue;
-        const id='P'+String(units.length+1).padStart(3,'0');
-        units.push({id,name:id,center:center.slice(),view:vh.slice(),points:poly,
-                    row:rowIdx,order:placedInRow,reference:null,active:true});
-        occupied.push({center:center.slice(),view:vh.slice(),points:poly});
-        placedInRow++;
-        break;
-       }
-       if(placedInRow>0&&units.length&&units[units.length-1].row===rowIdx&&units[units.length-1].order===placedInRow-1)break;
-      }
-     }
-     rowMeta.push({row:rowIdx,level:z,placed:placedInRow,offset:rowOff});
-     rowIdx++;
-    }
-   }
-  }
-  return units;
- }
- /* independent verification of a generated arrangement */
- function verify(units,boundary,sideGap,backClear){
-  const issues=[];
-  for(const u of units){
-   if(!u.points.every(p=>pointInPoly(p,boundary)))issues.push({type:'boundary',id:u.id});}
-  for(let i=0;i<units.length;i++)for(let j=i+1;j<units.length;j++){
-   const a=units[i],b=units[j];
-   if(polyDist(a.points,b.points)===0)issues.push({type:'overlap',a:a.id,b:b.id});
-   if(!sideGapOK(a,b,sideGap))issues.push({type:'side',a:a.id,b:b.id});
-   if(stripIntrusion(rearStrip(a,backClear),b.points))issues.push({type:'rear',a:a.id,b:b.id});
-   else if(stripIntrusion(rearStrip(b,backClear),a.points))issues.push({type:'rear',a:b.id,b:a.id});}
-  return {issues,ok:!issues.length,count:units.length};}
- return {smoothContours,downhillAt,rotatePoints,pointInPoly,polyDist,sideGapOK,rearStrip,stripIntrusion,rearConflict,generate,verify};
+  const step=2+lvl*2;
+  return contours.map(c=>({...c,points:chaikin(resample(c.points,step),1)}));}
+
+ return {VILLA,DEFAULTS,settings,
+  rect,rectangle,rotatePoints,rotate,pointInPoly,segDist,ptPolyDist,polyDist,polysOverlap,polyInsideBoundary,segCross,
+  buildField,groundDrop,rearStrip,stripIntrusion,rearConflict,sideClearance,sideGapOK,
+  stations,curvature,spineNormals,offsetStations,selfCuts,guidePointAt,arcOf,splitByTurn,buildGuides,
+  makeIndex,checkCandidate,attemptPlacement,redistribute,placeRow,alignStart,withinTol,
+  generate,generateLayout,rowsOf,runVariant,recover,prune,metrics,validate,verify,downhillAt,
+  smoothContours,resample,chaikin};
 })();
 if(typeof module!=='undefined')module.exports=ParallelPara;
