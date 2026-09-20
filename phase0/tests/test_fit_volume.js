@@ -63,11 +63,13 @@ const looseMoved=loose.moves.filter(m=>Math.hypot(m.dx,m.dy)>0.05).length;
 console.log('INFO sideGap=5 moved',strictMoved,'units; sideGap=2.5 moved',looseMoved,'units');
 assert(strictMoved>=looseMoved,'stricter clearance requires more movement');
 
-// ---- perpTol: zero tolerance reorients everything; huge tolerance reorients nothing
+// ---- perpTol is NOT consumed by fitLayout: the knob is currently a report threshold
+//      (the perpendicularity rotation is an open decision), so it must not steer fitting.
+//      When a rotation stage lands, replace this with the tolerance assertion.
 const strictO=T.fitLayout(report.layouts[0],report.boundary,pts,{sideGap:3,maxMove:12,perpTol:0});
 const looseO=T.fitLayout(report.layouts[0],report.boundary,pts,{sideGap:3,maxMove:12,perpTol:89});
 const strictR=strictO.moves.filter(m=>Math.abs(m.rot)>1e-4).length;
 const looseR=looseO.moves.filter(m=>Math.abs(m.rot)>1e-4).length;
-console.log('INFO perpTol=0 reoriented',strictR,'units; perpTol=89 reoriented',looseR,'units');
-assert(strictR>=looseR,'lower tolerance reorients at least as many villas');
-console.log('PASS perpTol and sideGap parameters steer the fitting');
+console.log('INFO perpTol=0 reoriented',strictR,'units; perpTol=89 reoriented',looseR,'units — inert by design for now');
+assert.equal(strictR,looseR,'perpTol must not change fitting while no rotation stage exists');
+console.log('PASS sideGap steers the fitting; perpTol is inert (report threshold only, rotation not implemented)');

@@ -50,25 +50,106 @@ const TerrainEdit=(()=>{
   const m=Math.hypot(gx,gy);
   if(!Number.isFinite(m)||m<1e-4)return fallback?fallback.slice():[0,1];
   return [-gx/m,-gy/m];}
- function apply(data,lines,perpTol=0){
+ /* ---- orientation authority: the contour LEVELS, not the interpolated field ----
+   The IDW field (inverse-distance-squared over sampled contour points) forms local dips
+   between lines. A symmetric ±11.5 m probe can straddle such a dip, so its verdict flips
+   with a few metres of drift, and villas that already face downhill get reversed — the
+   user reads the plan against the contour labels and sees arrows pointing up.
+   Level authority instead: find the villa's nearest contour level, then the nearest level
+   BELOW it; the arrow has an uphill component when it opposes that direction. Same
+   authority ParallelPara uses for population, so placement and correction agree.
+   Returns null when no lower level is in reach (caller falls back to the 23 m drop). */
+ function levelDownhill(x,y,pts){
+  const cand=[];
+  for(const p of pts){const dx=p[0]-x,dy=p[1]-y;cand.push([dx*dx+dy*dy,p[2],p]);}
+  cand.sort((a,b)=>a[0]-b[0]);
+  let here=null,lower=null;
+  for(const [,z] of cand){if(here===null){here=z;continue;}if(z<here-0.01){lower=z;break;}}
+  if(here===null||lower===null)return null;
+  const lowerPts=[];
+  for(const [,z,p] of cand){if(Math.abs(z-lower)<=0.01)lowerPts.push(p);if(lowerPts.length>=3)break;}
+  let vx=0,vy=0;
+  for(const p of lowerPts){const d=Math.hypot(p[0]-x,p[1]-y)||1;vx+=(p[0]-x)/d;vy+=(p[1]-y)/d;}
+  const m=Math.hypot(vx,vy);
+  return m<1e-6?null:[vx/m,vy/m];
+ }
+ /* The authority the user actually reads: the contour LABELS. For a few distances along
+    the arrow, compare the z of the nearest contour sample ahead of the villa with the
+    nearest one behind it — positive means the arrow runs toward higher labels, which is
+    what "pointing uphill" looks like on the plan. Samples come from samples(lines) at 4 m
+    spacing, so the nearest sample tracks the nearest contour line the way the drawn
+    labels do. The physical reads below only break ties. */
+ function nearestZ(p,pts){
+  let best=Infinity,z=null;
+  for(const q of pts){const dx=q[0]-p[0],dy=q[1]-p[1],d=dx*dx+dy*dy;if(d<best){best=d;z=q[2];}}
+  return z;
+ }
+ function labelVote(u,pts,distances=[5,10,15,20,25,30,35,40,45]){
+  let vote=0,used=0;
+  for(const d of distances){
+   const f=nearestZ([u.center[0]+u.view[0]*d,u.center[1]+u.view[1]*d],pts);
+   const b=nearestZ([u.center[0]-u.view[0]*d,u.center[1]-u.view[1]*d],pts);
+   if(f===null||b===null)continue;
+   vote+=Math.sign(f-b);used++;
+  }
+  return {vote,used};
+ }
+ /* Does this villa's arrow point uphill?
+     1. label vote >= +2 / <= -2 decides (the user's own read);
+     2. otherwise (ambiguous labels: flat, hollow or saddle spots) two physical reads must
+        AGREE that it is uphill — the contour LEVEL scan (arrow opposes the direction to
+        the nearest lower level) AND the integrated ±40 m drop (ground ahead higher than
+        behind). Each physical read alone misjudges: the level scan follows a lower line
+        that can sit laterally or only one level down (staggered-2 V043), and any short
+        field probe straddles the local dips of the interpolated surface (the ±11.5 m
+        rule that reversed 30 of 226 arrows, staggered-2 V073/V078 among them).
+    Never reverse a villa the labels read as downhill; leaving an ambiguous one alone is
+    the cheaper error. */
+ function pointsUphill(u,pts){
+  const {vote,used}=labelVote(u,pts);
+  const d=levelDownhill(u.center[0],u.center[1],pts);
+  const level=d?(u.view[0]*d[0]+u.view[1]*d[1])<0:null;
+  const zf=elevation(u.center[0]+u.view[0]*40,u.center[1]+u.view[1]*40,pts);
+  const zb=elevation(u.center[0]-u.view[0]*40,u.center[1]-u.view[1]*40,pts);
+  const drop=zf>zb+0.05;
+  const physical=level===null?drop:(level&&drop);
+  const decided=used===0?null:(vote>=2?true:vote<=-2?false:null);
+  return {uphill:decided===null?physical:decided,vote,used,level,drop,dir:d};
+ }
+ /* Pure 180° flip: the long axis stays perpendicular to the contour, the arrow reverses. */
+ function flip(u){
+  const ang=Math.PI,c=Math.cos(ang),s=Math.sin(ang);
+  return {...u,view:[-u.view[0],-u.view[1]],
+   points:u.points.map(p=>{const dx=p[0]-u.center[0],dy=p[1]-u.center[1];return [u.center[0]+dx*c-dy*s,u.center[1]+dx*s+dy*c];}),
+   rotation:(u.rotation||0)+ang};
+ }
+ /* Re-aim every villa that points uphill. Flips only — this stage never rotates an axis
+   onto the contour normal (that is what the perpendicular tolerance would gate; see
+   perpReport). A flip that would still leave the arrow uphill is refused. */
+ function apply(data,lines){
   const pts=samples(lines);
   return data.layouts.map(l=>({...l,units:l.units.map(u=>{
-   // Coupled orientation: the long axis stays perpendicular to the local contour,
-   // facing downhill. The PHYSICAL test is the integrated front-vs-back ground drop
-   // over the 23 m length — the point gradient of the IDW field is too noisy to be
-   // trusted (it flips signs near dragged lines). If the front facade sits on higher
-   // ground than the back facade the villa points uphill: flip 180° (the long axis
-   // remains perpendicular, the arrow reverses). Otherwise the villa is already
-   // downhill — never rotate it on the point gradient's word.
-   const pts2=pts;
-   const zf=elevation(u.center[0]+u.view[0]*11.5,u.center[1]+u.view[1]*11.5,pts2);
-   const zb=elevation(u.center[0]-u.view[0]*11.5,u.center[1]-u.view[1]*11.5,pts2);
-   if(!(zf>zb+0.05))return {...u,reference:elevation(u.center[0],u.center[1],pts)};
-   const ang=Math.PI; // pure flip
-   const c=Math.cos(ang),s=Math.sin(ang);
-   const points=u.points.map(p=>{const dx=p[0]-u.center[0],dy=p[1]-u.center[1];return [u.center[0]+dx*c-dy*s,u.center[1]+dx*s+dy*c];});
-   return {...u,view:[-u.view[0],-u.view[1]],points,reference:elevation(u.center[0],u.center[1],pts),rotation:(u.rotation||0)+ang};
+   if(!pointsUphill(u,pts).uphill)return {...u,reference:elevation(u.center[0],u.center[1],pts)};
+   const f=flip(u);
+   const out=pointsUphill(f,pts).uphill?u:f; // degenerate spot: leave the villa as it is
+   return {...out,reference:elevation(out.center[0],out.center[1],pts)};
   })}));}
+ /* How far each ACTIVE arrow sits from its local contour normal, for the perpendicular
+   tolerance: 0° = the axis IS the contour normal (either sense; the uphill sense is the
+   flip's business), 90° = the axis runs along the contour and a flip cannot fix it.
+   Reported, never corrected here. */
+ function perpReport(layout,lines,tol=0,active){
+  const pts=samples(lines),act=active||layout.units.map(u=>u.active!==false);
+  let count=0,total=0,worst=0;
+  layout.units.forEach((u,i)=>{
+   if(!act[i])return;
+   const d=levelDownhill(u.center[0],u.center[1],pts);
+   if(!d)return;
+   total++;
+   const dev=Math.acos(Math.max(-1,Math.min(1,Math.abs(u.view[0]*d[0]+u.view[1]*d[1]))))*180/Math.PI;
+   worst=Math.max(worst,dev);
+   if(dev>tol+1e-9)count++;});
+  return {count,total,worst};}
  function diff(before,after){
   let maxShift=0,rotated=0;
   before.forEach((l,li)=>l.units.forEach((u,i)=>{
@@ -124,10 +205,13 @@ const TerrainEdit=(()=>{
    const out=l.units[i].points.some(p=>!pointInPoly(p,boundary));
    if(out){issues.push({type:'boundary',i});}}
   return {conflicts,issues,ok:!issues.length};}
- /* Orientation deviation of a footprint's view from the terrain downhill, in degrees. */
+ /* Orientation deviation of a footprint's view from the local downhill, in degrees:
+    level authority (0° = aimed straight down the local slope, 180° = aimed straight up
+   it). 0 when the level scan finds nothing lower — unknown, not "correct". */
  function orientationError(u,pts){
-  const ideal=downhill(u.center,pts,u.view);
-  const dot=Math.max(-1,Math.min(1,u.view[0]*ideal[0]+u.view[1]*ideal[1]));
+  const d=levelDownhill(u.center[0],u.center[1],pts);
+  if(!d)return 0;
+  const dot=Math.max(-1,Math.min(1,u.view[0]*d[0]+u.view[1]*d[1]));
   return Math.acos(dot)*180/Math.PI;}
   /* Start fitting: legalize the arrangement — slide villas along facade/view axes to
    clear clearance/boundary conflicts, re-aim moved villas to the local downhill at
@@ -143,13 +227,16 @@ const TerrainEdit=(()=>{
   const live=()=>geomCheck({units},boundary,units.map(()=>true),sideGap);
   // Conflict + boundary repair in one loop: every accepted move must strictly
   // reduce the total issue count, so fitting never makes the layout worse.
-  const issueCount=()=>{const g=live();return g.conflicts.length+g.issues.length;};
   for(let pass=0;pass<80;pass++){
    const g=live();
    if(!g.conflicts.length&&!g.issues.length)break;
    let repaired=false;
    const pairs=[...g.conflicts];
    const boundaryIdx=g.issues.filter(x=>x.type==='boundary').map(x=>x.i);
+   // Baseline issue count for this pass. Every candidate below is judged against it, and
+   // the loops all break on the first accepted move, so the value cannot go stale inside a
+   // pass; recomputing it per candidate costs a full O(n²) geometry check each time.
+   const before=g.conflicts.length+g.issues.length;
    // boundary villas slide inward along every axis direction
    for(const a of boundaryIdx){
     const u=units[a];
@@ -165,7 +252,7 @@ const TerrainEdit=(()=>{
       if(total>maxMove)continue;
       const trial=units.map((q,k)=>k===a?{...u,center:[u.center[0]+dx,u.center[1]+dy],points:u.points.map(p=>[p[0]+dx,p[1]+dy])}:q);
       const tg=geomCheck({units:trial},boundary,trial.map(()=>true),sideGap);
-      if(tg.conflicts.length+tg.issues.length<issueCount()){
+      if(tg.conflicts.length+tg.issues.length<before){
        units[a]=trial[a];moves[a].dx+=dx;moves[a].dy+=dy;repaired=true;fixed=true;break;
       }
      }
@@ -176,7 +263,6 @@ const TerrainEdit=(()=>{
    if(repaired)continue;
    // clearance pairs: slide the villa whose facade axis points away from the other
    for(const [i,j] of pairs){
-    const before=issueCount();
     for(const [a,b] of [[i,j],[j,i]]){
      const u=units[a],other=units[b];
      // try all four slide directions (facade axis and view axis, both ways)
@@ -202,31 +288,27 @@ const TerrainEdit=(()=>{
    if(!repaired)break;
   }
   // 3. Orientation repair: a moved villa can now sit where its (unchanged) view
-  //    disagrees with the local downhill — even pointing uphill. Physical test:
-  //    front-vs-back integrated drop. Flip 180° any villa whose front facade is on
-  //    higher ground than its back facade (never trust the noisy point gradient).
+  //    disagrees with the local downhill — even pointing uphill. Authority is the
+  //    contour LEVEL scan (see levelDownhill): the point field dips between lines and
+  //    reversing a correctly-aimed villa is exactly the bug this replaces.
   units.forEach((u,i)=>{
-   const zf=elevation(u.center[0]+u.view[0]*11.5,u.center[1]+u.view[1]*11.5,pts);
-   const zb=elevation(u.center[0]-u.view[0]*11.5,u.center[1]-u.view[1]*11.5,pts);
-   if(!(zf>zb+0.05))return;
-   const ang=Math.PI; // pure flip: long axis stays perpendicular, arrow reverses
-   const c=Math.cos(ang),s=Math.sin(ang);
-   const rotated={...u,points:u.points.map(p=>{const dx=p[0]-u.center[0],dy=p[1]-u.center[1];return [u.center[0]+dx*c-dy*s,u.center[1]+dx*s+dy*c];}),view:[-u.view[0],-u.view[1]],rotation:(u.rotation||0)+ang};
-   const zf2=elevation(rotated.center[0]+rotated.view[0]*11.5,rotated.center[1]+rotated.view[1]*11.5,pts);
-   const zb2=elevation(rotated.center[0]-rotated.view[0]*11.5,rotated.center[1]-rotated.view[1]*11.5,pts);
-   if(zf2>zb2+0.05)return; // still uphill after flip — degenerate spot, leave it
+   if(!pointsUphill(u,pts).uphill)return;
+   const rotated=flip(u);
+   if(pointsUphill(rotated,pts).uphill)return; // degenerate spot: leave it as it is
    // Flipping an UPHILL villa is mandatory (planning rule), even if it introduces
    // clearance conflicts — those are then resolved by another slide-repair pass below.
-   units[i]=rotated;moves[i].rot+=ang;
+   units[i]=rotated;moves[i].rot+=Math.PI;
    const tg=geomCheck({units},boundary,units.map(()=>true),sideGap);
    if(tg.conflicts.length||tg.issues.length){
     // flip created conflicts: run one more slide-repair round immediately
-    for(let pass=0;pass<40;pass++){
+    for(const pass=0;pass<40;pass++){
      const gg=geomCheck({units},boundary,units.map(()=>true),sideGap);
      if(!gg.conflicts.length&&!gg.issues.length)break;
      let fixedOne=false;
+     // per-pass baseline, not per candidate: `units` is unchanged until a move is accepted
+     // and every loop breaks immediately after that
+     const b2=gg.conflicts.length+gg.issues.length;
      for(const [pi,pj] of gg.conflicts){
-      const b2=geomCheck({units},boundary,units.map(()=>true),sideGap).conflicts.length+geomCheck({units},boundary,units.map(()=>true),sideGap).issues.length;
       for(const [aa] of [[pi],[pj]]){
        const uu=units[aa],vv=uu.view,ax=[vv[1],-vv[0]];
        const dirs=[[ax[0],ax[1]],[-ax[0],-ax[1]],[vv[0],vv[1]],[-vv[0],-vv[1]]];
@@ -267,6 +349,6 @@ const TerrainEdit=(()=>{
   return {units:units.map((u,i)=>({...u,reference:reference[i]})),moves,
           remaining:final.issues,ok:!final.issues.length};
  }
- return {MAX,simplify,buildFromContours,samples,elevation,downhill,apply,diff,volume,polyDist,pointInPoly,geomCheck,orientationError,fitLayout,SIDE_GAP};
+ return {MAX,simplify,buildFromContours,samples,elevation,downhill,levelDownhill,nearestZ,labelVote,pointsUphill,flip,apply,perpReport,diff,volume,polyDist,pointInPoly,geomCheck,orientationError,fitLayout,SIDE_GAP};
 })();
 if(typeof module!=='undefined')module.exports=TerrainEdit;

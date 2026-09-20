@@ -114,3 +114,34 @@ base.forEach((l,li)=>l.units.forEach((u,i)=>{maxDelta=Math.max(maxDelta,Math.abs
 console.log('INFO unedited rebuild max reference shift vs saved z:',maxDelta.toFixed(2),'m');
 assert(maxDelta<25,'unedited rebuild stays near saved pads');
 console.log('PASS unedited terrain keeps references near saved values');
+
+// 8. Orientation criterion: the contour-label vote decides, physical reads only break ties.
+//    Synthetic slope: two straight contour lines, 1350 downhill of 1360. A villa whose
+//    arrow points at the 1360 line reads uphill; the pure flip must land it downhill.
+const synthetic=[{id:'A',z:1350,points:[[0,0],[400,0]]},{id:'B',z:1360,points:[[0,60],[400,60]]}];
+const sLines=T.buildFromContours(synthetic),sPts=T.samples(sLines);
+const mk=(center,view)=>({id:'T1',center,points:[[center[0]-5.5,center[1]-11.5],[center[0]+5.5,center[1]-11.5],[center[0]+5.5,center[1]+11.5],[center[0]-5.5,center[1]+11.5]],view,reference:T.elevation(center[0],center[1],sPts),z:T.elevation(center[0],center[1],sPts),active:true});
+const uphillVilla=mk([200,30],[0,1]);      // arrow aims at the higher contour
+const downhillVilla=mk([200,30],[0,-1]);   // arrow aims at the lower contour
+const vUp=T.labelVote(uphillVilla,sPts),vDown=T.labelVote(downhillVilla,sPts);
+assert(vUp.vote>=2,'arrow toward the higher labels reads uphill: vote '+vUp.vote);
+assert(vDown.vote<=-2,'arrow toward the lower labels reads downhill: vote '+vDown.vote);
+assert.equal(vUp.vote,-vDown.vote,'the vote negates under a 180 degree flip');
+assert.equal(T.pointsUphill(uphillVilla,sPts).uphill,true,'uphill villa detected');
+assert.equal(T.pointsUphill(downhillVilla,sPts).uphill,false,'downhill villa left alone');
+const flipped=T.flip(uphillVilla);
+assert.equal(T.pointsUphill(flipped,sPts).uphill,false,'flipping an uphill villa lands it downhill');
+assert(Math.abs(flipped.view[0])===0,'flip reverses only the arrow direction (x)');
+assert(flipped.view[1]===-1,'flip reverses only the arrow direction (y)');
+const ptsBefore=uphillVilla.points.map(p=>p.slice());
+flipped.points.forEach((p,i)=>{const dx=p[0]-uphillVilla.center[0],dy=p[1]-uphillVilla.center[1],bx=ptsBefore[i][0]-uphillVilla.center[0],by=ptsBefore[i][1]-uphillVilla.center[1];assert(Math.abs(Math.hypot(dx,dy)-Math.hypot(bx,by))<1e-9,'flip is a rigid rotation about the centre');});
+console.log('PASS orientation: label vote decides ('+vUp.vote+'/'+vDown.vote+'), flip negates it, rigid about the centre');
+
+// 9. Contours aimed parallel to the arrow (labels tied) fall back to the physical reads
+const tieVilla=mk([200,30],[1,0]);
+const tieVote=T.labelVote(tieVilla,sPts),tieDecision=T.pointsUphill(tieVilla,sPts);
+assert(Math.abs(tieVote.vote)<=1,'arrow along the contours ties the label vote: '+tieVote.vote);
+assert.equal(typeof tieDecision.uphill,'boolean','tied labels still yield a decision');
+const consensus=tieDecision.level===null?tieDecision.drop:(tieDecision.level&&tieDecision.drop);
+assert.equal(tieDecision.uphill,consensus,'tied labels decide by the physical consensus (level AND drop, drop alone if no lower level): level='+tieDecision.level+' drop='+tieDecision.drop);
+console.log('PASS orientation: tied labels (vote '+tieVote.vote+') fall back to level+drop -> '+tieDecision.uphill+' (level '+tieDecision.level+', drop '+tieDecision.drop+')');

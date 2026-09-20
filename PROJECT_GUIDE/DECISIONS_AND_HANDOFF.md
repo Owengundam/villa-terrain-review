@@ -47,6 +47,14 @@ Retrieved task history includes “Fix Three Resort Terrain” and “Check plan
 
 The partial-edit folder has status `selected`; completion is unconfirmed. Recovery files and Rhino temporary files have not been deleted or treated as authoritative deliverables.
 
+## Orientation authority corrected — September 20
+
+Planar fitting was reversing villas that already faced downhill. The rule in use since the earlier uphill fix probed the interpolated terrain field over the 23 m footprint (±11.5 m) and flipped when the front sample sat higher than the back sample. That field (inverse-distance-squared over sampled contour points) forms local dips between contour lines, so a symmetric probe straddles them: on the shipped data the rule flipped 30 of 226 arrows the contour labels read as downhill (staggered-2 V073/V078 among them) while missing genuinely uphill ones, which is why one user run corrected some villas and left others pointing up.
+
+The rule now decides from the contour LABELS the plan draws — the same thing the user compares against — with physical reads only breaking ties: sample 5…45 m ahead of and behind the arrow, each pair voting on the nearest contour's own z; vote ≥ +2 uphill, ≤ −2 downhill; when the labels are tied (flat, hollow or saddle spots) the arrow is flipped only if the contour-LEVEL scan and the integrated ±40 m drop both report uphill. A flip never reverses a villa the labels read downhill.
+
+Evidence (`node phase0/orientation_report.js`), scored against an independent label read: shipped terrain 5 of 5 definitely-uphill villas flipped, 0 false positives on the 218 the labels read downhill; with one contour line moved 5/5 and 0; with three lines moved 10/10 and 0. Arrows flipped on the shipped data: parallel V017 V053, staggered-2 V026 V043 V068, staggered-3 V067 — the free arrangement has none. The perpendicular tolerance is now reported (how many active villas sit how far off the local contour normal) but is not corrected: this stage flips arrows, it never rotates an axis onto the normal.
+
 ## Catalog maintenance
 
 On September 14, the output folder was physically organized: current model at the top level; supporting files in checks, previews, archive and backup folders. The move manifest records 109 files and their pre-move hashes. Historical report payloads retain their original path strings as provenance. Authored links and the offline inspection path were updated. Plugin helper scripts now search ancestor folders for the plugin source, supporting both current and archived model locations.
