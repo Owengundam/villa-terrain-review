@@ -1,0 +1,13 @@
+{
+  "connected": 34,
+  "total": 47,
+  "testEntrance": [
+    3220.400467337725,
+    2089.574414181945
+  ],
+  "roads": 106,
+  "shapelyRebuiltEnvelopeViolations": [],
+  "areaToleranceSquareMetres": 0.005,
+  "terrainAndVehicleChecks": "not evaluated",
+  "note": "Temporary browser-test interior arrival point, not an approved project entrance."
+}

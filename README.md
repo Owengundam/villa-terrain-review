@@ -4,6 +4,9 @@ Start with the [planning method](PROJECT_GUIDE/METHOD.md) (plain language for ar
 
 ## Current work
 
+- **Circulation prototype:** [fixed-layout rear lanes and entrance routing](experiments/2026-09-21-circulation/README.md). Plan checks only; terrain and vehicle checks remain separate.
+- **Canonical repository:** edit and build at this workspace root. The nested GitHub checkout is a preserved recovery copy.
+
 - **Phase 0 villa generator:** [parallel and staggered arrangements](phase0/README.md), generated without an image template. Both alternatives pass the adopted clearance and elevation rules.
 
 - **Current Phase 2:** [views and elevations](view_elevation/README.md), implemented and verified against a fresh September 14 export of the live model. [Review the proposed layouts](output/checks/view-elevation/20260914-152538/index.html). Sequence: orientation 鈫?views/elevations 鈫?clearance cleanup 鈫?terrain fitting. Proposals are not applied to the source model.
@@ -25,7 +28,7 @@ The catalog groups every existing file by experiment and role. The output folder
 | rhino-plugin/ResortTerrain | Native Rhino plugin source, build, tests and documentation |
 | outputs/partial-edit | Separate image-alignment and partial-edit experiment |
 
-The old filenames containing 鈥渃urrent鈥?or 鈥渇inal鈥?describe their own experiment, not necessarily today's working model. Dates are filesystem metadata unless a report explicitly states otherwise. This workspace has no Git history.
+The old filenames containing 鈥渃urrent鈥?or 鈥渇inal鈥?describe their own experiment, not necessarily today's working model. Dates are filesystem metadata unless a report explicitly states otherwise. The workspace root is now the canonical Git repository; see [repository unification](PROJECT_GUIDE/REPOSITORY.md).
 
 ## Maintaining the record
 
