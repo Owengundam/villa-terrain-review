@@ -4,8 +4,8 @@ function element(id){return nodes[id]??={value:'',textContent:'',innerHTML:'',hi
 class Worker{constructor(){workers.push(this);}postMessage(input){this.input=input;}terminate(){this.terminated=true;}}
 const ctx=vm.createContext({document:{getElementById:element,querySelectorAll:()=>Object.values(nodes)},console,setTimeout,clearTimeout,Worker,Blob,URL:{createObjectURL:()=>'',revokeObjectURL:()=>{}}});
 new vm.Script(script).runInContext(ctx);
-vm.runInContext(`data.boundary=[[0,0],[90,0],[90,100],[0,100]];data.layouts=[{name:'parallelPara',conflicts:[],outside:[],units:[{id:'A',center:[25,30],view:[0,-1],row:'R1',order:0,points:ParallelPara.rect([25,30],[0,-1],11,23),reference:10,z:10,active:true},{id:'B',center:[45,30],view:[0,-1],row:'R1',order:1,points:ParallelPara.rect([45,30],[0,-1],11,23),reference:10,z:10,active:true}]}];index=0;active=[true,true];state=View3D.inspect(data.layouts[0],active,[10,10],rules);`,ctx);
-element('roadWidth').value='4';element('roadEdge').value='0';element('backClear').value='7';element('arrivalWidth').value='1.5';
+vm.runInContext(`data.contours=[{z:10,points:[[-20,-20],[120,-20]]},{z:11.4,points:[[-20,120],[120,120]]}];data.boundary=[[0,0],[90,0],[90,100],[0,100]];data.layouts=[{name:'parallelPara',conflicts:[],outside:[],units:[{id:'A',center:[25,30],view:[0,-1],row:'R1',order:0,points:ParallelPara.rect([25,30],[0,-1],11,23),reference:10,z:10,active:true},{id:'B',center:[45,30],view:[0,-1],row:'R1',order:1,points:ParallelPara.rect([45,30],[0,-1],11,23),reference:10,z:10,active:true}]}];index=0;active=[true,true];state=View3D.inspect(data.layouts[0],active,[10,10],rules);`,ctx);
+element('roadMaxSlope').value='8';element('roadWidth').value='4';element('roadEdge').value='0';element('backClear').value='7';element('arrivalWidth').value='1.5';
 element('generateRoads').onclick();assert.equal(workers.length,1);
 const source=vm.runInContext('roadWorkerSource',ctx),messages=[],workerCtx=vm.createContext({postMessage:m=>messages.push(m)});new vm.Script(source).runInContext(workerCtx);workerCtx.onmessage({data:workers[0].input});
 assert(!messages.at(-1).error,messages.at(-1).error);workers[0].onmessage({data:messages.at(-1)});
@@ -18,3 +18,8 @@ element('generateRoads').onclick();const changed=workers.at(-1);element('roadWid
 element('roadWidth').value='4';vm.runInContext("roadEntrance=[10,70]",ctx);element('generateRoads').onclick();const connected=workers.at(-1);messages.length=0;workerCtx.onmessage({data:connected.input});assert(!messages.at(-1).error,messages.at(-1).error);connected.onmessage({data:messages.at(-1)});assert(element('roadStatus').textContent.includes('2/2'));
 vm.runInContext('state.z[0]+=1;draw()',ctx);assert(element('roadStatus').textContent.includes('OUT OF DATE'));
 console.log('PASS input changes discard pending results, entrance network and pad edits invalidate');
+vm.runInContext('state.z[0]-=1;draw()',ctx);
+element('roadMaxSlope').value='6';element('roadMaxSlope').onchange();assert(element('roadStatus').textContent.includes('OUT OF DATE'));
+element('generateRoads').onclick();assert.equal(workers.at(-1).input.settings.maxSlope,'6');element('cancelRoads').onclick();
+assert(html.includes('id="roadMaxSlope" type="number" min="0" max="100" step="0.5" value="8"'));
+console.log('PASS slope control defaults to 8%, enters worker snapshot, and invalidates results');

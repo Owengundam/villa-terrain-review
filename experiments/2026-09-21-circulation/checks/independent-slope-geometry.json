@@ -1,0 +1,15 @@
+{
+  "connected": 2,
+  "total": 16,
+  "testEntrance": [
+    3251.9596809604695,
+    2263.7170925624405
+  ],
+  "roads": 22,
+  "shapelyRebuiltEnvelopeViolations": [],
+  "areaToleranceSquareMetres": 0.005,
+  "exportedProfileSlopeViolations": [],
+  "maximumRecomputedGrade": 7.451159986524359,
+  "terrainAndVehicleChecks": "sampled ground-following longitudinal grade only",
+  "note": "Temporary browser-test interior arrival point, not an approved project entrance."
+}

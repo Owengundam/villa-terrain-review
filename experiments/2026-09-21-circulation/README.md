@@ -1,4 +1,53 @@
-# Circulation milestone 1 — fixed-layout plan study
+# Circulation — fixed-layout planning
+
+## Current update: ghost access and maximum road slope
+
+The latest version allows roads across ghost footprints. Only active villas are
+obstacles, using the viewer's current activation mask. Crossed ghosts are listed
+in exported `ghostCrossings`; reactivation invalidates the result and names the
+obstruction in the viewer. Regeneration treats the newly active villa as an
+obstacle. Existing roads are never silently presented as valid after reactivation.
+
+**Max road slope (%)** defaults to **8**, inclusive. It means absolute elevation
+change divided by horizontal travel distance, times 100, for uphill and downhill
+travel alike. Routing, direct row links, ground-following rear entrance links,
+route shortening and final independent checks all use this limit. Candidate
+paths are sampled at intervals no greater than **0.5 m**; equal start/end heights
+do not hide an intervening steep section. Each road exports its sampled profile
+and maximum grade. Changing the limit marks existing results out of date.
+
+The shared road reference uses `ParallelPara.buildField().zInfo()` on the accepted
+unsmoothed contour lines. It is the existing distinct-level contour interpolation,
+not the visual smoothing or villa-centre pad heights. Unbracketed, missing and
+extrapolated terrain is unresolved and cannot pass slope validation. This can
+reject locations used by the older XY-only preview, including its temporary test
+entrance. It also exposes steep changes in the inferred terrain; it does not
+silently smooth them, grade the ground, or assume retaining structures.
+
+This is sampled, ground-following **longitudinal** slope screening. Cross-slope,
+entrance floor thresholds, vertical curves, vehicle turns and surveyed grading
+remain unevaluated. The bounded grid search may miss longer feasible alignments;
+an unresolved route is not proof that civil design cannot provide access.
+
+Tests cover the 8% threshold, both directions, a hill with equal endpoint heights,
+unknown terrain, a longer slope-compliant detour, slope-safe shortening, current
+limit validation, ghost crossing/reactivation and UI snapshot/staleness. On the
+saved all-active 47-villa fixture, 22 rear arrivals pass the current geometry and
+ground-following slope tests at 4 m width and 8% maximum. This is not a network
+connectivity count. See `checks/slope-row-preview.json`.
+
+A separate synthetic activation test (every third villa active, test entrance at
+the first supported rear arrival) records 2/16 connected, one crossed ghost and
+a maximum accepted sampled grade of 7.45116%. Its inputs/result are in
+`checks/slope-network.json`; this is a regression fixture, not a proposed entrance
+or the user's current arrangement. Reproduce the independent envelope and
+exported-profile arithmetic check with:
+`python experiments/2026-09-21-circulation/check_geometry.py slope-network.json`.
+
+## Historical milestone 1 — XY-only baseline
+
+The sections below record the original version. Its ghost-protection and
+unevaluated-slope behavior are superseded by the update above.
 
 21 September 2026. Built on unified checkpoint **b03defd**. This is a working
 prototype in the existing viewer, not a terrain- or vehicle-validated road design.

@@ -1,6 +1,6 @@
 /* Fixed-layout circulation study. Metres in/out; Clipper uses millimetres.
  * No building edits, terrain grading, or vehicle usability claims.
- * Ghost footprints stay protected. Search is bounded and deterministic.
+ * Only active footprints obstruct roads. Search is bounded and deterministic.
  */
 const Circulation=(()=>{
  'use strict';
@@ -16,13 +16,39 @@ const Circulation=(()=>{
  const union=a=>op(a,[],C.ClipType.ctUnion);
  const area=a=>Math.abs(a.reduce((s,p)=>s+C.Clipper.Area(p),0))/SCALE**2;
  function buffer(points,r,flat=false){
+  points=points.filter((p,i)=>!i||dist(p,points[i-1])>1e-9);
   if(points.length===1){const p=points[0];return [ring(Array.from({length:32},(_,i)=>[p[0]+r*Math.cos(i*Math.PI/16),p[1]+r*Math.sin(i*Math.PI/16)]))];}
   const off=new C.ClipperOffset(2,0.005*SCALE),out=[];
   off.AddPath(path(points),C.JoinType.jtRound,flat?C.EndType.etOpenButt:C.EndType.etOpenRound);off.Execute(out,r*SCALE);return out;
  }
  function settings(input={}){
-  const number=(k,def,min,max)=>{const raw=input[k]===undefined?def:input[k];if(raw===null||raw===''||!Number.isFinite(Number(raw))||Number(raw)<min||Number(raw)>max)throw Error('Enter a valid '+k+' ('+min+'–'+max+' m).');return Number(raw);};
-  return {width:number('width',undefined,0.5,12),edge:number('edge',0,0,3),backClear:number('backClear',7,0,30),entranceWidth:number('entranceWidth',1.5,0.5,5),cell:number('cell',2,1,5)};
+  const number=(k,def,min,max,unit='m')=>{const raw=input[k]===undefined?def:input[k];if(raw===null||raw===''||!Number.isFinite(Number(raw))||Number(raw)<min||Number(raw)>max)throw Error('Enter a valid '+k+' ('+min+'–'+max+' '+unit+').');return Number(raw);};
+  return {width:number('width',undefined,0.5,12),edge:number('edge',0,0,3),backClear:number('backClear',7,0,30),entranceWidth:number('entranceWidth',1.5,0.5,5),cell:number('cell',2,1,5),maxSlope:number('maxSlope',8,0,100,'%')};
+ }
+ const isActive=(input,u,i)=>input.active?input.active[i]!==false:u.active!==false;
+ const activeUnits=input=>input.layout.units.filter((u,i)=>isActive(input,u,i));
+ // One unsmoothed reference shared by routing, exported profiles and final checks.
+ // Use the placement module's labelled-contour interpolation, not smoothed guidance
+ // or villa-centre pad heights. Unbracketed/extrapolated terrain cannot certify grade.
+ function terrainReference(contours){
+  if(!Array.isArray(contours)||contours.length<2)throw Error('Accepted terrain contours are required for road slope checks.');
+  const field=P.buildField(contours,P.settings({}).values),cache=new Map();
+  return {zAt(x,y){const key=x.toFixed(6)+','+y.toFixed(6);if(cache.has(key))return cache.get(key);
+   const info=field.zInfo(x,y),z=info.status==='interpolated'&&Number.isFinite(info.z)?info.z:null;
+   cache.set(key,z);return z;},source:'Accepted unsmoothed contours; distinct-level interpolation; no extrapolated grades'};
+ }
+ function profile(points,terrain,maxSlope,step=0.5){
+  const samples=[];let station=0,max=0;
+  const read=(p,s)=>{const z=terrain.zAt(p[0],p[1]);samples.push({s,x:p[0],y:p[1],z});return z;};
+  let prev=read(points[0],0);
+  if(prev===null||!Number.isFinite(prev))return {ok:false,reason:'Reference terrain unresolved',maxSlope:null,samples};
+  for(let i=1;i<points.length;i++){const a=points[i-1],b=points[i],len=dist(a,b);if(len<1e-9)continue;const count=Math.ceil(len/step),ds=len/count;
+   for(let j=1;j<=count;j++){const t=j/count,z=read([a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t],station+j*ds);
+    if(z===null||!Number.isFinite(z))return {ok:false,reason:'Reference terrain unresolved',maxSlope:null,samples};
+    const grade=100*Math.abs(z-prev)/ds;max=Math.max(max,grade);prev=z;
+   }station+=len;
+  }
+  return {ok:max<=maxSlope+1e-7,reason:max>maxSlope+1e-7?'Road slope '+max.toFixed(2)+'% exceeds '+maxSlope+'%':null,maxSlope:max,sampleStep:step,samples};
  }
  function fingerprint(input){return JSON.stringify({layout:input.layout,boundary:input.boundary,contours:input.contours,active:input.active,z:input.z,entrance:input.entrance,settings:input.settings,guidance:input.guidance});}
  function environment(boundary,units){
@@ -43,7 +69,7 @@ const Circulation=(()=>{
   push(x){const a=this.a;a.push(x);let i=a.length-1;while(i){const p=(i-1)>>1;if(a[p].f<x.f||(a[p].f===x.f&&a[p].id<=x.id))break;a[i]=a[p];i=p;}a[i]=x;}
   pop(){const a=this.a,r=a[0],x=a.pop();if(a.length){let i=0;while(i*2+1<a.length){let k=i*2+1;if(k+1<a.length&&(a[k+1].f<a[k].f||(a[k+1].f===a[k].f&&a[k+1].id<a[k].id)))k++;if(a[k].f>x.f||(a[k].f===x.f&&a[k].id>=x.id))break;a[i]=a[k];i=k;}a[i]=x;}return r;}
  }
- function router(boundary,units,radius,cell){
+ function router(boundary,units,radius,cell,gradeOK=()=>true){
   const xs=boundary.map(p=>p[0]),ys=boundary.map(p=>p[1]),x0=Math.min(...xs),y0=Math.min(...ys);
   const nx=Math.ceil((Math.max(...xs)-x0)/cell)+1,ny=Math.ceil((Math.max(...ys)-y0)/cell)+1;
   if(nx*ny>250000)throw Error('Site exceeds the bounded routing grid; increase grid spacing.');
@@ -52,12 +78,14 @@ const Circulation=(()=>{
   const point=id=>[x0+(id%nx)*cell,y0+Math.floor(id/nx)*cell];
   const pointOK=p=>P.pointInPoly(p,boundary)&&P.ptPolyDist(p,boundary)>radius+0.01&&!polys.some(poly=>P.pointInPoly(p,poly)||P.ptPolyDist(p,poly)<radius+0.01);
   const valid=id=>{if(!cache[id])cache[id]=pointOK(point(id))?1:-1;return cache[id]===1;};
-  function edgeOK(a,b){
+  const edgeCache=new Map();
+  function edgeCheck(a,b){
    if(!pointOK(a)||!pointOK(b))return false;
    for(const [c,d] of edges){if(P.segCross(a,b,c,d))return false;
     if(Math.min(P.segDist(a,c,d),P.segDist(b,c,d),P.segDist(c,a,b),P.segDist(d,a,b))<radius+0.005)return false;}
-   return true;
+   return gradeOK([a,b]);
   }
+  function edgeOK(a,b){const ka=a.join(','),kb=b.join(','),key=ka<kb?ka+'|'+kb:kb+'|'+ka;if(!edgeCache.has(key))edgeCache.set(key,edgeCheck(a,b));return edgeCache.get(key);}
   function near(p){const ix=Math.round((p[0]-x0)/cell),iy=Math.round((p[1]-y0)/cell),out=[];
    for(let dy=-2;dy<=2;dy++)for(let dx=-2;dx<=2;dx++){const x=ix+dx,y=iy+dy,id=y*nx+x;if(x>=0&&x<nx&&y>=0&&y<ny&&valid(id)&&edgeOK(p,point(id)))out.push(id);}
    return out.sort((a,b)=>dist(p,point(a))-dist(p,point(b))||a-b).slice(0,6);
@@ -86,13 +114,16 @@ const Circulation=(()=>{
   if(!Array.isArray(input.boundary)||input.boundary.length<3)throw Error('Site boundary is missing.');
   if(!units.length)throw Error('No villas to serve.');
   if(units.some(u=>!u.row))throw Error('This arrangement has no row IDs. Populate a parallel or staggered arrangement first.');
-  const env=environment(input.boundary,units),radius=s.width/2+s.edge;
+  const obstacles=activeUnits(input),env=environment(input.boundary,obstacles),radius=s.width/2+s.edge;
+  const terrain=terrainReference(input.contours),gradeOK=line=>profile(line,terrain,s.maxSlope).ok;
   if(2*radius>s.backClear)throw Error('Road width plus edge allowances exceeds the rear reservation.');
   const nodes=[],roads=[],warnings=[],reservations=[],byId=new Map(),groups=new Map();
-  const enabled=units.map((u,i)=>!input.active||input.active[i]!==false);
+  const enabled=units.map((u,i)=>isActive(input,u,i));
   const addRoad=(kind,a,b,points,width=s.width)=>{
    const footprint=buffer(points,width/2,kind==='entrance'),envelope=buffer(points,width/2+(kind==='entrance'?0:s.edge),kind==='entrance');
-   const r={id:'road-'+roads.length,kind,a,b,points,width,footprint:footprint.map(unpath),envelope:envelope.map(unpath),length:length(points)};roads.push(r);return r;
+   const slope=profile(points,terrain,s.maxSlope);
+   if(!slope.ok)throw Error(slope.reason);
+   const r={id:'road-'+roads.length,kind,a,b,points,width,footprint:footprint.map(unpath),envelope:envelope.map(unpath),length:length(points),profile:slope};roads.push(r);return r;
   };
   units.forEach((u,i)=>{
    if(!enabled[i])return;
@@ -104,6 +135,7 @@ const Circulation=(()=>{
     if(area(op(disc,[ring(strip)],C.ClipType.ctDifference))>TOL){last='Rear reservation too narrow';continue;}
     const arrival=buffer([p,r],s.entranceWidth/2,true),ec=env.check(arrival,u.id);
     if(!ec.ok||area(op(arrival,[ring(strip)],C.ClipType.ctDifference))>TOL){last=ec.reason||'Entrance connection leaves rear reservation';continue;}
+    const slope=profile([p,r],terrain,s.maxSlope);if(!slope.ok){last=slope.reason;continue;}
     selected={id:u.id,point:p,rear:r,row:u.row,order:u.order,connected:false};break;
    }
    if(!selected){warnings.push({villa:u.id,reason:last});return;}
@@ -113,7 +145,8 @@ const Circulation=(()=>{
   // Edges link only explicit portals. XY crossings are not silently declared junctions.
   for(const [row,members] of groups){members.sort((a,b)=>a.order-b.order);
    for(let i=1;i<members.length;i++){const a=members[i-1],b=members[i],line=[a.point,b.point],check=env.check(buffer(line,radius));
-    if(check.ok)addRoad('row',a.id,b.id,line);else warnings.push({row,a:a.id,b:b.id,reason:'Direct row link: '+check.reason});}
+    const slope=profile(line,terrain,s.maxSlope);
+    if(check.ok&&slope.ok)addRoad('row',a.id,b.id,line);else warnings.push({row,a:a.id,b:b.id,reason:'Direct row link: '+(check.reason||slope.reason)});}
   }
   const adjacency=()=>{const m=new Map(nodes.map(n=>[n.id,[]]));if(input.entrance)m.set('site',[]);
    for(const r of roads)if(r.a!==r.b){m.get(r.a)?.push([r.b,r.id]);m.get(r.b)?.push([r.a,r.id]);}return m;};
@@ -122,7 +155,8 @@ const Circulation=(()=>{
   if(input.entrance){
    if(!Array.isArray(input.entrance)||input.entrance.length!==2||!input.entrance.every(Number.isFinite))throw Error('Invalid site entrance.');
    if(!env.check(buffer([input.entrance],radius)).ok)throw Error('Choose an interior entrance arrival point with space for the full road width. External gate tie-in is not checked in this version.');
-   const route=router(input.boundary,units,radius,s.cell);
+   if(!gradeOK([input.entrance]))throw Error('Reference terrain at the entrance is unresolved; select a point within supported contour levels.');
+   const route=router(input.boundary,obstacles,radius,s.cell,gradeOK);
    for(let step=0;step<nodes.length;step++){
     const {seen}=reachable(),remaining=nodes.filter(n=>!seen.has(n.id));if(!remaining.length)break;
     progress({stage:'Connecting rear lanes',completed:nodes.length-remaining.length,total:nodes.length});
@@ -138,13 +172,14 @@ const Circulation=(()=>{
   const {seen,parents}=reachable();
   const served=units.filter((u,i)=>enabled[i]).map(u=>{const node=byId.get(u.id),connected=!!input.entrance&&seen.has(u.id),route=[];
    if(connected){let id=u.id;while(id!=='site'){const p=parents[id];if(!p)break;route.push(p[1]);id=p[0];}}
-   return {id:u.id,connected,status:connected?'Connected in plan':!input.entrance?'Reservation only':'Unresolved',reason:connected?'Terrain, entrance levels and vehicle turns not evaluated':warnings.find(w=>w.villa===u.id)?.reason||(!input.entrance?'Set an entrance arrival point':'No connection found within the bounded search'),route,rear:node?.rear};});
+   return {id:u.id,connected,status:connected?'Connected in plan; road slope checked':!input.entrance?'Reservation only':'Unresolved',reason:connected?'Ground-following slope within '+s.maxSlope+'%; entrance levels and vehicle turns not evaluated':warnings.find(w=>w.villa===u.id)?.reason||(!input.entrance?'Set an entrance arrival point':'No width- and slope-compliant connection found within the bounded search'),route,rear:node?.rear};});
   const unionFootprints=union(roads.flatMap(r=>r.footprint.map(ring)));
-  const result={version:1,settings:s,entrance:input.entrance||null,nodes,roads,reservations,warnings,served,connected:served.filter(v=>v.connected).length,total:served.length,length:roads.filter(r=>r.kind!=='arrival'&&r.kind!=='entrance').reduce((n,r)=>n+r.length,0),area:area(unionFootprints),searchAttempts,terrain:'Not evaluated',vehicle:'Not evaluated',gateTieIn:'Not evaluated',fingerprint:fingerprint(input)};
+  const ghostCrossings=units.filter((u,i)=>!enabled[i]).map(u=>({villa:u.id,roads:roads.filter(r=>area(op(r.envelope.map(ring),[ring(u.points)],C.ClipType.ctIntersection))>TOL).map(r=>r.id)})).filter(g=>g.roads.length);
+  const result={version:2,settings:s,entrance:input.entrance||null,nodes,roads,reservations,warnings,served,ghostCrossings,connected:served.filter(v=>v.connected).length,total:served.length,length:roads.filter(r=>r.kind!=='arrival'&&r.kind!=='entrance').reduce((n,r)=>n+r.length,0),area:area(unionFootprints),searchAttempts,terrain:roads.length?'Sampled longitudinal slope checked':'No accepted roads',slope:{limit:s.maxSlope,maxObserved:roads.length?Math.max(...roads.map(r=>r.profile.maxSlope)):null,sampleStep:0.5,source:terrain.source},vehicle:'Not evaluated',gateTieIn:'Not evaluated',fingerprint:fingerprint(input)};
   const check=validate(result,input);if(!check.ok)throw Error('Independent road check failed: '+check.issues.join('; '));result.validation=check;return result;
  }
  function validate(result,input){
-  const env=environment(input.boundary,input.layout.units),issues=[],ids=new Set(result.nodes.map(n=>n.id));ids.add('site');
+  const env=environment(input.boundary,activeUnits(input)),terrain=terrainReference(input.contours),s=settings(input.settings),issues=[],ids=new Set(result.nodes.map(n=>n.id));ids.add('site');
   const graph=new Map([...ids].map(id=>[id,[]]));
   for(const n of result.nodes){
    const u=input.layout.units.find(u=>u.id===n.id),entry=result.roads.find(r=>r.kind==='entrance'&&r.a===n.id);
@@ -156,6 +191,7 @@ const Circulation=(()=>{
   for(const r of result.roads){const envelope=buffer(r.points,r.width/2+(r.kind==='entrance'?0:result.settings.edge),r.kind==='entrance');
    if(r.width!==(r.kind==='entrance'?result.settings.entranceWidth:result.settings.width))issues.push(r.id+': inconsistent width');
    const c=env.check(envelope,r.kind==='entrance'?r.a:undefined);if(!c.ok)issues.push(r.id+': '+c.reason);
+   const slope=profile(r.points,terrain,s.maxSlope);if(!slope.ok)issues.push(r.id+': '+slope.reason);
    if(!ids.has(r.a)||!ids.has(r.b))issues.push(r.id+': unknown endpoint');
    if(r.a!==r.b){const a=r.a==='site'?result.entrance:result.nodes.find(n=>n.id===r.a)?.point,b=result.nodes.find(n=>n.id===r.b)?.point;
     if(!a||!b||dist(r.points[0],a)>0.002||dist(r.points.at(-1),b)>0.002)issues.push(r.id+': disconnected geometry');
@@ -165,6 +201,6 @@ const Circulation=(()=>{
   for(const v of result.served)if(v.connected!==reached.has(v.id))issues.push(v.id+': inconsistent connectivity');
   return {ok:!issues.length,issues};
  }
- return {settings,fingerprint,generate,validate,buffer,environment,area,ring,op,union,unpath,rear,router};
+ return {settings,fingerprint,generate,validate,buffer,environment,area,ring,op,union,unpath,rear,router,terrainReference,profile,activeUnits};
 })();
 if(typeof module!=='undefined')module.exports=Circulation;

@@ -1,9 +1,10 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),C=require('../circulation.js'),P=require('../parallel_para.js');
 function villa(id,x,y,row='R1',order=0,view=[0,-1]){return {id,center:[x,y],view,row,order,points:P.rect([x,y],view,11,23),active:true};}
 const units=[villa('A',25,30,'R1',0),villa('B',45,30,'R1',1),villa('C',25,65,'R2',0),villa('D',45,65,'R2',1)];
-const input={layout:{units},boundary:[[0,0],[90,0],[90,100],[0,100]],active:[true,true,true,true],settings:{width:4,backClear:7},entrance:[10,90]};
+const contours=[{z:10,points:[[-20,-20],[120,-20]]},{z:11.4,points:[[-20,120],[120,120]]}];
+const input={contours,layout:{units},boundary:[[0,0],[90,0],[90,100],[0,100]],active:[true,true,true,true],settings:{width:4,backClear:7},entrance:[10,90]};
 const saved=JSON.stringify(input),r=C.generate(input);
-assert.equal(JSON.stringify(input),saved,'fixed layout and settings are immutable');assert.equal(r.connected,4);assert.equal(r.validation.ok,true);assert.equal(r.terrain,'Not evaluated');
+assert.equal(JSON.stringify(input),saved,'fixed layout and settings are immutable');assert.equal(r.connected,4);assert.equal(r.validation.ok,true);assert.equal(r.terrain,'Sampled longitudinal slope checked');assert.equal(r.settings.maxSlope,8);
 assert.deepEqual(C.generate(input),r,'deterministic');
 assert.equal(r.roads.filter(r=>r.kind==='row').length,2);assert(r.served.every(v=>v.route.length));
 console.log('PASS straight shared lanes, multi-row entrance network, determinism and immutable inputs');
@@ -13,8 +14,10 @@ const noEntrance=C.generate({...input,entrance:null});assert.equal(noEntrance.co
 console.log('PASS missing/oversized width, boundary entrance and reservation-only status');
 const narrow=villa('edge',25,86);const edge=C.generate({...input,layout:{units:[narrow]},active:[true],entrance:null});assert.equal(edge.nodes.length,0);assert(edge.warnings.some(w=>w.villa==='edge'));
 const ghost=villa('ghost',35,50,'G');const withGhost=C.generate({...input,layout:{units:[...units,ghost]},active:[true,true,true,true,false],entrance:null});
-for(const road of withGhost.roads)assert(C.environment(input.boundary,[ghost]).check(road.envelope.map(C.ring)).ok);
-console.log('PASS boundary-clipped rear space rejected and ghosts protected');
+assert(withGhost.ghostCrossings.some(g=>g.villa==='ghost'),'road crosses ignored ghost');
+assert(C.validate(withGhost,{...input,layout:{units:[...units,ghost]},active:[true,true,true,true,false],entrance:null}).ok);
+assert(!C.validate(withGhost,{...input,layout:{units:[...units,ghost]},active:[true,true,true,true,true],entrance:null}).ok,'reactivation detects road obstruction');
+console.log('PASS boundary-clipped rear space rejected; ghosts ignored and reactivation conflicts detected');
 const rotated={...input,layout:{units:[villa('R',35,35,'R1',0,[.6,-.8]),villa('S',57,47,'R1',1,[.4,-Math.sqrt(.84)])]},active:[true,true],entrance:null};
 const rr=C.generate(rotated);assert(C.validate(rr,rotated).ok);assert.equal(rr.nodes.length,2);
 const broken=structuredClone(r);broken.roads.find(x=>x.kind==='connector').points[0]=[25,30];assert(!C.validate(broken,input).ok);
@@ -23,10 +26,31 @@ const missingEntry=structuredClone(r);missingEntry.roads=missingEntry.roads.filt
 console.log('PASS rotated geometry and independently rejected route/connectivity corruption');
 const route=C.router(input.boundary,[villa('block',45,50)],2,2).route([20,50],[70,50]);assert(route&&route.length>2);assert(C.environment(input.boundary,[villa('block',45,50)]).check(C.buffer(route,2)).ok);
 console.log('PASS width-aware obstacle detour');
+assert.throws(()=>C.settings({width:4,maxSlope:''}),/maxSlope/);
+assert.throws(()=>C.settings({width:4,maxSlope:-1}),/maxSlope/);
+assert.throws(()=>C.generate({...input,contours:[]}),/terrain contours/);
+assert.equal(C.settings({width:4,maxSlope:0}).maxSlope,0);
+const plane={zAt:(x,y)=>100+.08*x};
+assert(C.profile([[0,0],[100,0]],plane,8).ok,'8 percent threshold inclusive');
+assert(C.profile([[100,0],[0,0]],plane,8).ok,'descent uses absolute grade');
+assert(!C.profile([[0,0],[100,0]],{zAt:x=>100+.0801*x},8).ok);
+assert(!C.profile([[0,0],[10,0]],{zAt:x=>Math.abs(x-5)},8).ok,'equal endpoint levels do not hide a steep hill');
+assert(!C.profile([[0,0],[10,0]],{zAt:x=>x>4&&x<6?null:10},8).ok,'unknown interior terrain never passes');
+assert(!C.profile([[0,0]],{zAt:()=>null},8).ok);
+const limitInput={...input,settings:{...input.settings,maxSlope:.5}},blocked=C.generate(limitInput);
+assert.equal(blocked.nodes.length,0);assert(blocked.warnings.some(w=>/slope/.test(w.reason)));
+assert(!C.validate(r,limitInput).ok,'independent validator resamples terrain against current limit');
+const gradeTerrain={zAt:x=>.1*x},limited=C.router(input.boundary,[],2,2,line=>C.profile(line,gradeTerrain,8).ok).route([20,50],[70,50]);
+assert(limited&&limited.length>2);assert(C.profile(limited,gradeTerrain,8).ok,'A* and shortening preserve grade');
+assert(limited.slice(1).reduce((sum,p,i)=>sum+Math.hypot(p[0]-limited[i][0],p[1]-limited[i][1]),0)>62.49);
+const ref=C.terrainReference(contours);assert(Math.abs(ref.zAt(25,30)-10.5)<1e-8);
+assert.equal(ref.zAt(25,150),null,'outside labelled levels is not certified');
+assert.deepEqual(C.activeUnits({...input,active:undefined,layout:{units:[{...units[0],active:false}]}}),[]);
+console.log('PASS 8% default/threshold, descent, hidden hills, unknown terrain, slope rejection, compliant detour and independent slope validation');
 if(process.argv.includes('--site')){
  const site=JSON.parse(fs.readFileSync('experiments/2026-09-21-parallel-capacity/inputs/site-report.json','utf8'));
  const layout=JSON.parse(fs.readFileSync('experiments/2026-09-21-parallel-capacity/checks/after-0.json','utf8'));
- const real={layout,boundary:site.boundary,settings:{width:4,backClear:7},entrance:null};const result=C.generate(real);assert(result.validation.ok);
- fs.mkdirSync('experiments/2026-09-21-circulation/checks',{recursive:true});fs.writeFileSync('experiments/2026-09-21-circulation/checks/real-row-preview.json',JSON.stringify(result,null,2));
+ const real={contours:site.contours,layout,boundary:site.boundary,settings:{width:4,backClear:7},entrance:null};const result=C.generate(real);assert(result.validation.ok);
+ fs.mkdirSync('experiments/2026-09-21-circulation/checks',{recursive:true});fs.writeFileSync('experiments/2026-09-21-circulation/checks/slope-row-preview.json',JSON.stringify(result,null,2));
  console.log('PASS saved 47-villa row preview:',JSON.stringify({arrivalPoints:result.nodes.length,roads:result.roads.length,warnings:result.warnings.length,connected:result.connected}));
 }
