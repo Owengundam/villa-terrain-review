@@ -34,6 +34,17 @@ const detour=C.generate(detourInput),v70=detour.served.find(v=>v.id==='V070');
 assert(v70.connected,'V070 must enter the search via an angled rear approach and connect by a gentler detour');
 assert(C.validate(detour,detourInput).ok);
 const approach=detour.roads.find(r=>r.kind==='connector'&&r.b==='V070');
-assert(approach.points.length>2,'V070 needs a bent route, not the rejected straight approach');
+assert(v70.route.some(id=>detour.roads.find(r=>r.id===id).points.length>2),'V070 retains a bent route through the shared network');
 assert(approach.profile.maxSlope<=8);assert(detour.slope.maxObserved<=8);
 console.log('PASS saved V070 detour at 8%, width 4m, independently resampled');
+
+assert(detour.junctions.length>0,'network must create independent junctions');
+assert.equal(new Set(detour.roads.map(r=>r.id)).size,detour.roads.length,'split roads have unique IDs');
+for(const j of detour.junctions){
+ const edges=detour.roads.filter(r=>r.a===j.id||r.b===j.id);
+ assert(edges.length>=3);
+ for(const e of edges)assert.deepEqual(e.a===j.id?e.points[0]:e.points.at(-1),j.point);
+}
+const corrupt=JSON.parse(JSON.stringify(detour));corrupt.junctions[0].point[0]+=1;
+assert(!C.validate(corrupt,detourInput).ok,'independent validator rejects disconnected junction geometry');
+console.log('PASS shared junctions, edge splitting, unique IDs and disconnected-junction rejection');

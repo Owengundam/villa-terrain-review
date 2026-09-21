@@ -39,7 +39,7 @@ const Circulation=(()=>{
  }
  function settings(input={}){
   const number=(k,def,min,max,unit='m')=>{const raw=input[k]===undefined?def:input[k];if(raw===null||raw===''||!Number.isFinite(Number(raw))||Number(raw)<min||Number(raw)>max)throw Error('Enter a valid '+k+' ('+min+'–'+max+' '+unit+').');return Number(raw);};
-  return {checkSlope:input.checkSlope!==false,width:number('width',undefined,0.5,12),edge:number('edge',0,0,3),backClear:number('backClear',7,0,30),entranceWidth:number('entranceWidth',1.5,0.5,5),cell:number('cell',2,1,5),maxSlope:number('maxSlope',8,0,100,'%')};
+  return {junctionClearance:number('junctionClearance',8,0,30),checkSlope:input.checkSlope!==false,width:number('width',undefined,0.5,12),edge:number('edge',0,0,3),backClear:number('backClear',7,0,30),entranceWidth:number('entranceWidth',1.5,0.5,5),cell:number('cell',2,1,5),maxSlope:number('maxSlope',8,0,100,'%')};
  }
  const isActive=(input,u,i)=>input.active?input.active[i]!==false:u.active!==false;
  const activeUnits=input=>input.layout.units.filter((u,i)=>isActive(input,u,i));
@@ -131,14 +131,15 @@ const Circulation=(()=>{
   const obstacles=activeUnits(input),env=environment(input.boundary,obstacles),radius=s.width/2+s.edge;
   const terrain=s.checkSlope?terrainReference(input.contours):null,gradeOK=line=>assessment(line,terrain,s).ok;
   if(2*radius>s.backClear)throw Error('Road width plus edge allowances exceeds the rear reservation.');
-  const nodes=[],roads=[],warnings=[],reservations=[],byId=new Map(),groups=new Map();
+  let roadSerial=0;
+  const junctions=[],nodes=[],roads=[],warnings=[],reservations=[],byId=new Map(),groups=new Map();
   const enabled=units.map((u,i)=>isActive(input,u,i));
   const addRoad=(kind,a,b,points,width=s.width)=>{
    const u=kind==='entrance'?units.find(u=>u.id===a):null;
    const footprint=u?entranceEnvelope(points,width/2,u):buffer(points,width/2),envelope=u?footprint:buffer(points,width/2+s.edge);
    const slope=assessment(points,terrain,s);
    if(!slope.ok)throw Error(slope.reason);
-   const r={id:'road-'+roads.length,kind,a,b,points,width,footprint:footprint.map(unpath),envelope:envelope.map(unpath),length:length(points),profile:slope};roads.push(r);return r;
+   const r={id:'road-'+roadSerial++,kind,a,b,points,width,footprint:footprint.map(unpath),envelope:envelope.map(unpath),length:length(points),profile:slope};roads.push(r);return r;
   };
   units.forEach((u,i)=>{
    if(!enabled[i])return;
@@ -166,7 +167,7 @@ const Circulation=(()=>{
     const slope=assessment(line,terrain,s);
     if(check.ok&&slope.ok)addRoad('row',a.id,b.id,line);else warnings.push({row,a:a.id,b:b.id,reason:'Direct row link: '+(check.reason||slope.reason)});}
   }
-  const adjacency=()=>{const m=new Map(nodes.map(n=>[n.id,[]]));if(input.entrance)m.set('site',[]);
+  const adjacency=()=>{const m=new Map([...nodes,...junctions].map(n=>[n.id,[]]));if(input.entrance)m.set('site',[]);
    for(const r of roads)if(r.a!==r.b){m.get(r.a)?.push([r.b,r.id]);m.get(r.b)?.push([r.a,r.id]);}return m;};
   function reachable(){const adj=adjacency(),seen=new Set(['site']),parents={},queue=['site'];for(let i=0;i<queue.length;i++)for(const [b,r] of adj.get(queue[i])||[])if(!seen.has(b)){seen.add(b);parents[b]=[queue[i],r];queue.push(b);}return {seen,parents};}
   let searchAttempts=0;
@@ -178,13 +179,35 @@ const Circulation=(()=>{
    for(let step=0;step<nodes.length;step++){
     const {seen}=reachable(),remaining=nodes.filter(n=>!seen.has(n.id));if(!remaining.length)break;
     progress({stage:'Connecting rear lanes',completed:nodes.length-remaining.length,total:nodes.length});
-    const connected=[{id:'site',point:input.entrance},...nodes.filter(n=>seen.has(n.id))],pairs=[];
-    for(const a of connected)for(const b of remaining)pairs.push({a,b,d:dist(a.point,b.point)});
-    pairs.sort((a,b)=>a.d-b.d||a.a.id.localeCompare(b.a.id)||a.b.id.localeCompare(b.b.id));
+    const connected=[{id:'site',point:input.entrance},...nodes.filter(n=>seen.has(n.id)),...junctions.filter(n=>seen.has(n.id))],pairs=[];
+    // Search the interior of connected shared roads, not private entrance links.
+    for(const road of roads){if(road.a===road.b||!seen.has(road.a)||!seen.has(road.b))continue;
+     let station=0;const total=length(road.points);
+     for(let k=1;k<road.points.length;k++){const a=road.points[k-1],b=road.points[k],len=dist(a,b),count=Math.ceil(len/4);
+      for(let j=1;j<=count;j++){const t=j/count,at=station+t*len;if(at<2||total-at<2)continue;
+       connected.push({id:'station-'+road.id+'-'+k+'-'+j,point:[a[0]+t*(b[0]-a[0]),a[1]+t*(b[1]-a[1])],host:road,segment:k});}
+      station+=len;}
+    }
+    const clearance=p=>Math.min(...nodes.map(n=>dist(p,n.rear)));
+    for(const a of connected){const penalty= a.id==='site'?0: 6*Math.max(0,s.junctionClearance+radius-clearance(a.point));
+     for(const b of remaining)pairs.push({a,b,d:dist(a.point,b.point),penalty});}
+    pairs.sort((a,b)=>(a.d+a.penalty)-(b.d+b.penalty)||a.a.id.localeCompare(b.a.id)||a.b.id.localeCompare(b.b.id));
     let best=null;
-    for(let candidate=0;candidate<pairs.length;candidate++){if(candidate>0&&candidate%12===0&&best)break;const pair=pairs[candidate];searchAttempts++;const line=route.route(pair.a.point,pair.b.point);if(!line)continue;
-     if(!env.check(buffer(line,radius)).ok)continue;const len=length(line);if(!best||len<best.len)best={...pair,line,len};}
-    if(!best)break;addRoad('connector',best.a.id,best.b.id,best.line);
+    for(let candidate=0;candidate<pairs.length;candidate++){
+     const pair=pairs[candidate];if(best&&pair.d+pair.penalty>=best.score)break;
+     searchAttempts++;const line=route.route(pair.a.point,pair.b.point);if(!line||!env.check(buffer(line,radius)).ok)continue;
+     const len=length(line),score=len+pair.penalty;if(!best||score<best.score)best={...pair,line,len,score};}
+    if(!best)break;
+    let source=best.a.id;
+    if(best.a.host){const old=best.a.host,k=best.a.segment,p=best.a.point;
+     source='junction-'+junctions.length;junctions.push({id:source,type:'junction',point:p});
+     roads.splice(roads.indexOf(old),1);
+     const clean=points=>points.filter((p,i)=>!i||dist(p,points[i-1])>1e-8);
+     addRoad(old.kind,old.a,source,clean([...old.points.slice(0,k),p]),old.width);
+     addRoad(old.kind,source,old.b,clean([p,...old.points.slice(k)]),old.width);
+    }
+    addRoad('connector',source,best.b.id,best.line);
+
    }
   }
   const {seen,parents}=reachable();
@@ -193,11 +216,11 @@ const Circulation=(()=>{
    return {id:u.id,connected,status:connected?(s.checkSlope?'Connected in plan; road slope checked':'Connected in plan; slope unchecked'):!input.entrance?'Reservation only':'Unresolved',reason:connected?(s.checkSlope?'Ground-following slope within '+s.maxSlope+'%; entrance levels and vehicle turns not evaluated':'Slope checking disabled; terrain/access not validated'):warnings.find(w=>w.villa===u.id)?.reason||(!input.entrance?'Set an entrance arrival point':(s.checkSlope?'No width- and slope-compliant connection found within the bounded search':'No width-compliant connection found within the bounded search')),route,rear:node?.rear};});
   const unionFootprints=union(roads.flatMap(r=>r.footprint.map(ring)));
   const ghostCrossings=units.filter((u,i)=>!enabled[i]).map(u=>({villa:u.id,roads:roads.filter(r=>area(op(r.envelope.map(ring),[ring(u.points)],C.ClipType.ctIntersection))>TOL).map(r=>r.id)})).filter(g=>g.roads.length);
-  const result={version:3,settings:s,entrance:input.entrance||null,nodes,roads,reservations,warnings,served,ghostCrossings,connected:served.filter(v=>v.connected).length,total:served.length,length:roads.filter(r=>r.kind!=='arrival'&&r.kind!=='entrance').reduce((n,r)=>n+r.length,0),area:area(unionFootprints),searchAttempts,terrain:!s.checkSlope?'Slope checking disabled':roads.length?'Sampled longitudinal slope checked':'No accepted roads',slope:{enabled:s.checkSlope,limit:s.maxSlope,maxObserved:s.checkSlope&&roads.length?Math.max(...roads.map(r=>r.profile.maxSlope)):null,sampleStep:0.5,source:terrain?terrain.source:null},vehicle:'Not evaluated',gateTieIn:'Not evaluated',fingerprint:fingerprint(input)};
+  const result={version:4,settings:s,entrance:input.entrance||null,nodes,junctions,roads,reservations,warnings,served,ghostCrossings,connected:served.filter(v=>v.connected).length,total:served.length,length:roads.filter(r=>r.kind!=='arrival'&&r.kind!=='entrance').reduce((n,r)=>n+r.length,0),area:area(unionFootprints),searchAttempts,terrain:!s.checkSlope?'Slope checking disabled':roads.length?'Sampled longitudinal slope checked':'No accepted roads',slope:{enabled:s.checkSlope,limit:s.maxSlope,maxObserved:s.checkSlope&&roads.length?Math.max(...roads.map(r=>r.profile.maxSlope)):null,sampleStep:0.5,source:terrain?terrain.source:null},vehicle:'Not evaluated',gateTieIn:'Not evaluated',fingerprint:fingerprint(input)};
   const check=validate(result,input);if(!check.ok)throw Error('Independent road check failed: '+check.issues.join('; '));result.validation=check;return result;
  }
  function validate(result,input){
-  const s=settings(input.settings),env=environment(input.boundary,activeUnits(input)),terrain=s.checkSlope?terrainReference(input.contours):null,issues=[],ids=new Set(result.nodes.map(n=>n.id));ids.add('site');
+  const s=settings(input.settings),env=environment(input.boundary,activeUnits(input)),terrain=s.checkSlope?terrainReference(input.contours):null,issues=[],ids=new Set([...result.nodes,...(result.junctions||[])].map(n=>n.id));ids.add('site');
   const graph=new Map([...ids].map(id=>[id,[]]));
   for(const n of result.nodes){
    const u=input.layout.units.find(u=>u.id===n.id),entry=result.roads.find(r=>r.kind==='entrance'&&r.a===n.id);
@@ -212,10 +235,12 @@ const Circulation=(()=>{
    const c=env.check(envelope,r.kind==='entrance'?r.a:undefined);if(!c.ok)issues.push(r.id+': '+c.reason);
    const slope=assessment(r.points,terrain,s);if(!slope.ok)issues.push(r.id+': '+slope.reason);
    if(!ids.has(r.a)||!ids.has(r.b))issues.push(r.id+': unknown endpoint');
-   if(r.a!==r.b){const a=r.a==='site'?result.entrance:result.nodes.find(n=>n.id===r.a)?.point,b=result.nodes.find(n=>n.id===r.b)?.point;
+   if(r.a!==r.b){const a=r.a==='site'?result.entrance:[...result.nodes,...(result.junctions||[])].find(n=>n.id===r.a)?.point,b=[...result.nodes,...(result.junctions||[])].find(n=>n.id===r.b)?.point;
     if(!a||!b||dist(r.points[0],a)>0.002||dist(r.points.at(-1),b)>0.002)issues.push(r.id+': disconnected geometry');
     graph.get(r.a)?.push(r.b);graph.get(r.b)?.push(r.a);}
   }
+  for(const j of result.junctions||[])if((graph.get(j.id)||[]).length<3)issues.push(j.id+': shared junction has fewer than three branches');
+  if(ids.size!==result.nodes.length+(result.junctions||[]).length+1)issues.push('Duplicate network node IDs');
   const reached=new Set(result.entrance?['site']:[]),q=[...reached];for(let i=0;i<q.length;i++)for(const id of graph.get(q[i])||[])if(!reached.has(id)){reached.add(id);q.push(id);}
   for(const v of result.served)if(v.connected!==reached.has(v.id))issues.push(v.id+': inconsistent connectivity');
   return {ok:!issues.length,issues};

@@ -1,6 +1,34 @@
 # Circulation — fixed-layout planning
 
-## Current update: slope-compliant detours and angled rear access
+## Current update: shared interior junctions
+
+Checkpoint: 98308ff. Version 4 adds independent `junctions` and attaches new
+branches to sampled stations inside existing connected shared roads. Selected
+host edges are split with unique IDs and shared endpoints; connectivity and
+per-villa route highlighting are reconstructed from the resulting graph.
+Private entrance links are excluded from attachment candidates. Independent
+validation checks junction endpoints and degree as well as every road envelope
+and profile.
+
+Preferred junction clearance is editable, initially 8 m. It is a soft preference
+measured from rear entrance points with road half-width added to the candidate
+scoring target, not a guaranteed setback or turning envelope. Candidate scores
+combine added length with a proximity penalty. Candidates are considered by a
+lower bound and stop when no remaining candidate can improve the best score.
+Existing villa attachment remains available where needed for feasibility.
+
+Latest 14-villa fixture: 13 connected, 11 independent junctions, no villa arrival
+has three shared-road branches, maximum sampled slope 7.7454%. Minimum junction
+centre distance to a served rear entrance is 9.97 m. `checks/fixed-junctions.json`
+and `checks/independent-fixed-junctions.json` preserve the result and independent
+checks. Tests cover split endpoint identity, unique IDs, graph corruption,
+connectivity, slope and preference propagation/staleness.
+
+This first increment does not merge nearby junctions, reserve vehicle turning
+areas, optimize over multiple growth orders or dynamically reselect rear arrivals.
+Geometric crossings remain unconnected unless an explicit shared node exists.
+
+## Previous update: slope-compliant detours and angled rear access
 
 The supplied `inputs/user-detour-request.json` exposed two search limitations:
 V070 was discarded by its straight 14.3% rear approach before network routing,
