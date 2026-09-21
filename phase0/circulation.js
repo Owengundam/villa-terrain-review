@@ -30,6 +30,13 @@ const Circulation=(()=>{
   off.AddPaths(strip,C.JoinType.jtMiter,C.EndType.etClosedPolygon);off.Execute(expanded,2);
   return area(op(envelope,expanded,C.ClipType.ctDifference))<=TOL;
  }
+ // Trim only the terminal cap against the owning rear facade for oblique access.
+ function entranceEnvelope(points,radius,u){
+  const end=points.at(-1),prev=points.at(-2),dx=end[0]-prev[0],dy=end[1]-prev[1];
+  const normal=Math.abs(dx*u.view[0]+dy*u.view[1]);
+  const cap=buffer([end],radius*Math.hypot(dx,dy)/Math.max(normal,1e-6)+0.01);
+  return op(buffer(points,radius,true),op(cap,[ring(u.points)],C.ClipType.ctIntersection),C.ClipType.ctDifference);
+ }
  function settings(input={}){
   const number=(k,def,min,max,unit='m')=>{const raw=input[k]===undefined?def:input[k];if(raw===null||raw===''||!Number.isFinite(Number(raw))||Number(raw)<min||Number(raw)>max)throw Error('Enter a valid '+k+' ('+min+'–'+max+' '+unit+').');return Number(raw);};
   return {checkSlope:input.checkSlope!==false,width:number('width',undefined,0.5,12),edge:number('edge',0,0,3),backClear:number('backClear',7,0,30),entranceWidth:number('entranceWidth',1.5,0.5,5),cell:number('cell',2,1,5),maxSlope:number('maxSlope',8,0,100,'%')};
@@ -75,6 +82,11 @@ const Circulation=(()=>{
   const xs=boundary.map(p=>p[0]),ys=boundary.map(p=>p[1]),x0=Math.min(...xs),y0=Math.min(...ys);
   const nx=Math.ceil((Math.max(...xs)-x0)/cell)+1,ny=Math.ceil((Math.max(...ys)-y0)/cell)+1;
   if(nx*ny>250000)throw Error('Site exceeds the bounded routing grid; increase grid spacing.');
+  // More headings let the search follow a grade obliquely instead of only
+  // the eight compass directions. Every longer edge retains swept-width checks.
+  const directions=[];
+  for(let dx=-3;dx<=3;dx++)for(let dy=-3;dy<=3;dy++)
+   if((Math.abs(dx)===1||Math.abs(dy)===1||Math.abs(dx)===2&&Math.abs(dy)===3||Math.abs(dx)===3&&Math.abs(dy)===2))directions.push([dx,dy]);
   const cache=new Int8Array(nx*ny),polys=units.map(u=>u.points),edges=[];
   for(const poly of [boundary,...polys])for(let i=0;i<poly.length;i++)edges.push([poly[i],poly[(i+1)%poly.length]]);
   const point=id=>[x0+(id%nx)*cell,y0+Math.floor(id/nx)*cell];
@@ -89,8 +101,8 @@ const Circulation=(()=>{
   }
   function edgeOK(a,b){const ka=a.join(','),kb=b.join(','),key=ka<kb?ka+'|'+kb:kb+'|'+ka;if(!edgeCache.has(key))edgeCache.set(key,edgeCheck(a,b));return edgeCache.get(key);}
   function near(p){const ix=Math.round((p[0]-x0)/cell),iy=Math.round((p[1]-y0)/cell),out=[];
-   for(let dy=-2;dy<=2;dy++)for(let dx=-2;dx<=2;dx++){const x=ix+dx,y=iy+dy,id=y*nx+x;if(x>=0&&x<nx&&y>=0&&y<ny&&valid(id)&&edgeOK(p,point(id)))out.push(id);}
-   return out.sort((a,b)=>dist(p,point(a))-dist(p,point(b))||a-b).slice(0,6);
+   for(let dy=-4;dy<=4;dy++)for(let dx=-4;dx<=4;dx++){const x=ix+dx,y=iy+dy,id=y*nx+x;if(x>=0&&x<nx&&y>=0&&y<ny&&valid(id)&&edgeOK(p,point(id)))out.push(id);}
+   return out.sort((a,b)=>dist(p,point(a))-dist(p,point(b))||a-b).slice(0,12);
   }
   function route(a,b){
    if(edgeOK(a,b))return [a,b];
@@ -100,7 +112,7 @@ const Circulation=(()=>{
    let found=-1,expanded=0;
    while(heap.a.length&&expanded++<30000){const {id}=heap.pop();if(closed[id])continue;closed[id]=1;if(ends.has(id)){found=id;break;}
     const x=id%nx,y=Math.floor(id/nx),p=point(id);
-    for(const [dx,dy] of [[1,0],[0,1],[-1,0],[0,-1],[1,1],[-1,1],[-1,-1],[1,-1]]){const xx=x+dx,yy=y+dy,n=yy*nx+xx;
+    for(const [dx,dy] of directions){const xx=x+dx,yy=y+dy,n=yy*nx+xx;
      if(xx<0||xx>=nx||yy<0||yy>=ny||closed[n]||!valid(n))continue;
      const q=point(n),g=cost[id]+dist(p,q);if(g>=cost[n]||!edgeOK(p,q))continue;cost[n]=g;parent[n]=id;heap.push({id:n,f:g+dist(q,b)});}
    }
@@ -122,7 +134,8 @@ const Circulation=(()=>{
   const nodes=[],roads=[],warnings=[],reservations=[],byId=new Map(),groups=new Map();
   const enabled=units.map((u,i)=>isActive(input,u,i));
   const addRoad=(kind,a,b,points,width=s.width)=>{
-   const footprint=buffer(points,width/2,kind==='entrance'),envelope=buffer(points,width/2+(kind==='entrance'?0:s.edge),kind==='entrance');
+   const u=kind==='entrance'?units.find(u=>u.id===a):null;
+   const footprint=u?entranceEnvelope(points,width/2,u):buffer(points,width/2),envelope=u?footprint:buffer(points,width/2+s.edge);
    const slope=assessment(points,terrain,s);
    if(!slope.ok)throw Error(slope.reason);
    const r={id:'road-'+roads.length,kind,a,b,points,width,footprint:footprint.map(unpath),envelope:envelope.map(unpath),length:length(points),profile:slope};roads.push(r);return r;
@@ -132,13 +145,16 @@ const Circulation=(()=>{
    const strip=P.rearStrip(u,s.backClear),r=rear(u);reservations.push({villa:u.id,polygons:op([ring(strip)],env.site,C.ClipType.ctIntersection).map(unpath)});
    const candidates=[s.backClear/2,radius+0.025,s.backClear-radius-0.025].filter(d=>d>=radius&&d<=s.backClear-radius);
    let selected=null,last='No usable road width in rear reservation';
-   for(const d of [...new Set(candidates)]){const p=portal(u,d),disc=buffer([p],radius),check=env.check(disc);
+   const offsets=[0],lateral=Math.max(0,(u.width||11)/2-radius-0.025);
+   for(const f of [1,-1,0.5,-0.5])if(lateral>0)offsets.push(f*lateral);
+   candidateSearch: for(const offset of offsets)for(const d of [...new Set(candidates)]){
+    const base=portal(u,d),p=[base[0]-offset*u.view[1],base[1]+offset*u.view[0]],disc=buffer([p],radius),check=env.check(disc);
     if(!check.ok){last=check.reason;continue;}
     if(area(op(disc,[ring(strip)],C.ClipType.ctDifference))>TOL){last='Rear reservation too narrow';continue;}
-    const arrival=buffer([p,r],s.entranceWidth/2,true),ec=env.check(arrival,u.id);
+    const arrival=entranceEnvelope([p,r],s.entranceWidth/2,u),ec=env.check(arrival,u.id);
     if(!ec.ok||!entranceWithinStrip(arrival,[ring(strip)])){last=ec.reason||'Entrance connection leaves rear reservation';continue;}
     const slope=assessment([p,r],terrain,s);if(!slope.ok){last=slope.reason;continue;}
-    selected={id:u.id,point:p,rear:r,row:u.row,order:u.order,connected:false};break;
+    selected={id:u.id,point:p,rear:r,row:u.row,order:u.order,connected:false};break candidateSearch;
    }
    if(!selected){warnings.push({villa:u.id,reason:last});return;}
    nodes.push(selected);byId.set(u.id,selected);if(!groups.has(u.row))groups.set(u.row,[]);groups.get(u.row).push(selected);
@@ -187,10 +203,11 @@ const Circulation=(()=>{
    const u=input.layout.units.find(u=>u.id===n.id),entry=result.roads.find(r=>r.kind==='entrance'&&r.a===n.id);
    if(!u||!entry||dist(entry.points[0],n.point)>0.002||dist(entry.points.at(-1),rear(u))>0.002){issues.push(n.id+': missing or disconnected rear entrance link');continue;}
    const strip=[ring(P.rearStrip(u,result.settings.backClear))];
-   if(!entranceWithinStrip(buffer(entry.points,entry.width/2,true),strip))issues.push(n.id+': entrance link leaves rear reservation');
+   if(!entranceWithinStrip(entranceEnvelope(entry.points,entry.width/2,u),strip))issues.push(n.id+': entrance link leaves rear reservation');
    if(area(op(buffer([n.point],result.settings.width/2+result.settings.edge),strip,C.ClipType.ctDifference))>TOL)issues.push(n.id+': arrival width leaves rear reservation');
   }
-  for(const r of result.roads){const envelope=buffer(r.points,r.width/2+(r.kind==='entrance'?0:result.settings.edge),r.kind==='entrance');
+  for(const r of result.roads){const owner=r.kind==='entrance'?input.layout.units.find(u=>u.id===r.a):null;
+   const envelope=owner?entranceEnvelope(r.points,r.width/2,owner):buffer(r.points,r.width/2+(r.kind==='entrance'?0:result.settings.edge),r.kind==='entrance');
    if(r.width!==(r.kind==='entrance'?result.settings.entranceWidth:result.settings.width))issues.push(r.id+': inconsistent width');
    const c=env.check(envelope,r.kind==='entrance'?r.a:undefined);if(!c.ok)issues.push(r.id+': '+c.reason);
    const slope=assessment(r.points,terrain,s);if(!slope.ok)issues.push(r.id+': '+slope.reason);

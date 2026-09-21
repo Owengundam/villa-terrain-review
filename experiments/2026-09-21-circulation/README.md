@@ -1,6 +1,29 @@
 # Circulation — fixed-layout planning
 
-## Current update: repair rear-access rounding rejection
+## Current update: slope-compliant detours and angled rear access
+
+The supplied `inputs/user-detour-request.json` exposed two search limitations:
+V070 was discarded by its straight 14.3% rear approach before network routing,
+and the grid allowed only eight compass headings. Rear arrivals now try lateral
+positions inside their reservation after central candidates fail. Angled entrance
+links terminate flush at the rear facade; only the terminal cap is trimmed against
+the owning building. Width, other buildings, site and reservation checks remain.
+The router now has 32 headings and wider endpoint attachment search; all edges
+retain swept-width and sampled longitudinal grade checks, including shortcuts.
+
+Latest fixture: 13/14 connected at 4 m width and 8%. V070 connects via a 48.15 m
+bent connector from V021, maximum sampled grade 7.80%; its angled entrance is
+5.21%. The selected network uses V021 rather than forcing a V036 connection.
+V077 remains unresolved at the site boundary. Full network maximum is 7.87%.
+Saved result and independent geometry check: `checks/fixed-detour.json` and
+`checks/independent-fixed-detour.json`. The regression asserts that V070 connects
+with a bent route at <=8%. This remains a bounded search, not exhaustive alignment
+optimization, road grading, or a vehicle turning check.
+
+Build the current review after `npm run build` with:
+`node experiments/2026-09-21-circulation/build-user-review.js user-detour-request.json`.
+
+## Previous update: repair rear-access rounding rejection
 
 V041 and V079 were incorrectly rejected at the rear boundary. Independently
 rounding the rear strip and the entrance envelope to millimetres created outside
