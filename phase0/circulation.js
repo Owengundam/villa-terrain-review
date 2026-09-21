@@ -22,6 +22,14 @@ const Circulation=(()=>{
   const off=new C.ClipperOffset(2,0.005*SCALE),out=[];
   off.AddPath(path(points),C.JoinType.jtRound,flat?C.EndType.etOpenButt:C.EndType.etOpenRound);off.Execute(out,r*SCALE);return out;
  }
+ // Independent millimetre rounding of strip vertices, centreline and offset ends
+ // can produce sub-millimetre slivers at an exactly shared rear boundary.
+ // Allow only 2 mm of positional error here; site/building checks stay unchanged.
+ function entranceWithinStrip(envelope,strip){
+  const off=new C.ClipperOffset(2,0.25),expanded=[];
+  off.AddPaths(strip,C.JoinType.jtMiter,C.EndType.etClosedPolygon);off.Execute(expanded,2);
+  return area(op(envelope,expanded,C.ClipType.ctDifference))<=TOL;
+ }
  function settings(input={}){
   const number=(k,def,min,max,unit='m')=>{const raw=input[k]===undefined?def:input[k];if(raw===null||raw===''||!Number.isFinite(Number(raw))||Number(raw)<min||Number(raw)>max)throw Error('Enter a valid '+k+' ('+min+'–'+max+' '+unit+').');return Number(raw);};
   return {checkSlope:input.checkSlope!==false,width:number('width',undefined,0.5,12),edge:number('edge',0,0,3),backClear:number('backClear',7,0,30),entranceWidth:number('entranceWidth',1.5,0.5,5),cell:number('cell',2,1,5),maxSlope:number('maxSlope',8,0,100,'%')};
@@ -128,7 +136,7 @@ const Circulation=(()=>{
     if(!check.ok){last=check.reason;continue;}
     if(area(op(disc,[ring(strip)],C.ClipType.ctDifference))>TOL){last='Rear reservation too narrow';continue;}
     const arrival=buffer([p,r],s.entranceWidth/2,true),ec=env.check(arrival,u.id);
-    if(!ec.ok||area(op(arrival,[ring(strip)],C.ClipType.ctDifference))>TOL){last=ec.reason||'Entrance connection leaves rear reservation';continue;}
+    if(!ec.ok||!entranceWithinStrip(arrival,[ring(strip)])){last=ec.reason||'Entrance connection leaves rear reservation';continue;}
     const slope=assessment([p,r],terrain,s);if(!slope.ok){last=slope.reason;continue;}
     selected={id:u.id,point:p,rear:r,row:u.row,order:u.order,connected:false};break;
    }
@@ -179,7 +187,7 @@ const Circulation=(()=>{
    const u=input.layout.units.find(u=>u.id===n.id),entry=result.roads.find(r=>r.kind==='entrance'&&r.a===n.id);
    if(!u||!entry||dist(entry.points[0],n.point)>0.002||dist(entry.points.at(-1),rear(u))>0.002){issues.push(n.id+': missing or disconnected rear entrance link');continue;}
    const strip=[ring(P.rearStrip(u,result.settings.backClear))];
-   if(area(op(buffer(entry.points,entry.width/2,true),strip,C.ClipType.ctDifference))>TOL)issues.push(n.id+': entrance link leaves rear reservation');
+   if(!entranceWithinStrip(buffer(entry.points,entry.width/2,true),strip))issues.push(n.id+': entrance link leaves rear reservation');
    if(area(op(buffer([n.point],result.settings.width/2+result.settings.edge),strip,C.ClipType.ctDifference))>TOL)issues.push(n.id+': arrival width leaves rear reservation');
   }
   for(const r of result.roads){const envelope=buffer(r.points,r.width/2+(r.kind==='entrance'?0:result.settings.edge),r.kind==='entrance');
@@ -195,6 +203,6 @@ const Circulation=(()=>{
   for(const v of result.served)if(v.connected!==reached.has(v.id))issues.push(v.id+': inconsistent connectivity');
   return {ok:!issues.length,issues};
  }
- return {settings,fingerprint,generate,validate,buffer,environment,area,ring,op,union,unpath,rear,router,terrainReference,profile,activeUnits};
+ return {entranceWithinStrip,settings,fingerprint,generate,validate,buffer,environment,area,ring,op,union,unpath,rear,router,terrainReference,profile,activeUnits};
 })();
 if(typeof module!=='undefined')module.exports=Circulation;

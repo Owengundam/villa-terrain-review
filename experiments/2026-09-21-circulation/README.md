@@ -1,6 +1,27 @@
 # Circulation — fixed-layout planning
 
-## Current update: repair false terrain rejections
+## Current update: repair rear-access rounding rejection
+
+V041 and V079 were incorrectly rejected at the rear boundary. Independently
+rounding the rear strip and the entrance envelope to millimetres created outside
+slivers of 0.000749 and 0.000735 m². This was a numerical defect, not a physical
+rear-access conflict. The entrance-in-reservation test now allows 2 mm of positional
+rounding error in both generation and validation. Site, active-building and road
+arrival containment checks remain unchanged; a regression rejects a real 10 mm
+reservation departure.
+
+Latest supplied study: `inputs/user-rear-access-rejected.json`, road width 4 m,
+maximum slope 8%, moved entrance. Both villas now connect; total 14/18, maximum
+sampled grade 7.7454%. Saved result: `checks/fixed-rear-access.json`; independent
+Shapely envelopes and slope arithmetic: `checks/independent-fixed-rear-access.json`.
+The earlier 3 m fixture now connects 18/18 at 100% and 15/18 at 8%; historical
+results below predate the rounding fix. Full `npm test` passes.
+
+Rebuild the current review with:
+`node experiments/2026-09-21-circulation/build-user-review.js user-rear-access-rejected.json`
+after `npm run build`. This preserves the latest supplied layout and road settings.
+
+## Previous update: repair false terrain rejections
 
 The supplied `inputs/user-rejected-network.json` reproduces the failure: the old
 nearest-contour-pair reference reports unsupported holes and discontinuities
