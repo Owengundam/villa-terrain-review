@@ -40,3 +40,71 @@ Update graph construction, independent validation, exported node types, edge spl
 Regression cases: a third villa joins midway along an existing lane; a junction moves away from a rear entrance while the shared lane remains; a nearby blocked or steep candidate is rejected; edge splitting preserves connectivity and measured total length; crossing roads remain unconnected unless a valid junction is created; impossible entrance clearance is explicitly reported rather than silently relaxed. Compare connectivity, unique road area/length, branch count, junction-to-entrance clearance, maximum grade and travel detour on all supplied layouts. Never reduce villa service count just to improve appearance without reporting it.
 
 The immediate expected change is a shared road continuing past a villa before branching in an open gap. A specific location near V036 or V070 must be found and checked by the revised solver; the research does not prove that particular junction feasible.
+
+
+## Revision: arbitrary arrangements, no predefined groups
+
+The proposal to identify villa groups or prescribe a central main road is withdrawn
+as a required modeling step. Neither rows nor a cluster count should be necessary
+inputs to road generation. A corridor may be useful without passing through a
+geometric centre; usefulness must be judged against all destinations and feasible
+terrain, not a centre-seeking penalty.
+
+Repository findings: `generate` currently rejects missing row IDs, stores row/order
+on arrivals, groups arrivals by row and preconnects adjacent row members. This is
+an actual layout dependency. Removing the input guard alone would not address the
+preconnection bias. Remove row-based preconnection from the generic solver as
+well; existing arrangement metadata can remain in the placement/viewer features.
+
+Primary research:
+
+- Meyerson, Munagala and Plotkin, *Cost-Distance: Two Metric Network Design*
+  (SIAM Journal on Computing, 2008): optimizes network construction costs and
+  source-to-sink distances jointly. The formulation has demand locations and a
+  common source/sink, without an externally supplied spatial grouping. This is
+  the closest starting point for our fixed-width planning problem.
+  https://users.cs.duke.edu/~kamesh/bicriteria.pdf
+- Khuller, Raghavachari and Young, *Balancing Minimum Spanning Trees and
+  Shortest-Path Trees* (Algorithmica, 1995): demonstrates the tradeoff between
+  total tree weight and distances to the root. Useful as a baseline/comparison,
+  not a direct solution for movable junctions and our geometry constraints.
+  https://www.cs.ucr.edu/~neal/publication/Khuller95Balancing.pdf
+- Goel and Post, *One Tree Suffices: A Simultaneous O(1)-Approximation for
+  Single-Sink Buy-at-Bulk* (2012): concave costs support sharing routes among
+  demands. This is an alternative model if capacity-dependent cost is introduced;
+  do not invent traffic or capacity classes for the current fixed-width roads.
+  https://theoryofcomputing.org/articles/v008a015/
+
+Proposed application, not a claim that these papers validate our implementation:
+
+Use active villa footprints, feasible access alternatives, entrance, boundary,
+terrain and configured constraints. Build a terrain-feasible graph with possible
+junction locations throughout usable space. Search complete entrance-connected
+networks, maximizing service first, then comparing unique construction cost plus
+weighted entrance-to-villa route distances. Initially treat villas equally;
+weights are planning assumptions, not measured traffic. Retain penalties for
+awkward junction placement. Slope and width stay hard constraints. Counting each
+shared edge once encourages reuse, while summing journey distances discourages
+one long chain serving everybody. These terms do not guarantee a visually central
+road, nor should they when terrain or destination distribution favours another
+route.
+
+Use multiple initial networks (including entrance-to-all least-cost routes and
+different growth orders), then local edge replacement, branch relocation and
+rerouting, scoring the entire network after each change. This is a practical
+heuristic; do not claim theoretical approximation guarantees for our added
+geometric constraints. Hold access alternatives open while selecting the network.
+A junction remains a geometric/topological necessity, but no persistent villa
+cluster, main-road class or number of branches is required.
+
+Verification before replacing current behavior: shuffled villa input order and
+removed/randomized row labels; irregular scattered, curved, ring-like and
+one-sided layouts; terrain barriers separating nearby villas; existing saved
+fixtures; preserved access count and <=8% sampled slope. Compare construction
+area/length, total and worst entrance journey, junction clearance and runtime.
+Input order should not materially bias quality; use stable geometry-based
+ordering and deterministic alternative trials. Rotation tests must allow for
+grid discretization effects. Disconnected terrain must be reported explicitly.
+
+This revision is research only. The current row dependency remains until the
+solver is refactored and these cases are tested.
