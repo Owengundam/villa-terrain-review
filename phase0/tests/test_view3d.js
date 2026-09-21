@@ -19,14 +19,31 @@ const limit=metric({height:1}).central;assert(limit>0&&limit<1);
 assert(v.inspect(l,[true,true],[0,0],{...v.defaults,height:1,clear:0,centralClear:1-limit}).viewBad[0],'exact central obstruction limit fails');
 assert(!v.inspect(l,[true,true],[0,0],{...v.defaults,height:1,clear:0,centralClear:1-limit-1e-4}).viewBad[0],'below central obstruction limit passes');
 assert(v.inspect(l,[true,false],[0,0],{...v.defaults,centralClear:1}).valid,'fully clear satisfies 100 percent setting');
+// A roof strictly below the viewing floor plate is exempt, even within the angular window.
+assert.equal(metric({},[0,-5.01]).blocked,0);
+assert.equal(metric({},[0,-5.01]).central,0);
+assert(metric({},[0,-5]).blocked>0,'roof equal to floor is still evaluated');
+assert(metric({},[0,-4.99]).blocked>0,'roof above floor is still evaluated');
+const short={...l,units:[l.units[0],{...l.units[1],height:2}]};
+assert.equal(v.measure(short,[true,true],[0,-2.01],v.defaults)[0].blocked,0,'uses individual height');
+assert(metric({height:1},[0,0]).blocked>0,'roof below eye but above floor still obstructs');
+const mixed={...l,units:[...l.units,{...l.units[1],id:'C'}]};
+assert.equal(v.measure(mixed,[true,true,true],[0,-5.01,0],v.defaults)[0].blocked,metric({}).blocked,'exempt neighbour does not exempt other blockers');
 // Independent 3D ray / oriented box slab intersection; no angular-envelope code reused.
 function hit(o,d,u,pad,height){const side=[u.view[1],-u.view[0]],delta=[o[0]-u.center[0],o[1]-u.center[1]],p=[delta[0]*side[0]+delta[1]*side[1],delta[0]*u.view[0]+delta[1]*u.view[1],o[2]-pad],ray=[d[0]*side[0]+d[1]*side[1],d[0]*u.view[0]+d[1]*u.view[1],d[2]],low=[-5.5,-11.5,0],high=[5.5,11.5,height];let enter=1e-7,exit=Infinity;for(let a=0;a<3;a++){if(Math.abs(ray[a])<1e-12){if(p[a]<low[a]||p[a]>high[a])return false;}else{const x=(low[a]-p[a])/ray[a],y=(high[a]-p[a])/ray[a];enter=Math.max(enter,Math.min(x,y));exit=Math.min(exit,Math.max(x,y));}}return exit>=enter;}
 const report=JSON.parse(fs.readFileSync('output/checks/image-flow-3d-20260915/report.json','utf8'));let rays=0;
 for(const layout of report.layouts){const active=layout.units.map(u=>u.active),z=layout.units.map(u=>u.z),r=report.rules.view3d,state=v.inspect(layout,active,z,r);assert(state.valid,layout.name);
  layout.units.forEach((u,i)=>{if(!active[i])return;const strips=v.measure(layout,active,z,r,i)[i].strips,side=[u.view[1],-u.view[0]],o=[u.center[0]+11.5*u.view[0],u.center[1]+11.5*u.view[1],z[i]+r.eye];
-  for(let k=0;k<120;k++)for(let b=0;b<30;b++){const a=(-15+(k+.5)*.25)*Math.PI/180,e=(r.bottom+(b+.5)*(r.top-r.bottom)/30)*Math.PI/180,d=[Math.cos(e)*(u.view[0]*Math.cos(a)+side[0]*Math.sin(a)),Math.cos(e)*(u.view[1]*Math.cos(a)+side[1]*Math.sin(a)),Math.sin(e)],blocked=layout.units.some((q,j)=>j!==i&&active[j]&&hit(o,d,q,z[j],r.height));
+  for(let k=0;k<120;k++)for(let b=0;b<30;b++){const a=(-15+(k+.5)*.25)*Math.PI/180,e=(r.bottom+(b+.5)*(r.top-r.bottom)/30)*Math.PI/180,d=[Math.cos(e)*(u.view[0]*Math.cos(a)+side[0]*Math.sin(a)),Math.cos(e)*(u.view[1]*Math.cos(a)+side[1]*Math.sin(a)),Math.sin(e)],blocked=layout.units.some((q,j)=>j!==i&&active[j]&&z[j]+(q.height??r.height)>=z[i]&&hit(o,d,q,z[j],q.height??r.height));
    if(blocked)assert(strips[k].some(([lo,hi])=>e*180/Math.PI>=lo-1e-8&&e*180/Math.PI<=hi+1e-8),'conservative envelope must include every independent ray hit');rays++;
   }
  });console.log(layout.name,layout.retained_count,'PASS');
 }
 console.log('PASS partial height, eye height, union, ghosts, validation and',rays,'independent 3D rays');
+
+const exemptPreview=v.measure(l,[true,true],[0,-5.01],v.defaults,0)[0];
+assert.equal(exemptPreview.blocked,0);
+assert.equal(exemptPreview.central,0);
+assert(exemptPreview.strips.some(column=>column.some(entry=>entry[2]===1)),'exempt active villa remains in the rendered silhouettes');
+assert(!v.measure(l,[true,false],[0,-5.01],v.defaults,0)[0].strips.some(column=>column.length),'inactive ghosts remain excluded');
+console.log('PASS below-floor silhouettes visible without adding obstruction');

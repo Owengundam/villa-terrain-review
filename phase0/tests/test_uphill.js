@@ -1,3 +1,4 @@
+(async()=>{
 /* Regression: Planar fitting must never reverse a villa the contour LABELS call
    downhill, and must flip every villa the labels call clearly uphill.
    The reference read is independent of TerrainEdit: for each villa, sample the nearest
@@ -43,7 +44,7 @@ for(const idx of [2,3]){
   const tLayout=Date.now();
   run(`index=${idx};$('layout').value=String(${idx});reset();$('perpTol').value='15';`);
   const before=views(),voteBefore=new Map(read().filter(r=>r[0]===idx).map(r=>[r[1],r[2]]));
-  run("$('startFitting').onclick()");
+  await run("$('startFitting').onclick()");
   const after=views();
   const now=read().filter(r=>r[0]===idx);
   const voteAfter=new Map(now.map(r=>[r[1],r[2]]));
@@ -80,14 +81,14 @@ console.log('PASS every definitely-uphill villa ends facing downhill');
 /* --- scenario 2: aggressive terrain edits, then fitting twice (full user flow) */
 const t1=Date.now();
 run("index=0;$('layout').value='0';reset();");
-run("$('terrain').onclick()");
+await run("$('terrain').onclick()");
 run("terrainLines[8].controls[4][0]+=150; terrainLines[8].controls[4][1]+=150; terrainLines[10].controls[3][0]-=140; terrainLines[10].controls[3][1]-=130;");
-run("$('terrainOk').onclick()");
-run("$('startFitting').onclick()");
-run("$('terrain').onclick()");
+await run("$('terrainOk').onclick()");
+await run("$('startFitting').onclick()");
+await run("$('terrain').onclick()");
 run("terrainLines[3].controls[2][0]-=120; terrainLines[3].controls[2][1]+=90; terrainLines[5].controls[8][1]-=100;");
-run("$('terrainOk').onclick()");
-run("$('startFitting').onclick()");
+await run("$('terrainOk').onclick()");
+await run("$('startFitting').onclick()");
 const afterEdit=read();
 const stillUp=afterEdit.filter(r=>r[2]>=2&&r[3]);
 console.log(`INFO after aggressive double edit + fitting (${((Date.now()-t1)/1000).toFixed(0)}s): active villas still reading definitely uphill: ${stillUp.length}${stillUp.length?': '+stillUp.map(r=>r[0]+'/'+r[1]+'('+r[2]+')').join(' '):''}`);
@@ -95,3 +96,5 @@ assert.equal(stillUp.length,0,'after fitting, no active villa may read definitel
 const g=run("JSON.stringify(TerrainEdit.geomCheck({units:data.layouts[0].units},data.boundary,data.layouts[0].units.map(u=>u.active!==false),3).issues)");
 assert.equal(JSON.parse(g).length,0,'active villas stay geometrically legal: '+g);
 console.log('PASS edited-terrain flow: no uphill reads, active geometry legal');
+
+})().catch(e=>{console.error(e);process.exitCode=1;});

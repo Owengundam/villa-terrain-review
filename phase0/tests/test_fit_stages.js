@@ -1,3 +1,4 @@
+(async()=>{
 /* Fit-stage separation tests: terrain OK = save+close only; Planar fitting = reorient+
    move+ghost (no worker); 3D view fitting = the worker stage (renamed button).
    Uphill is judged with an INDEPENDENT read (the contour labels the user compares
@@ -30,9 +31,9 @@ run("index=2;$('layout').value='2';reset();$('perpTol').value='15';");  // the s
 
 // 1. Terrain OK: saves contours + closes + landmass readout; no rotation, no recalc
 const viewsBefore=viewsNow();
-run("$('terrain').onclick()");
+await run("$('terrain').onclick()");
 run("terrainLines[0].controls[3][0]+=60; terrainLines[0].controls[3][1]-=40;");
-run("$('terrainOk').onclick()");
+await run("$('terrainOk').onclick()");
 assert(element('terrainPanel').hidden===true,'panel closed');
 assert(element('landmass').textContent.includes('Landmass change')&&element('landmass').textContent.includes('saved'),'landmass total + saved');
 assert.equal(element('action-message').textContent,'Terrain saved.','OK reports save only');
@@ -45,7 +46,7 @@ console.log('PASS terrain OK: save + close + landmass only — no rotation, no r
 //    downhill; moves repair conflicts; unresolvable villas are ghosted; no worker.
 const upBefore=readUp().filter(r=>r[1]>=2).map(r=>r[0]);
 assert(upBefore.length>0,'scenario must contain uphill arrows to reorient (found '+upBefore.length+')');
-run("$('startFitting').onclick()");
+await run("$('startFitting').onclick()");
 const viewsAfter=viewsNow();
 assert(JSON.stringify(viewsAfter)!==JSON.stringify(viewsBefore),'planar fitting reoriented the uphill villas');
 const stillUp=readUp().filter(r=>r[1]>=2).map(r=>r[0]);
@@ -66,3 +67,5 @@ assert(html.includes('>3D view fitting<'),'recalculate button renamed to 3D view
 assert(html.includes('>Planar fitting<'),'planar fitting button labelled');
 assert(html.includes('>OK — save terrain<'),'terrain OK button states save-only semantics');
 console.log('PASS naming: Planar fitting / 3D view fitting / OK — save terrain');
+
+})().catch(e=>{console.error(e);process.exitCode=1;});

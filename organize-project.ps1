@@ -54,7 +54,7 @@ $files | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $guide 'f
 $intro = @'
 # Planning Agent — project guide
 
-Start with [the browsable project catalog](PROJECT_GUIDE/index.html), the [experiment history](PROJECT_GUIDE/EXPERIMENTS.md), [maintained tools](SCRIPTS.md), or [decisions and continuation notes](PROJECT_GUIDE/DECISIONS_AND_HANDOFF.md).
+Start with the [planning method](PROJECT_GUIDE/METHOD.md) (plain language for architects), then the [browsable project catalog](PROJECT_GUIDE/index.html), [experiment history](PROJECT_GUIDE/EXPERIMENTS.md), [maintained tools](SCRIPTS.md), or [decisions and continuation notes](PROJECT_GUIDE/DECISIONS_AND_HANDOFF.md).
 
 ## Current work
 
@@ -73,7 +73,7 @@ The catalog groups every existing file by experiment and role. The output folder
 
 | Location | Purpose |
 |---|---|
-| PROJECT_GUIDE | Experiment records, searchable catalog, inventory, decisions and continuation notes |
+| PROJECT_GUIDE | Planning method, experiment records, searchable catalog, inventory, decisions and continuation notes |
 | planning-iterations | Early campus concepts, image studies and Rhino reconstructions |
 | output | Current model and a short guide; supporting material is in subfolders |
 | rhino-plugin/ResortTerrain | Native Rhino plugin source, build, tests and documentation |

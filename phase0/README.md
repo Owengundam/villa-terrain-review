@@ -1,5 +1,11 @@
 # Phase 0 — terrain-led villa-only layouts
 
+## Current browser population update — September 21
+
+The current JavaScript `parallelPara` generator now retains **47 villas** on the saved site at terrain response scale 0 (previously 42), and **47 at terrain response scale 2** (previously 43), with the existing dimensions, clearances and orientation tolerance. Additional parallel rows are checked against actual occupied footprints rather than rejected because any part approaches another guide. Repacked villa IDs are also unique. [Comparison, preserved baseline and validation](../experiments/2026-09-21-parallel-capacity/README.md).
+
+These are initial populations before separate 3D view fitting. The Python study results below are historical and describe different stages/rules.
+
 **Latest result:** [live terrain, narrow central view](../output/checks/phase0/20260914-181521/index.html) · [elevation viewer](../output/checks/phase0/20260914-181521/elevations.html). Both sampled row strategies retain 21 villas after conflict omissions. Minimum clear angular width: parallel 73.50%, staggered 76.69%; no final constraint violations. This supersedes earlier results for the current live terrain and adopted view rule. Twelve tests pass, including peripheral exclusion, union coverage and vertical clearance.
 
 **Current view rule (supersedes all 120° and full-width-corridor wording below):** protect the central ±15° from the front-facade midpoint. At least 70% of its angular width must remain clear. Union all obstructing footprint intervals, counting overlaps once. Buildings at least 5.25 m below the viewer pad are vertically cleared; peripheral buildings impose no height-drop constraint. These are explicit design parameters, not statutory requirements. `sight.py` performs the coverage/level solve; exact interval acceptance is cross-checked by independent ray intersections. Boundary, side clearance, contour-normal orientation and ±3 m pad limits remain hard gates. Older Phase 2 tools retain their historical rule and must not be substituted for the current Phase 0 view check.
@@ -45,3 +51,13 @@ Both pass boundary, overlap, side clearance and elevation checks. The 13.05 m ro
 The reference is the existing synthetic 8 m contour-interpolated field. Passing these planning rules does not validate surveyed terrain, access roads, services, final slopes or pad contact; those have not been designed here.
 
 Tests: `python -m unittest discover -s phase0/tests -p 'test_*.py' -v`.
+
+## Calculation feedback — September 21
+
+The browser viewer dims the page and shows a calculation message during Populate, planar fitting, 3D view fitting and villa activation changes, terrain saving/smoothing, arrangement checking/restoring, and PNG export. Synchronous calculations yield a rendered frame before starting so the message is visible; the page is inert until completion. Worker searches show their reported villa count, not a fabricated completion percentage. Completion, validation failures, calculation errors and worker startup failures release the overlay.
+
+Checks: `node phase0/tests/test_calculation_overlay.js`, `node phase0/tests/test_view3d_page.js`, and `node phase0/tests/test_terrain_panel.js`. Page interaction tests await the calculation handlers. Browser visual verification was blocked by the browser tool's network-file URL policy.
+
+## Staggered browser population — September 21
+
+Use **Populate (staggered)** to generate alternating half-pitch row bands alongside the parallel result. Both stay available in the arrangement selector. On the saved site, staggered retains 38 initial villas at terrain response scales 0 and 2; parallel retains 47. The constraints are unchanged, and separate 3D view fitting is still required. [Plans, method and checks](../experiments/2026-09-21-staggered-population/README.md).

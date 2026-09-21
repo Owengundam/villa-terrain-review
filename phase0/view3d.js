@@ -16,13 +16,13 @@ const View3D=(()=>{
    });return entries;});
  });cache.set(l,rows);return rows;}
  function union(intervals,bottom,top){let end=bottom,total=0;for(const [a,b] of intervals.sort((a,b)=>a[0]-b[0])){const lo=Math.max(a,bottom),hi=Math.min(b,top);total+=Math.max(0,hi-Math.max(lo,end));end=Math.max(end,hi);}return total;}
- function column(l,i,entries,active,z,r){const eye=z[i]+r.eye;return entries.filter(([j])=>active[j]).map(([j,near,far])=>{const base=z[j]-eye,roof=base+(l.units[j].height??r.height);const angles=[Math.atan2(base,near),Math.atan2(base,far),Math.atan2(roof,near),Math.atan2(roof,far)].map(a=>a/rad);return [Math.min(...angles),Math.max(...angles),j];});}
+ function column(l,i,entries,active,z,r,includeExempt=false){const eye=z[i]+r.eye;return entries.filter(([j])=>active[j] && (includeExempt || z[j]+(l.units[j].height??r.height)>=z[i])).map(([j,near,far])=>{const base=z[j]-eye,roof=base+(l.units[j].height??r.height);const angles=[Math.atan2(base,near),Math.atan2(base,far),Math.atan2(roof,near),Math.atan2(roof,far)].map(a=>a/rad);return [Math.min(...angles),Math.max(...angles),j];});}
  function centralHalf(r){return Math.min(2.5,-r.bottom,r.top);}
  function measure(l,active,z,r,selected=null){r=settings(r);const rows=prepare(l),half=centralHalf(r);return rows.map((cols,i)=>{
   if(!active[i]&&selected!==i)return {blocked:0,central:0};let total=0,central=0;const strips=[];
   cols.forEach((entries,k)=>{const intervals=column(l,i,entries,active,z,r);total+=union(intervals.slice(),r.bottom,r.top)*.25;
    if(k>=40&&k<80)central+=union(intervals.slice(),-half,half)*.25;
-   if(selected===i)strips.push(intervals);
+   if(selected===i)strips.push(column(l,i,entries,active,z,r,true));
   });return {blocked:total/(30*(r.top-r.bottom)),central:central/(20*half),strips};
  });}
  function inspect(l,active,z,r){r=settings(r);const metrics=measure(l,active,z,r),viewBad=metrics.map((m,i)=>active[i]&&(m.blocked>1-r.clear+1e-9||(r.centralClear===1?m.central>1e-9:m.central>=1-r.centralClear-1e-9))),padBad=z.map((v,i)=>active[i]&&(!Number.isFinite(v)||Math.abs(v-l.units[i].reference)>r.pad+1e-7)),conflicts=l.conflicts.filter(([a,b])=>active[a]&&active[b]),outside=l.outside.filter(i=>active[i]);return {z,metrics,viewBad,padBad,conflicts,outside,valid:!viewBad.some(Boolean)&&!padBad.some(Boolean)&&!conflicts.length&&!outside.length};}

@@ -1,0 +1,2058 @@
+{
+  "method": "Diagnostic only: fixed saved layouts, straight links between rear-band centres.\nWidths are sensitivity assumptions, not adopted project parameters.\nDoes not search for routes or establish terrain/vehicle feasibility.\n",
+  "siteArea": 40335.399999999936,
+  "bbox": [
+    3108.5431784535313,
+    2060.466421938575,
+    3351.5072058468622,
+    2347.376901823502
+  ],
+  "contourCount": 18,
+  "contourRange": [
+    1364,
+    1375
+  ],
+  "results": [
+    {
+      "level": 0,
+      "villas": 47,
+      "occupiedRows": 14,
+      "singleVillaRows": 4,
+      "rearStripsOutsideBoundary": [
+        "V031",
+        "V039",
+        "V048",
+        "V065",
+        "V073",
+        "V074",
+        "V077",
+        "V078"
+      ],
+      "cases": [
+        {
+          "widthAssumption": 3,
+          "links": 33,
+          "passXY": 21,
+          "blocked": 12,
+          "details": [
+            {
+              "row": "R06",
+              "a": "V023",
+              "b": "V024",
+              "length": 14.397,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R06",
+              "a": "V024",
+              "b": "V025",
+              "length": 15.133,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R10",
+              "a": "V032",
+              "b": "V033",
+              "length": 14.426,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R04",
+              "a": "V036",
+              "b": "V037",
+              "length": 40.786,
+              "buildingHits": [
+                "V036"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R04",
+              "a": "V037",
+              "b": "V038",
+              "length": 19.947,
+              "buildingHits": [
+                "V038"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R08",
+              "a": "V039",
+              "b": "V040",
+              "length": 35.726,
+              "buildingHits": [
+                "V039"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R11",
+              "a": "V041",
+              "b": "V042",
+              "length": 31.037,
+              "buildingHits": [
+                "V041"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R02",
+              "a": "V048",
+              "b": "V049",
+              "length": 13.605,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R02",
+              "a": "V049",
+              "b": "V050",
+              "length": 14.409,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R02",
+              "a": "V050",
+              "b": "V051",
+              "length": 26.756,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R02",
+              "a": "V051",
+              "b": "V052",
+              "length": 16.194,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R02",
+              "a": "V052",
+              "b": "V053",
+              "length": 28.998,
+              "buildingHits": [
+                "V069"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R02",
+              "a": "V053",
+              "b": "V054",
+              "length": 15.138,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R02",
+              "a": "V054",
+              "b": "V055",
+              "length": 20.969,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R02",
+              "a": "V055",
+              "b": "V056",
+              "length": 14.116,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R02",
+              "a": "V056",
+              "b": "V057",
+              "length": 19.176,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R02",
+              "a": "V057",
+              "b": "V058",
+              "length": 16.072,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R07",
+              "a": "V059",
+              "b": "V060",
+              "length": 18.802,
+              "buildingHits": [
+                "V059"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R07",
+              "a": "V060",
+              "b": "V061",
+              "length": 19.859,
+              "buildingHits": [
+                "V060"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R07",
+              "a": "V061",
+              "b": "V062",
+              "length": 33.089,
+              "buildingHits": [
+                "V061"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R07",
+              "a": "V062",
+              "b": "V063",
+              "length": 14.201,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R07",
+              "a": "V063",
+              "b": "V064",
+              "length": 14.078,
+              "buildingHits": [
+                "V063"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R01",
+              "a": "V065",
+              "b": "V066",
+              "length": 21.325,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R01",
+              "a": "V066",
+              "b": "V067",
+              "length": 14.613,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R01",
+              "a": "V067",
+              "b": "V068",
+              "length": 14.27,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R01",
+              "a": "V068",
+              "b": "V069",
+              "length": 27.369,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R01",
+              "a": "V069",
+              "b": "V070",
+              "length": 39.74,
+              "buildingHits": [
+                "V070"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R01",
+              "a": "V070",
+              "b": "V071",
+              "length": 14.941,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R01",
+              "a": "V071",
+              "b": "V072",
+              "length": 19.43,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R01",
+              "a": "V072",
+              "b": "V073",
+              "length": 37.936,
+              "buildingHits": [
+                "V072"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R01",
+              "a": "V073",
+              "b": "V074",
+              "length": 19.439,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R12",
+              "a": "V075",
+              "b": "V076",
+              "length": 13.711,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R13",
+              "a": "V077",
+              "b": "V078",
+              "length": 21.924,
+              "buildingHits": [
+                "V077"
+              ],
+              "outsideArea": 14.98958,
+              "passXY": false
+            }
+          ]
+        },
+        {
+          "widthAssumption": 4,
+          "links": 33,
+          "passXY": 19,
+          "blocked": 14,
+          "details": [
+            {
+              "row": "R06",
+              "a": "V023",
+              "b": "V024",
+              "length": 14.397,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R06",
+              "a": "V024",
+              "b": "V025",
+              "length": 15.133,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R10",
+              "a": "V032",
+              "b": "V033",
+              "length": 14.426,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R04",
+              "a": "V036",
+              "b": "V037",
+              "length": 40.786,
+              "buildingHits": [
+                "V036",
+                "V037"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R04",
+              "a": "V037",
+              "b": "V038",
+              "length": 19.947,
+              "buildingHits": [
+                "V038"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R08",
+              "a": "V039",
+              "b": "V040",
+              "length": 35.726,
+              "buildingHits": [
+                "V039"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R11",
+              "a": "V041",
+              "b": "V042",
+              "length": 31.037,
+              "buildingHits": [
+                "V041"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R02",
+              "a": "V048",
+              "b": "V049",
+              "length": 13.605,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R02",
+              "a": "V049",
+              "b": "V050",
+              "length": 14.409,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R02",
+              "a": "V050",
+              "b": "V051",
+              "length": 26.756,
+              "buildingHits": [
+                "V050"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R02",
+              "a": "V051",
+              "b": "V052",
+              "length": 16.194,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R02",
+              "a": "V052",
+              "b": "V053",
+              "length": 28.998,
+              "buildingHits": [
+                "V053",
+                "V069"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R02",
+              "a": "V053",
+              "b": "V054",
+              "length": 15.138,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R02",
+              "a": "V054",
+              "b": "V055",
+              "length": 20.969,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R02",
+              "a": "V055",
+              "b": "V056",
+              "length": 14.116,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R02",
+              "a": "V056",
+              "b": "V057",
+              "length": 19.176,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R02",
+              "a": "V057",
+              "b": "V058",
+              "length": 16.072,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R07",
+              "a": "V059",
+              "b": "V060",
+              "length": 18.802,
+              "buildingHits": [
+                "V059"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R07",
+              "a": "V060",
+              "b": "V061",
+              "length": 19.859,
+              "buildingHits": [
+                "V060"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R07",
+              "a": "V061",
+              "b": "V062",
+              "length": 33.089,
+              "buildingHits": [
+                "V061"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R07",
+              "a": "V062",
+              "b": "V063",
+              "length": 14.201,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R07",
+              "a": "V063",
+              "b": "V064",
+              "length": 14.078,
+              "buildingHits": [
+                "V063"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R01",
+              "a": "V065",
+              "b": "V066",
+              "length": 21.325,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R01",
+              "a": "V066",
+              "b": "V067",
+              "length": 14.613,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R01",
+              "a": "V067",
+              "b": "V068",
+              "length": 14.27,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R01",
+              "a": "V068",
+              "b": "V069",
+              "length": 27.369,
+              "buildingHits": [
+                "V069"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R01",
+              "a": "V069",
+              "b": "V070",
+              "length": 39.74,
+              "buildingHits": [
+                "V070"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R01",
+              "a": "V070",
+              "b": "V071",
+              "length": 14.941,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R01",
+              "a": "V071",
+              "b": "V072",
+              "length": 19.43,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R01",
+              "a": "V072",
+              "b": "V073",
+              "length": 37.936,
+              "buildingHits": [
+                "V072",
+                "V073"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R01",
+              "a": "V073",
+              "b": "V074",
+              "length": 19.439,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R12",
+              "a": "V075",
+              "b": "V076",
+              "length": 13.711,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R13",
+              "a": "V077",
+              "b": "V078",
+              "length": 21.924,
+              "buildingHits": [
+                "V077"
+              ],
+              "outsideArea": 21.14597,
+              "passXY": false
+            }
+          ]
+        },
+        {
+          "widthAssumption": 5,
+          "links": 33,
+          "passXY": 16,
+          "blocked": 17,
+          "details": [
+            {
+              "row": "R06",
+              "a": "V023",
+              "b": "V024",
+              "length": 14.397,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R06",
+              "a": "V024",
+              "b": "V025",
+              "length": 15.133,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R10",
+              "a": "V032",
+              "b": "V033",
+              "length": 14.426,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R04",
+              "a": "V036",
+              "b": "V037",
+              "length": 40.786,
+              "buildingHits": [
+                "V036",
+                "V037"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R04",
+              "a": "V037",
+              "b": "V038",
+              "length": 19.947,
+              "buildingHits": [
+                "V038"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R08",
+              "a": "V039",
+              "b": "V040",
+              "length": 35.726,
+              "buildingHits": [
+                "V039"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R11",
+              "a": "V041",
+              "b": "V042",
+              "length": 31.037,
+              "buildingHits": [
+                "V041"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R02",
+              "a": "V048",
+              "b": "V049",
+              "length": 13.605,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R02",
+              "a": "V049",
+              "b": "V050",
+              "length": 14.409,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R02",
+              "a": "V050",
+              "b": "V051",
+              "length": 26.756,
+              "buildingHits": [
+                "V050",
+                "V051"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R02",
+              "a": "V051",
+              "b": "V052",
+              "length": 16.194,
+              "buildingHits": [
+                "V051"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R02",
+              "a": "V052",
+              "b": "V053",
+              "length": 28.998,
+              "buildingHits": [
+                "V053",
+                "V069"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R02",
+              "a": "V053",
+              "b": "V054",
+              "length": 15.138,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R02",
+              "a": "V054",
+              "b": "V055",
+              "length": 20.969,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R02",
+              "a": "V055",
+              "b": "V056",
+              "length": 14.116,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R02",
+              "a": "V056",
+              "b": "V057",
+              "length": 19.176,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R02",
+              "a": "V057",
+              "b": "V058",
+              "length": 16.072,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R07",
+              "a": "V059",
+              "b": "V060",
+              "length": 18.802,
+              "buildingHits": [
+                "V059"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R07",
+              "a": "V060",
+              "b": "V061",
+              "length": 19.859,
+              "buildingHits": [
+                "V060"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R07",
+              "a": "V061",
+              "b": "V062",
+              "length": 33.089,
+              "buildingHits": [
+                "V061"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R07",
+              "a": "V062",
+              "b": "V063",
+              "length": 14.201,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R07",
+              "a": "V063",
+              "b": "V064",
+              "length": 14.078,
+              "buildingHits": [
+                "V063"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R01",
+              "a": "V065",
+              "b": "V066",
+              "length": 21.325,
+              "buildingHits": [
+                "V065"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R01",
+              "a": "V066",
+              "b": "V067",
+              "length": 14.613,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R01",
+              "a": "V067",
+              "b": "V068",
+              "length": 14.27,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R01",
+              "a": "V068",
+              "b": "V069",
+              "length": 27.369,
+              "buildingHits": [
+                "V068",
+                "V069"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R01",
+              "a": "V069",
+              "b": "V070",
+              "length": 39.74,
+              "buildingHits": [
+                "V070"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R01",
+              "a": "V070",
+              "b": "V071",
+              "length": 14.941,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R01",
+              "a": "V071",
+              "b": "V072",
+              "length": 19.43,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R01",
+              "a": "V072",
+              "b": "V073",
+              "length": 37.936,
+              "buildingHits": [
+                "V072",
+                "V073"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R01",
+              "a": "V073",
+              "b": "V074",
+              "length": 19.439,
+              "buildingHits": [
+                "V073"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R12",
+              "a": "V075",
+              "b": "V076",
+              "length": 13.711,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R13",
+              "a": "V077",
+              "b": "V078",
+              "length": 21.924,
+              "buildingHits": [
+                "V077"
+              ],
+              "outsideArea": 27.8975,
+              "passXY": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "villas": 47,
+      "occupiedRows": 14,
+      "singleVillaRows": 4,
+      "rearStripsOutsideBoundary": [
+        "V001",
+        "V006",
+        "V007",
+        "V038",
+        "V041"
+      ],
+      "cases": [
+        {
+          "widthAssumption": 3,
+          "links": 33,
+          "passXY": 22,
+          "blocked": 11,
+          "details": [
+            {
+              "row": "R01",
+              "a": "V001",
+              "b": "V002",
+              "length": 22.354,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R01",
+              "a": "V002",
+              "b": "V003",
+              "length": 14.693,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R02",
+              "a": "V004",
+              "b": "V005",
+              "length": 51.86,
+              "buildingHits": [
+                "V004",
+                "V005"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R02",
+              "a": "V005",
+              "b": "V006",
+              "length": 14.462,
+              "buildingHits": [],
+              "outsideArea": 5.22182,
+              "passXY": false
+            },
+            {
+              "row": "R03",
+              "a": "V007",
+              "b": "V008",
+              "length": 14.057,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R03",
+              "a": "V008",
+              "b": "V009",
+              "length": 19.26,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R03",
+              "a": "V009",
+              "b": "V010",
+              "length": 22.2,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R03",
+              "a": "V010",
+              "b": "V011",
+              "length": 28.457,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R03",
+              "a": "V011",
+              "b": "V012",
+              "length": 21.057,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R03",
+              "a": "V012",
+              "b": "V013",
+              "length": 28.338,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R03",
+              "a": "V013",
+              "b": "V014",
+              "length": 15.365,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R03",
+              "a": "V014",
+              "b": "V015",
+              "length": 16.169,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R03",
+              "a": "V015",
+              "b": "V016",
+              "length": 17.484,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R03",
+              "a": "V016",
+              "b": "V017",
+              "length": 9.337,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R06",
+              "a": "V023",
+              "b": "V024",
+              "length": 15.35,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R06",
+              "a": "V024",
+              "b": "V025",
+              "length": 14.378,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R06",
+              "a": "V025",
+              "b": "V026",
+              "length": 26.204,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R06",
+              "a": "V026",
+              "b": "V027",
+              "length": 23.111,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R06",
+              "a": "V027",
+              "b": "V028",
+              "length": 20.632,
+              "buildingHits": [
+                "V027"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R06",
+              "a": "V028",
+              "b": "V029",
+              "length": 21.729,
+              "buildingHits": [
+                "V028"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R06",
+              "a": "V029",
+              "b": "V030",
+              "length": 15.242,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R06",
+              "a": "V030",
+              "b": "V031",
+              "length": 15.596,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R05",
+              "a": "V039",
+              "b": "V040",
+              "length": 15.147,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R07",
+              "a": "V041",
+              "b": "V042",
+              "length": 31.69,
+              "buildingHits": [
+                "V041"
+              ],
+              "outsideArea": 0.87134,
+              "passXY": false
+            },
+            {
+              "row": "R08",
+              "a": "V043",
+              "b": "V044",
+              "length": 14.772,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R08",
+              "a": "V044",
+              "b": "V045",
+              "length": 13.716,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R09",
+              "a": "V046",
+              "b": "V047",
+              "length": 21.505,
+              "buildingHits": [
+                "V046"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R09",
+              "a": "V047",
+              "b": "V048",
+              "length": 26.622,
+              "buildingHits": [
+                "V047"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R04",
+              "a": "V049",
+              "b": "V050",
+              "length": 39.284,
+              "buildingHits": [
+                "V049"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R04",
+              "a": "V050",
+              "b": "V051",
+              "length": 28.06,
+              "buildingHits": [
+                "V050"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R04",
+              "a": "V051",
+              "b": "V052",
+              "length": 21.386,
+              "buildingHits": [
+                "V051"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R04",
+              "a": "V052",
+              "b": "V053",
+              "length": 33.044,
+              "buildingHits": [
+                "V053"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R12",
+              "a": "V054",
+              "b": "V055",
+              "length": 12.806,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            }
+          ]
+        },
+        {
+          "widthAssumption": 4,
+          "links": 33,
+          "passXY": 19,
+          "blocked": 14,
+          "details": [
+            {
+              "row": "R01",
+              "a": "V001",
+              "b": "V002",
+              "length": 22.354,
+              "buildingHits": [
+                "V001"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R01",
+              "a": "V002",
+              "b": "V003",
+              "length": 14.693,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R02",
+              "a": "V004",
+              "b": "V005",
+              "length": 51.86,
+              "buildingHits": [
+                "V004",
+                "V005"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R02",
+              "a": "V005",
+              "b": "V006",
+              "length": 14.462,
+              "buildingHits": [],
+              "outsideArea": 7.85841,
+              "passXY": false
+            },
+            {
+              "row": "R03",
+              "a": "V007",
+              "b": "V008",
+              "length": 14.057,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R03",
+              "a": "V008",
+              "b": "V009",
+              "length": 19.26,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R03",
+              "a": "V009",
+              "b": "V010",
+              "length": 22.2,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R03",
+              "a": "V010",
+              "b": "V011",
+              "length": 28.457,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R03",
+              "a": "V011",
+              "b": "V012",
+              "length": 21.057,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R03",
+              "a": "V012",
+              "b": "V013",
+              "length": 28.338,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R03",
+              "a": "V013",
+              "b": "V014",
+              "length": 15.365,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R03",
+              "a": "V014",
+              "b": "V015",
+              "length": 16.169,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R03",
+              "a": "V015",
+              "b": "V016",
+              "length": 17.484,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R03",
+              "a": "V016",
+              "b": "V017",
+              "length": 9.337,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R06",
+              "a": "V023",
+              "b": "V024",
+              "length": 15.35,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R06",
+              "a": "V024",
+              "b": "V025",
+              "length": 14.378,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R06",
+              "a": "V025",
+              "b": "V026",
+              "length": 26.204,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R06",
+              "a": "V026",
+              "b": "V027",
+              "length": 23.111,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R06",
+              "a": "V027",
+              "b": "V028",
+              "length": 20.632,
+              "buildingHits": [
+                "V027"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R06",
+              "a": "V028",
+              "b": "V029",
+              "length": 21.729,
+              "buildingHits": [
+                "V028"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R06",
+              "a": "V029",
+              "b": "V030",
+              "length": 15.242,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R06",
+              "a": "V030",
+              "b": "V031",
+              "length": 15.596,
+              "buildingHits": [
+                "V030"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R05",
+              "a": "V039",
+              "b": "V040",
+              "length": 15.147,
+              "buildingHits": [
+                "V040"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R07",
+              "a": "V041",
+              "b": "V042",
+              "length": 31.69,
+              "buildingHits": [
+                "V041"
+              ],
+              "outsideArea": 1.26265,
+              "passXY": false
+            },
+            {
+              "row": "R08",
+              "a": "V043",
+              "b": "V044",
+              "length": 14.772,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R08",
+              "a": "V044",
+              "b": "V045",
+              "length": 13.716,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R09",
+              "a": "V046",
+              "b": "V047",
+              "length": 21.505,
+              "buildingHits": [
+                "V046"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R09",
+              "a": "V047",
+              "b": "V048",
+              "length": 26.622,
+              "buildingHits": [
+                "V047"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R04",
+              "a": "V049",
+              "b": "V050",
+              "length": 39.284,
+              "buildingHits": [
+                "V049"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R04",
+              "a": "V050",
+              "b": "V051",
+              "length": 28.06,
+              "buildingHits": [
+                "V050"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R04",
+              "a": "V051",
+              "b": "V052",
+              "length": 21.386,
+              "buildingHits": [
+                "V051"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R04",
+              "a": "V052",
+              "b": "V053",
+              "length": 33.044,
+              "buildingHits": [
+                "V053"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R12",
+              "a": "V054",
+              "b": "V055",
+              "length": 12.806,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            }
+          ]
+        },
+        {
+          "widthAssumption": 5,
+          "links": 33,
+          "passXY": 16,
+          "blocked": 17,
+          "details": [
+            {
+              "row": "R01",
+              "a": "V001",
+              "b": "V002",
+              "length": 22.354,
+              "buildingHits": [
+                "V001"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R01",
+              "a": "V002",
+              "b": "V003",
+              "length": 14.693,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R02",
+              "a": "V004",
+              "b": "V005",
+              "length": 51.86,
+              "buildingHits": [
+                "V004",
+                "V005"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R02",
+              "a": "V005",
+              "b": "V006",
+              "length": 14.462,
+              "buildingHits": [
+                "V006"
+              ],
+              "outsideArea": 11.03197,
+              "passXY": false
+            },
+            {
+              "row": "R03",
+              "a": "V007",
+              "b": "V008",
+              "length": 14.057,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R03",
+              "a": "V008",
+              "b": "V009",
+              "length": 19.26,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R03",
+              "a": "V009",
+              "b": "V010",
+              "length": 22.2,
+              "buildingHits": [
+                "V009"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R03",
+              "a": "V010",
+              "b": "V011",
+              "length": 28.457,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R03",
+              "a": "V011",
+              "b": "V012",
+              "length": 21.057,
+              "buildingHits": [
+                "V012"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R03",
+              "a": "V012",
+              "b": "V013",
+              "length": 28.338,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R03",
+              "a": "V013",
+              "b": "V014",
+              "length": 15.365,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R03",
+              "a": "V014",
+              "b": "V015",
+              "length": 16.169,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R03",
+              "a": "V015",
+              "b": "V016",
+              "length": 17.484,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R03",
+              "a": "V016",
+              "b": "V017",
+              "length": 9.337,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R06",
+              "a": "V023",
+              "b": "V024",
+              "length": 15.35,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R06",
+              "a": "V024",
+              "b": "V025",
+              "length": 14.378,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R06",
+              "a": "V025",
+              "b": "V026",
+              "length": 26.204,
+              "buildingHits": [
+                "V025",
+                "V026"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R06",
+              "a": "V026",
+              "b": "V027",
+              "length": 23.111,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R06",
+              "a": "V027",
+              "b": "V028",
+              "length": 20.632,
+              "buildingHits": [
+                "V027"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R06",
+              "a": "V028",
+              "b": "V029",
+              "length": 21.729,
+              "buildingHits": [
+                "V028"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R06",
+              "a": "V029",
+              "b": "V030",
+              "length": 15.242,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R06",
+              "a": "V030",
+              "b": "V031",
+              "length": 15.596,
+              "buildingHits": [
+                "V030"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R05",
+              "a": "V039",
+              "b": "V040",
+              "length": 15.147,
+              "buildingHits": [
+                "V040"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R07",
+              "a": "V041",
+              "b": "V042",
+              "length": 31.69,
+              "buildingHits": [
+                "V041"
+              ],
+              "outsideArea": 1.72633,
+              "passXY": false
+            },
+            {
+              "row": "R08",
+              "a": "V043",
+              "b": "V044",
+              "length": 14.772,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R08",
+              "a": "V044",
+              "b": "V045",
+              "length": 13.716,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            },
+            {
+              "row": "R09",
+              "a": "V046",
+              "b": "V047",
+              "length": 21.505,
+              "buildingHits": [
+                "V046"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R09",
+              "a": "V047",
+              "b": "V048",
+              "length": 26.622,
+              "buildingHits": [
+                "V047"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R04",
+              "a": "V049",
+              "b": "V050",
+              "length": 39.284,
+              "buildingHits": [
+                "V049"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R04",
+              "a": "V050",
+              "b": "V051",
+              "length": 28.06,
+              "buildingHits": [
+                "V050"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R04",
+              "a": "V051",
+              "b": "V052",
+              "length": 21.386,
+              "buildingHits": [
+                "V051"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R04",
+              "a": "V052",
+              "b": "V053",
+              "length": 33.044,
+              "buildingHits": [
+                "V053"
+              ],
+              "outsideArea": 0.0,
+              "passXY": false
+            },
+            {
+              "row": "R12",
+              "a": "V054",
+              "b": "V055",
+              "length": 12.806,
+              "buildingHits": [],
+              "outsideArea": 0.0,
+              "passXY": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

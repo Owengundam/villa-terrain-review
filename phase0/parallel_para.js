@@ -8,8 +8,9 @@
  * facade, rotated with the villa; the side rule is the adopted directional clearance; every
  * footprint lies fully inside the boundary (concave-safe) and overlaps no other footprint.
  *
- * Pipeline: settings() -> buildField() -> buildGuides() -> placeRow() -> generateLayout()
- * (bounded deterministic search + row-based gap recovery) -> metrics() -> validate().
+ * Pipeline: settings() -> buildField() -> buildGuideFamilies() -> placeRow() -> generateLayout()
+ * (across-row phase × along-row phase × direction, then row-based gap recovery, then a
+ * geometry-only densify pass kept only on a validated net gain) -> metrics() -> validate().
  *
  * Guidance and physics are deliberately separate: the SMOOTHED contours decide the preferred
  * axis and where rows run; the UNSMOOTHED accepted contours decide which end is downhill
@@ -19,7 +20,7 @@
 const ParallelPara=(()=>{
  'use strict';
  const VILLA={width:11,depth:23};
- const DEFAULTS={sideGap:3,backClear:7,perpTol:15,margin:1.0,eps:1e-6,stationStep:3,cell:10};
+ const DEFAULTS={sideGap:3,backClear:7,perpTol:15,margin:1.0,eps:1e-6,stationStep:3,cell:10,guideSmooth:16,maxFold:0.9,maxTurnDeg:60};
 
  /* ---------------- settings ---------------- */
  /* Validate the selected inputs. Absent keys take the adopted default; keys present but
@@ -31,20 +32,30 @@ const ParallelPara=(()=>{
  function settings(input){
   const i=input||{},errors=[];
   const read=(k,label,def,min,max)=>{
-   const has=Object.prototype.hasOwnProperty.call(i,k)&&i[k]!==undefined&&i[k]!==null&&i[k]!=='';
+   /* an ABSENT key takes the adopted default; a key that is present but empty, null,
+      non-numeric or out of range is an error, so a cleared clearance field can never
+      silently become 0 (or quietly fall back to the default either) */
+   const has=Object.prototype.hasOwnProperty.call(i,k)&&i[k]!==undefined;
    if(!has){if(def===undefined){errors.push(label+' is required');return NaN;}return def;}
-   const n=Number(i[k]);
+   const raw=i[k];
+   if(raw===null||raw===''){errors.push(label+' is empty — enter a number');return NaN;}
+   const n=Number(raw);
    if(!Number.isFinite(n)){errors.push(label+' must be a number');return NaN;}
    if(n<min||n>max){errors.push(label+' must be between '+min+' and '+max);return NaN;}
    return n;};
   const v={
-   sideGap:read('sideGap','Min side clearance',DEFAULTS.sideGap,0,30),
-   backClear:read('backClear','Backhouse clearance',DEFAULTS.backClear,0,30),
-   perpTol:read('perpTol','Perpendicular tolerance',DEFAULTS.perpTol,0,90),
-   margin:read('margin','construction margin',DEFAULTS.margin,0.01,10),
-   width:read('width','villa width',VILLA.width,1,60),
-   depth:read('depth','villa depth',VILLA.depth,1,60),
-   eps:DEFAULTS.eps,stationStep:DEFAULTS.stationStep,cell:DEFAULTS.cell};
+  sideGap:read('sideGap','Min side clearance',DEFAULTS.sideGap,0,30),
+  backClear:read('backClear','Backhouse clearance',DEFAULTS.backClear,0,30),
+  perpTol:read('perpTol','Perpendicular tolerance',DEFAULTS.perpTol,0,90),
+  margin:read('margin','construction margin',DEFAULTS.margin,0.01,10),
+  width:read('width','villa width',VILLA.width,1,60),
+  depth:read('depth','villa depth',VILLA.depth,1,60),
+  /* implementation choices, not planning metrics (see generateLayout's report for the
+     evidence behind their defaults) */
+  guideSmooth:read('guideSmooth','guide smoothing (stations)',DEFAULTS.guideSmooth,0,60),
+  maxFold:read('maxFold','offset fold limit',DEFAULTS.maxFold,0.3,3),
+  maxTurnDeg:read('maxTurnDeg','row turn limit (deg)',DEFAULTS.maxTurnDeg,15,180),
+  eps:DEFAULTS.eps,stationStep:DEFAULTS.stationStep,cell:DEFAULTS.cell};
   v.alongPitch=v.width+v.sideGap+v.margin;
   v.acrossPitch=v.depth+v.backClear+v.margin;
   return {values:v,errors,ok:!errors.length};
@@ -106,12 +117,13 @@ const ParallelPara=(()=>{
   for(const c of boundary)if(pointInPoly(c,poly))return false;
   return true;}
  /* ---------------- elevation / guidance field ---------------- */
- /* Built from contour polylines only. zAt() brackets the two nearest DISTINCT levels and
-    interpolates linearly between them, so the field is monotone between two contour lines
-    and no dip appears between them. normalAt() averages the tangents of the nearest
-    same-level segments (small radius, so a row does not chase single-vertex zigzags) and
-    orients the normal toward the higher terrain. facing() returns that uphill normal plus
-    the downhill-ward direction (the preferred facing). */
+ /* Built from contour polylines only.
+    Between two distinct levels, zAt interpolates linearly along the line joining the closest
+    points on those contours — monotone, no dip. Beyond the outer contour it EXTRAPOLATES
+    that same plane (unsigned inverse-distance blending falls toward the nearer line and
+    inverts the slope). A single nearby level, or no levels in range, is not a heading:
+    zInfo reports 'level' / 'unverified' and facing() returns null so callers can skip the
+    station as terrain-unverified rather than invent a downhill. */
  function buildField(lines,par){
   const cell=(par&&par.cell)||DEFAULTS.cell,segs=[],grid=new Map();
   for(const l of lines||[]){
@@ -125,20 +137,34 @@ const ParallelPara=(()=>{
    const y0=Math.min(s.a[1],s.b[1]),y1=Math.max(s.a[1],s.b[1]);
    for(let i=Math.floor(x0/cell);i<=Math.floor(x1/cell);i++)for(let j=Math.floor(y0/cell);j<=Math.floor(y1/cell);j++){
     const k=i+','+j;if(!grid.has(k))grid.set(k,[]);grid.get(k).push(idx);}});
-  function segmentDist(s,x,y){
-   const dx=s.b[0]-s.a[0],dy=s.b[1]-s.a[1];
-   const t=Math.max(0,Math.min(1,((x-s.a[0])*dx+(y-s.a[1])*dy)/(dx*dx+dy*dy||1)));
-   return Math.hypot(x-(s.a[0]+t*dx),y-(s.a[1]+t*dy));}
-  function nearSegments(x,y,radius){
+  function closestOnSeg(s,x,y){
+   const dx=s.b[0]-s.a[0],dy=s.b[1]-s.a[1],l2=dx*dx+dy*dy||1;
+   const t=Math.max(0,Math.min(1,((x-s.a[0])*dx+(y-s.a[1])*dy)/l2));
+   const px=s.a[0]+t*dx,py=s.a[1]+t*dy;
+   return {px,py,d:Math.hypot(x-px,y-py)};}
+  function segmentDist(s,x,y){return closestOnSeg(s,x,y).d;}
+  /* Segments near a point, by ring expansion that STOPS once the nearest segment is settled and
+     a small neighbourhood is in hand (capped by `limit`). The guidance field is dense — marching
+     squares puts a vertex every couple of metres — so scanning a fixed 12 m radius would touch
+     hundreds of segments per call, and this is the hot path of every walk step. */
+  function nearSegments(x,y,radius,limit){
    const ci=Math.floor(x/cell),cj=Math.floor(y/cell),rings=Math.ceil(radius/cell),out=[],seen=new Set();
+   const cap=limit||24;
    for(let r=0;r<=rings;r++){
     for(let i=ci-r;i<=ci+r;i++)for(let j=cj-r;j<=cj+r;j++){
      if(Math.max(Math.abs(i-ci),Math.abs(j-cj))!==r)continue;
-     const list=grid.get(i+','+j);if(!list)continue;
-     for(const idx of list){if(seen.has(idx))continue;seen.add(idx);
+     const list=grid.get(i+','+j);
+     if(!list)continue;
+     for(const idx of list){
+      if(seen.has(idx))continue;
+      seen.add(idx);
       const s=segs[idx],d=segmentDist(s,x,y);
-      if(d<=radius)out.push({s,d});}}}
-   out.sort((a,b)=>a.d-b.d);
+      if(d<=radius)out.push({s,d});}}
+    if(out.length){
+     out.sort((a,b)=>a.d-b.d);
+     if(out.length>=cap)break;
+     if(r*cell>=out[0].d+3)break;}}
+   if(out.length>cap)out.length=cap;
    return out;}
   /* Nearest segment per level, expanding rings only as far as needed: the search stops as
      soon as the two nearest DISTINCT levels are bracketed (the ring radius has passed the
@@ -155,8 +181,8 @@ const ParallelPara=(()=>{
      for(const idx of list){
       if(seen.has(idx))continue;
       seen.add(idx);
-      const s=segs[idx],d=segmentDist(s,x,y),key=s.z.toFixed(3);
-      if(!best.has(key)||best.get(key).d>d)best.set(key,{z:s.z,d});}}
+      const s=segs[idx],hit=closestOnSeg(s,x,y),key=s.z.toFixed(3);
+      if(!best.has(key)||best.get(key).d>hit.d)best.set(key,{z:s.z,d:hit.d,px:hit.px,py:hit.py});}}
     if(best.size>=2){
      const arr=[...best.values()].sort((a,b)=>a.d-b.d);
      const z1=arr[0].z;
@@ -164,17 +190,37 @@ const ParallelPara=(()=>{
      for(const v of arr)if(Math.abs(v.z-z1)>0.01){second=v;break;}
      if(second&&r*cell>=second.d)break;}}
    return [...best.values()].sort((a,b)=>a.d-b.d);}
-  function zAt(x,y){
+  function zInfo(x,y){
    const lv=nearestLevels(x,y,80);
-   if(!lv.length)return null;
-   const z1=lv[0].z,d1=lv[0].d;
-   let other=null;
-   for(let i=1;i<lv.length;i++)if(Math.abs(lv[i].z-z1)>0.01){other=lv[i];break;}
-   if(!other)return z1;
-   if(d1+other.d<1e-9)return z1;
-   return z1+(other.z-z1)*(d1/(d1+other.d));}
+   if(!lv.length)return {z:null,status:'unverified'};
+   const a=lv[0];
+   let b=null;
+   for(let i=1;i<lv.length;i++)if(Math.abs(lv[i].z-a.z)>0.01){b=lv[i];break;}
+   if(!b){
+    const far=nearestLevels(x,y,240);
+    for(let i=0;i<far.length;i++)if(Math.abs(far[i].z-a.z)>0.01){b=far[i];break;}
+    if(!b)return {z:a.z,status:'level'};}
+   if(a.d<1e-9)return {z:a.z,status:'interpolated'};
+   const vx=a.px-b.px,vy=a.py-b.py,span2=vx*vx+vy*vy;
+   if(span2<1e-6)return {z:a.z,status:'level'};
+   /* Two closest-points do not uniquely determine a 3D plane. The missing assumption is
+      that slope lies along the horizontal joining segment of those two points, with zero
+      slope in the perpendicular horizontal direction (a ruled interpolation, not a
+      three-point plane). Parameter t is 0 at the farther closest-point b and 1 at the
+      nearer a: z = z_b + (z_a − z_b) t, with
+        t = ((x,y) − b) · (a − b) / |a − b|²
+      The same formula interpolates between the contours and extrapolates beyond them. */
+   const t=((x-b.px)*vx+(y-b.py)*vy)/span2;
+   const z=b.z+(a.z-b.z)*t;
+   const between=t>=-1e-6&&t<=1+1e-6;
+   return {z,status:between?'interpolated':'extrapolated',t,pair:[a,b]};}
+  function zAt(x,y){const i=zInfo(x,y);return i.z;}
   function tangentAt(x,y,radius){
-   const near=nearSegments(x,y,radius===undefined?12:radius);
+   let near=nearSegments(x,y,radius===undefined?12:radius);
+   if(!near.length){                      // sparse contours: widen the window instead of giving up
+    for(const r of [24,48,80]){
+     near=nearSegments(x,y,r);
+     if(near.length)break;}}
    if(!near.length)return null;
    const z0=near[0].s.z;
    let sx=near[0].s.tx,sy=near[0].s.ty,tx=near[0].s.tx,ty=near[0].s.ty;
@@ -197,9 +243,11 @@ const ParallelPara=(()=>{
     if(up!==null&&up<here)n=[-n[0],-n[1]];}
    return n;}
   function facing(x,y){
+   const info=zInfo(x,y);
+   if(!info||info.status==='unverified'||info.status==='level')return null;
    const n=normalAt(x,y);
-   return n?{uphill:n,downhill:[-n[0],-n[1]]}:null;}
-  return {segs,grid,segmentDist,nearSegments,nearestLevels,zAt,tangentAt,normalAt,facing};}
+   return n?{uphill:n,downhill:[-n[0],-n[1]],terrain:info.status}:null;}
+  return {segs,grid,segmentDist,nearSegments,nearestLevels,zAt,zInfo,tangentAt,normalAt,facing};}
  /* Front-vs-back ground drop over the FULL depth (established physical check — not a point
     gradient), sampled at three lateral offsets across the footprint and averaged. Positive
     drop = the front end is lower = the villa faces downhill. */
@@ -232,9 +280,11 @@ const ParallelPara=(()=>{
   for(const p of strip)if(pointInPoly(p,poly))return true;
   for(const p of poly)if(pointInPoly(p,strip))return true;
   return polysOverlap(strip,poly);}
- /* B's footprint vs A's strip and A's footprint vs B's strip — both directions are errors.
-    Rear strips MAY overlap each other; this is not a 14 m separation and not an all-round
-    setback, and the strip is not required to lie inside the site. */
+ /* B's footprint vs A's strip and A's footprint vs B's strip — both directions are always
+    checked. Returns 'A' when the FIRST villa's strip was entered, 'B' when the second's was,
+    or null (the value is positional: it names which strip, not which villa intruded). Rear
+    strips MAY overlap each other; this is not a 14 m separation and not an all-round setback,
+    and the strip is not required to lie inside the site. */
  function rearConflict(a,b,clear){
   if(stripIntrusion(rearStrip(a,clear),b.points))return 'A';
   if(stripIntrusion(rearStrip(b,clear),a.points))return 'B';
@@ -244,24 +294,29 @@ const ParallelPara=(()=>{
       (a) their plain polygon distance exceeds the gap, or
       (b) their projections onto at least ONE of the two villas' own side axes are separated
           by more than the gap (overlapping intervals give 0).
-    (b) deliberately needs only one frame: on a curved row the two frames legitimately
-    disagree (each villa measures against its own heading) and requiring both is the older,
-    overly restrictive rule that discarded valid curved-row pairs. Front-to-back neighbours
-    (one behind another) are governed by the rear-strip rule and normally pass (a) too.
-    Returns the measurements so callers can report why a pair passed or failed. */
+    (b) needs only one frame on purpose: on a curved row the two frames legitimately disagree
+    (each villa measures against its own heading), and requiring both is the older, overly
+    restrictive rule that discarded valid curved-row pairs.
+    RELATIONSHIP between the two: a projection gap along any axis is a lower bound on the true
+    set distance, so (b) can never hold when (a) fails. The union therefore accepts exactly the
+    pairs whose footprints are more than `gap` apart, and the directional statement is what
+    explains WHY a curved-row pair passes (one frame reads 2.5 m while the footprints are 3.4 m
+    apart). Both measurements are returned so callers can report the reason, and the exact
+    threshold matters: 3.000 m fails, 3.001 m passes. */
  function sideClearance(a,b,gap,eps){
   const e=eps===undefined?DEFAULTS.eps:eps;
+  /* both measurements are always computed, even when the plain distance already settles it,
+     so a report can explain WHY a pair passed (this is the number that shows a curved row
+     reading 2.5 m in one frame while its footprints are 3.4 m apart) */
   const out={ok:false,gap,polyGap:polyDist(a.points,b.points),sep:[]};
-  if(out.polyGap>gap+e){out.ok=true;return out;}
   for(const u of [a,b]){
    const v=u.view,side=[v[1],-v[0]];
    const proj=p=>(p[0]-u.center[0])*side[0]+(p[1]-u.center[1])*side[1];
    const pa=a.points.map(proj),pb=b.points.map(proj);
    const aMin=Math.min.apply(null,pa),aMax=Math.max.apply(null,pa);
    const bMin=Math.min.apply(null,pb),bMax=Math.max.apply(null,pb);
-   const sep=Math.max(aMin-bMax,bMin-aMax);
-   out.sep.push(Number(sep.toFixed(3)));
-   if(sep>gap+e)out.ok=true;}
+   out.sep.push(Number(Math.max(aMin-bMax,bMin-aMax).toFixed(3)));}
+  out.ok=out.polyGap>gap+e||out.sep.some(s=>s>gap+e);
   return out;}
  function sideGapOK(a,b,gap,tol){return sideClearance(a,b,gap===undefined?DEFAULTS.sideGap:gap,tol).ok;}
  /* ---------------- row guides ---------------- */
@@ -284,20 +339,38 @@ const ParallelPara=(()=>{
   const last=points[points.length-1];
   if(out[out.length-1].s<acc-1e-9)out.push({x:last[0],y:last[1],s:acc});
   return out;}
- /* Discrete curvature (1/m) at each station from the turn between neighbouring stations. */
- function curvature(list){
+ /* Discrete curvature (1/m) at each station, measured over a ±w station BASELINE (default
+    4 stations = ~24 m). A one-step curvature on a traced contour is dominated by
+    vertex-level noise, and the offset fold test (|dist| * curvature) would then cut nearly
+    every real row; over a 24 m baseline only genuine folds trip it. */
+ function curvature(list,w){
+  const W=w===undefined?4:w;
   for(let i=0;i<list.length;i++){
-   const a=list[Math.max(0,i-1)],b=list[Math.min(list.length-1,i+1)];
+   const a=list[Math.max(0,i-W)],b=list[Math.min(list.length-1,i+W)];
    let k=0;
-   if(i>0&&i+1<list.length){
+   if(a!==list[i]&&b!==list[i]){
     const v1=[list[i].x-a.x,list[i].y-a.y],v2=[b.x-list[i].x,b.y-list[i].y];
     const m1=Math.hypot(v1[0],v1[1]),m2=Math.hypot(v2[0],v2[1]);
     if(m1>1e-9&&m2>1e-9){
      const cross=(v1[0]*v2[1]-v1[1]*v2[0])/(m1*m2);
-     const ang=Math.asin(Math.max(-1,Math.min(1,cross)));
-     k=Math.abs(ang)/((m1+m2)/2);}}
+     k=Math.abs(Math.asin(Math.max(-1,Math.min(1,cross))))/((m1+m2)/2);}}
    list[i].curv=k;}
   return list;}
+ /* Low-pass the spine positions (moving average over ±w stations, default 8 ≈ 24 m) and
+    re-measure arc length. This is the "broad, smoothed terrain structure" the rows are
+    derived from: a traced contour carries metre-scale wiggles that are irrelevant to
+    building rows, and offsetting the raw polyline folds at every one of them. */
+ function smoothPath(list,w){
+  const W=w===undefined?8:w,n=list.length;
+  if(n<3)return list.map(p=>Object.assign({},p));
+  const out=[];
+  for(let i=0;i<n;i++){
+   let sx=0,sy=0,c=0;
+   for(let j=Math.max(0,i-W);j<=Math.min(n-1,i+W);j++){sx+=list[j].x;sy+=list[j].y;c++;}
+   out.push({x:sx/c,y:sy/c,s:0});}
+  let acc=0;
+  for(let i=1;i<n;i++){acc+=Math.hypot(out[i].x-out[i-1].x,out[i].y-out[i-1].y);out[i].s=acc;}
+  return out;}
  /* Tangent and uphill-oriented normal at every station of a spine, from a WINDOW of
     neighbouring stations (±win): the traced contours carry vertex-level noise, and a
     one-step tangent turns sharply at every wiggle, which would fragment rows and jitter the
@@ -357,6 +430,10 @@ const ParallelPara=(()=>{
   let best=g.nodes.length?g.nodes[0].s:0,bd=Infinity;
   for(const n of g.nodes){const d=Math.hypot(n.x-u.center[0],n.y-u.center[1]);if(d<bd){bd=d;best=n.s;}}
   return best;}
+ function inUsable(usable,s){
+  if(!usable||!usable.length)return true;
+  for(const iv of usable)if(s>=iv.lo-1e-9&&s<=iv.hi+1e-9)return true;
+  return false;}
  /* Cut a piece into separate rows where the terrain genuinely turns: the heading drifts more
     than maxTurn (implementation choice, default 60°) from the row's own starting heading.
     Gradual bending — the normal case on this hillside — is kept, and vertex noise does not
@@ -372,61 +449,193 @@ const ParallelPara=(()=>{
   if(piece.length-start>=3)out.push(piece.slice(start));
   if(!out.length)out.push(piece);
   return out;}
- /* Build the individual-row system used for the placement: villas sit on these curves, one
-    row per curve. Every smoothed contour line is a spine; its uphill and downhill offsets at
-    multiples of the across-row pitch are candidate rows, accepted greedily (longest spine
-    first, nearest offsets first) while they keep at least a legal distance from every
-    accepted row. Regions therefore keep their own terrain direction instead of one global
-    grid, no contour level is treated as a mandatory row, and no contour segment boundary
-    restarts the placement rhythm. */
- function buildGuides(field,boundary,par,lines){
-  const pitch=par.acrossPitch,minSep=par.depth+par.backClear+0.5,minRow=Math.max(par.alongPitch*1.2,20);
+ /* Row guides from contour spines. A contour is reference GEOMETRY for the shape and
+    direction of a family, not an immovable building row. Families are
+      G_k(s) = C(s) + (δ + k P) n(s)
+    with P the parameter-derived across-row pitch and δ an across-row phase. Complete
+    (spine, δ) arrangements are compared; rows are not greedily hashed into one growing
+    exclusion index. Only stations where an oriented footprint fits, and downhill is
+    verified, become usable intervals — unusable stretches do not reserve spacing.
+    No extra positional smoothing: the caller's smoothed polylines are already the
+    guidance, and a second 24 m window would change the meaning of Terrain response scale. */
+ function retangent(list){
+  if(!list.length)return list;
+  let acc=0;list[0].s=0;
+  for(let i=1;i<list.length;i++){
+   acc+=Math.hypot(list[i].x-list[i-1].x,list[i].y-list[i-1].y);list[i].s=acc;}
+  for(let i=0;i<list.length;i++){
+   const a=list[Math.max(0,i-2)],b=list[Math.min(list.length-1,i+2)];
+   const dx=b.x-a.x,dy=b.y-a.y,m=Math.hypot(dx,dy)||1;
+   list[i].tx=dx/m;list[i].ty=dy/m;list[i].nx=-dy/m;list[i].ny=dx/m;}
+  return list;}
+ function usableIntervals(nodes,field,boundary,par){
+  const out=[],g={nodes},lo=nodes[0].s,hi=nodes[nodes.length-1].s;
+  let run=null,unverified=0;
+  const step=par.stationStep;
+  for(let s=lo;s<=hi+1e-9;s+=step){
+   const q=guidePointAt(g,s);
+   if(!q){if(run){out.push(run);run=null;}continue;}
+   const info=field.zInfo?field.zInfo(q.x,q.y):null;
+   const face=field.facing(q.x,q.y);
+   let ok=false;
+   if(!face||(info&&(info.status==='unverified'||info.status==='level'))){
+    unverified++;}
+   else{
+    const poly=rect([q.x,q.y],face.downhill,par.width,par.depth);
+    if(polyInsideBoundary(poly,boundary)&&groundDrop(field,[q.x,q.y],face.downhill,par.depth,par.width).ok)
+     ok=true;}
+   if(ok){if(!run)run={lo:s,hi:s};else run.hi=s;}
+   else if(run){out.push(run);run=null;}}
+  if(run)out.push(run);
+  return {intervals:out,unverified};}
+ function punchCloseRows(rows,minSep,step){
+  const samples=[];
+  for(let i=0;i<rows.length;i++){
+   const g={nodes:rows[i].nodes};
+   for(const iv of rows[i].usable){
+    for(let s=iv.lo;s<=iv.hi+1e-9;s+=step)
+     {const q=guidePointAt(g,s);if(q)samples.push({i,s,x:q.x,y:q.y});}}}
+  const cell=Math.max(minSep,1),hash=new Map();
+  const key=(x,y)=>Math.floor(x/cell)+','+Math.floor(y/cell);
+  const add=(p)=>{const k=key(p.x,p.y);if(!hash.has(k))hash.set(k,[]);hash.get(k).push(p);};
+  const near=(x,y,exceptI)=>{
+   const ci=Math.floor(x/cell),cj=Math.floor(y/cell);let best=Infinity;
+   for(let i=ci-2;i<=ci+2;i++)for(let j=cj-2;j<=cj+2;j++){
+    const l=hash.get(i+','+j);if(!l)continue;
+    for(const p of l){if(p.i===exceptI)continue;const d=Math.hypot(p.x-x,p.y-y);if(d<best)best=d;}}
+   return best;};
+  rows.sort((a,b)=>Math.abs(a.offset)-Math.abs(b.offset)||a.offset-b.offset);
+  for(let i=0;i<rows.length;i++){
+   const g={nodes:rows[i].nodes},kept=[];
+   for(const iv of rows[i].usable){
+    let run=null;
+    for(let s=iv.lo;s<=iv.hi+1e-9;s+=step){
+     const q=guidePointAt(g,s);if(!q)continue;
+     if(near(q.x,q.y,i)<minSep){if(run){kept.push(run);run=null;}continue;}
+     if(!run)run={lo:s,hi:s};else run.hi=s;}
+    if(run)kept.push(run);}
+   rows[i].usable=kept;
+   for(const iv of kept)for(let s=iv.lo;s<=iv.hi+1e-9;s+=step){
+    const q=guidePointAt(g,s);if(q)add({i,s,x:q.x,y:q.y});}}
+  return rows.filter(r=>r.usable.length);}
+ function familyFromSpine(spine,delta,field,boundary,par){
+  const P=par.acrossPitch,minSep=par.depth+par.backClear-0.2,step=par.stationStep;
+  const rows=[],maxK=14;
+  for(let k=-maxK;k<=maxK;k++){
+   const dist=delta+k*P;
+   const pieces=offsetStations(spine.nodes,dist,{boundary,maxFold:par.maxFold});
+   for(const pc of pieces){
+    if(pc.length<3)continue;
+    const nodes=canonicalNodes(retangent(pc.map(p=>({x:p.x,y:p.y,s:p.s,tx:p.tx,ty:p.ty}))));
+    if(nodes.length<3)continue;
+    const mid=nodes[Math.floor(nodes.length/2)];
+    const fn=field.normalAt(mid.x,mid.y);
+    if(fn){
+     const rn=[-mid.ty,mid.tx];
+     const dot=Math.abs(fn[0]*rn[0]+fn[1]*rn[1]);
+     const ang=Math.acos(Math.max(-1,Math.min(1,dot)))*180/Math.PI;
+     if(ang>40)continue;}
+    const mask=usableIntervals(nodes,field,boundary,par);
+    if(!mask.intervals.length)continue;
+    const raw=mask.intervals.map(iv=>({lo:iv.lo,hi:iv.hi}));
+    rows.push({nodes,usable:mask.intervals,usableRaw:raw,offset:dist,k,level:field.zAt(mid.x,mid.y),
+     unverified:mask.unverified,length:nodes[nodes.length-1].s-nodes[0].s});}}
+  return punchCloseRows(rows,minSep,step);}
+ function pickSpines(lines,field,par,boundary){
   const spines=[];
   for(const l of lines||[]){
    const pts=l.points||l.controls||[];
+   if(pts.length<2)continue;
    const st=spineNormals(stations(pts,par.stationStep),field);
-   if(st.length<2)continue;
-   curvature(st);
+   if(st.length<3)continue;
+   curvature(st,4);
    const len=st[st.length-1].s;
    if(len<par.alongPitch)continue;
-   spines.push({z:l.z,st,len});}
-  spines.sort((a,b)=>b.len-a.len||a.z-b.z||a.st[0].x-b.st[0].x||a.st[0].y-b.st[0].y);
-  const cell=Math.max(minSep,1),hash=new Map(),accepted=[],dropped=[];
-  const addSample=(x,y)=>{const k=Math.floor(x/cell)+','+Math.floor(y/cell);if(!hash.has(k))hash.set(k,[]);hash.get(k).push([x,y]);};
-  const tooClose=(x,y)=>{
-   const ci=Math.floor(x/cell),cj=Math.floor(y/cell);
-   for(let i=ci-1;i<=ci+1;i++)for(let j=cj-1;j<=cj+1;j++){
-    const l=hash.get(i+','+j);if(!l)continue;
-    for(const p of l)if(Math.hypot(p[0]-x,p[1]-y)<minSep)return true;}
-   return false;};
-  const maxOff=4,offsets=[];
-  for(let k=0;k<=maxOff;k++){if(k){offsets.push(k);offsets.push(-k);}else offsets.push(0);}
-  for(let si=0;si<spines.length;si++){
-   const sp=spines[si];
-   for(const off of offsets){
-    const dist=off*pitch;
-    for(const piece of offsetStations(sp.st,dist,{boundary,maxFold:0.9})){
-     if(piece[piece.length-1].s-piece[0].s<minRow)continue;
-     const stride=Math.max(1,Math.floor(piece.length/10));
-     let close=false;
-     for(let i=0;i<piece.length;i+=stride)if(tooClose(piece[i].x,piece[i].y)){close=true;break;}
-     if(close){dropped.push({reason:'tooClose',level:sp.z,offset:dist});continue;}
-     for(const part of splitByTurn(piece,par)){
-      const len=part[part.length-1].s-part[0].s;
-      if(len<minRow)continue;
-      for(let i=0;i<part.length;i+=stride)addSample(part[i].x,part[i].y);
-      accepted.push({family:si,level:sp.z,offset:dist,nodes:part,length:len});}}}}
-  accepted.sort((a,b)=>a.level-b.level||a.offset-b.offset||a.nodes[0].x-b.nodes[0].x||a.nodes[0].y-b.nodes[0].y);
-  accepted.forEach((g,i)=>{g.id='R'+String(i+1).padStart(2,'0');});
-  const familyAxis=new Map();
-  for(const g of accepted){
-   if(familyAxis.has(g.family))continue;
+   if(boundary&&boundary.length>=3&&!st.some(p=>pointInPoly([p.x,p.y],boundary)))continue;
+   spines.push({z:l.z,nodes:st,length:len});}
+  spines.sort((a,b)=>b.length-a.length||a.z-b.z);
+  const picked=[];
+  for(const s of spines){
+   if(picked.length>=2)break;
+   if(!picked.length){picked.push(s);continue;}
+   const mid=s.nodes[Math.floor(s.nodes.length/2)];
+   const far=picked.every(p=>{
+    const q=p.nodes[Math.floor(p.nodes.length/2)];
+    return Math.hypot(mid.x-q.x,mid.y-q.y)>80;});
+   if(far)picked.push(s);}
+  return picked;}
+ function rowsToGuides(rows,delta,spineId){
+  const guides=rows.map((r,i)=>{
    let sx=0,sy=0;
-   for(const n of g.nodes){sx+=n.tx;sy+=n.ty;}
+   for(const n of r.nodes){sx+=n.tx;sy+=n.ty;}
    const m=Math.hypot(sx,sy);
-   familyAxis.set(g.family,m>1e-9?[sx/m,sy/m]:null);}
-  for(const g of accepted)g.famAxis=familyAxis.get(g.family);
-  return {guides:accepted,dropped};}
+   return {id:'R'+String(i+1).padStart(2,'0'),family:r.k,level:r.level,offset:r.offset,
+    nodes:r.nodes,usable:r.usable,usableRaw:r.usableRaw||r.usable,length:r.length,delta,spineId,
+    famAxis:m>1e-9?[sx/m,sy/m]:null,unverified:r.unverified||0};});
+  return guides;}
+ function mergeFamilyRows(a,b,minSep,step){
+  const rows=a.concat(b).map(r=>({nodes:r.nodes,usable:r.usable.slice(),
+   usableRaw:(r.usableRaw||r.usable).map(iv=>({lo:iv.lo,hi:iv.hi})),
+   offset:r.offset,k:r.k,level:r.level,unverified:r.unverified,length:r.length}));
+  return punchCloseRows(rows,minSep,step);}
+ function buildGuideFamilies(field,boundary,par,lines){
+  const stats={candidateLength:0,acceptedLength:0,trimmedLength:0,families:0,unverified:0};
+  if(!field.segs.length||boundary.length<3)return [];
+  const spines=pickSpines(lines,field,par,boundary);
+  if(!spines.length)return [];
+  const P=par.acrossPitch,minSep=par.depth+par.backClear-0.2,step=par.stationStep;
+  const deltas=[0,P/3,2*P/3];
+  const families=[];
+  const pushFam=(rows,delta,spineId,merged)=>{
+   if(!rows.length)return;
+   const guides=rowsToGuides(rows,delta,spineId);
+   const usableLen=guides.reduce((s,g)=>s+g.usable.reduce((t,iv)=>t+(iv.hi-iv.lo),0),0);
+   stats.families++;
+   stats.acceptedLength+=guides.reduce((s,g)=>s+g.length,0);
+   stats.unverified+=guides.reduce((s,g)=>s+(g.unverified||0),0);
+   families.push({guides,delta,spineId,merged:!!merged,usableLength:Number(usableLen.toFixed(1)),
+    stats:{acceptedLength:Number(guides.reduce((s,g)=>s+g.length,0).toFixed(1)),
+     usableLength:Number(usableLen.toFixed(1)),rows:guides.length}});};
+  if(spines.length===1){
+   for(const d of deltas)pushFam(familyFromSpine(spines[0],d,field,boundary,par),d,0,false);}
+  else{
+   for(const d of deltas){
+    const a=familyFromSpine(spines[0],d,field,boundary,par);
+    const b=familyFromSpine(spines[1],d,field,boundary,par);
+    pushFam(mergeFamilyRows(a,b,minSep,step),d,'0+1',true);}}
+  stats.acceptedLength=Number(stats.acceptedLength.toFixed(1));
+  return families;}
+ function buildGuides(field,boundary,par,lines){
+  const families=buildGuideFamilies(field,boundary,par,lines);
+  if(!families.length)return {guides:[],dropped:[],stats:{acceptedLength:0,families:0},families};
+  families.sort((a,b)=>b.usableLength-a.usableLength||a.delta-b.delta);
+  const pick=families[0];
+  return {guides:pick.guides,dropped:[],stats:Object.assign({families:families.length},pick.stats),families};}
+
+ /* Canonicalise a row's node order: the polyline is a SET of points, so the walk's own
+    start end must not leak into the result. Without this, reversing the input contour point
+    order flips each walked row, which shifts the phase alignment and produces a different
+    arrangement from identical terrain. */
+ function canonicalNodes(nodes){
+  if(nodes.length<2)return nodes;
+  const a=nodes[0],b=nodes[nodes.length-1];
+  const swap=(a.x>b.x+1e-9)||(Math.abs(a.x-b.x)<=1e-9&&a.y>b.y+1e-9);
+  if(!swap)return nodes;
+  const out=nodes.slice().reverse();
+  let acc=0;
+  out[0].s=0;
+  for(let i=1;i<out.length;i++){acc+=Math.hypot(out[i].x-out[i-1].x,out[i].y-out[i-1].y);out[i].s=acc;}
+  for(let i=0;i<out.length;i++){
+   const A=out[Math.max(0,i-2)],B=out[Math.min(out.length-1,i+2)];
+   const dx=B.x-A.x,dy=B.y-A.y,m=Math.hypot(dx,dy)||1;
+   out[i].tx=dx/m;out[i].ty=dy/m;}
+  return out;}
+ /* Order-invariant sort key for a spine: its length plus the lexicographically smallest end. */
+ function spineKey(st){
+  const a=st[0],b=st[st.length-1];
+  const minx=Math.min(a.x,b.x),maxx=Math.max(a.x,b.x);
+  const miny=minx===a.x?a.y:b.y;
+  return [minx,miny,maxx];}
  /* ---------------- placement ---------------- */
  function makeIndex(cell){
   const map=new Map(),keyOf=(x,y)=>Math.floor(x/cell)+','+Math.floor(y/cell);
@@ -476,10 +685,13 @@ const ParallelPara=(()=>{
   const face=ctx.field.facing(q0.x,q0.y);
   const tail=rowUnits.length?rowUnits[rowUnits.length-1].view:null;
   const axis=face?face.downhill:(tail?tail.slice():null);
-  if(!axis)return {ok:false,reason:'direction'};
+  if(!axis){
+   const info=ctx.field.zInfo?ctx.field.zInfo(q0.x,q0.y):null;
+   const unverified=info&&(info.status==='unverified'||info.status==='level');
+   return {ok:false,reason:unverified?'unverified':'direction'};}
   const tol=par.perpTol*Math.PI/180;
   const turns=[0,tol/3,-tol/3,2*tol/3,-2*tol/3,tol,-tol];
-  const slides=[0,0.75,-0.75,1.5,-1.5,2.5,-2.5,par.alongPitch/3,-par.alongPitch/3];
+  const slides=par.arrangement==='staggered'?[0,0.75,-0.75,1.5,-1.5]:[0,0.75,-0.75,1.5,-1.5,2.5,-2.5,par.alongPitch/3,-par.alongPitch/3];
   const across=[0,0.75,-0.75,1.5,-1.5];
   /* candidates in order of increasing intervention: the undisturbed position first, then
      small slides, shifts and re-aims — so an ordinary villa is placed with no adjustment at
@@ -502,7 +714,11 @@ const ParallelPara=(()=>{
    if(!drop.ok){
     const flipped=[-view[0],-view[1]];
     const d2=groundDrop(ctx.dropField,center,flipped,par.depth,par.width);
-    if(d2.ok){useView=flipped;drop=d2;}
+    /* 180° flip is allowed only when the field has no facing (ambiguous). With a downhill
+       axis in hand, a positive drop the other way is the IDW halo past the last contour,
+       not a real reverse slope — taking it produced uphill villas on a simple test slope. */
+    const flipOk=d2.ok&&(!face||(flipped[0]*face.downhill[0]+flipped[1]*face.downhill[1]>=0));
+    if(flipOk){useView=flipped;drop=d2;}
     else if(tail&&(!face||withinTol(tail,face.downhill,par.perpTol))){
      // row-consistent recovery: follow this row's own heading, still inside the tolerance
      const d3=groundDrop(ctx.dropField,center,tail,par.depth,par.width);
@@ -511,11 +727,18 @@ const ParallelPara=(()=>{
     else{note('direction');continue;}}
    const bad=checkCandidate(center,useView,ctx);
    if(bad){note(bad.reason);continue;}
+   /* the deviation is judged where the villa actually lands, not at the station: the offset
+      that repairs a conflict moves the centre, and the local normal moves with it. Reporting
+      and placement therefore share one reference. */
+   if(face){
+    const at=ctx.field.normalAt(center[0],center[1]);
+    if(at&&!withinTol(useView,at,par.perpTol)){note('direction');continue;}
+    if(useView[0]*face.downhill[0]+useView[1]*face.downhill[1]<0){note('direction');continue;}}
    return {ok:true,center,view:useView,drop,turn,turnDeg:Number((turn*180/Math.PI).toFixed(2)),ds,da,axis:face?'normal':'row'};}
-  const grouped=redistribute(g,s,ctx,rowUnits,axis);
+  const grouped=par.arrangement==='staggered'?null:redistribute(g,s,ctx,rowUnits,axis);
   if(grouped)return grouped;
   return {ok:false,reason:dominantReason(tally),tally};}
- const REASON_ORDER=['boundary','overlap','side','rear','direction','unexplored','geometry'];
+ const REASON_ORDER=['boundary','overlap','side','rear','direction','unverified','unexplored','geometry'];
  function dominantReason(tally){
   let best=null,bestN=0;
   for(const r of REASON_ORDER)if((tally[r]||0)>bestN){best=r;bestN=tally[r];}
@@ -563,35 +786,39 @@ const ParallelPara=(()=>{
     for(const u of tail)ctx.index.add(u);}}
   return null;}
  /* Walk one row, one attempt per along-row pitch, in the traversal direction, starting from a
-    phase that keeps the rows aligned with each other. Three consecutive misses abandon the
-    row (its end may legitimately run out of room); gap recovery revisits those places later. */
+    phase that keeps the rows aligned with each other. A local miss (boundary pinch, neighbour)
+    is skipped — the rest of the row is still walked. Abandoning after three misses was leaving
+    whole lobes empty; gap recovery still fills leftover holes. */
  function placeRow(g,ctx,phase,dir){
   const par=ctx.par,pitch=par.alongPitch,lo=g.nodes[0].s,hi=g.nodes[g.nodes.length-1].s;
   if(hi-lo<pitch*0.8)return [];
   const start=alignStart(g,phase,g.famAxis,par,dir);
   const rowUnits=[];
-  let misses=0;
+  const placeAt=(s)=>{
+   if(g.usable&&!inUsable(g.usable,s))return false;
+   ctx.attempts++;
+   const res=attemptPlacement(g,s,ctx,rowUnits);
+   if(!res.ok){
+    ctx.rejects.byReason[res.reason]=(ctx.rejects.byReason[res.reason]||0)+1;
+    if(ctx.rejects.details.length<60)ctx.rejects.details.push({row:g.id,at:Number(s.toFixed(1)),reason:res.reason});
+    return false;}
+   const id='V'+String(ctx.units.length+1).padStart(3,'0');
+   const u={id,name:id,center:res.center,view:res.view,
+    points:rect(res.center,res.view,par.width,par.depth),
+    row:g.id,family:g.family,order:rowUnits.length,reference:null,active:true,
+    heading:Number((Math.atan2(res.view[1],res.view[0])*180/Math.PI).toFixed(3)),
+    drop:res.drop&&res.drop.drop!==null?Number(res.drop.drop.toFixed(3)):null,
+    repaired:res.repaired||null,axis:res.axis||'normal'};
+   ctx.units.push(u);ctx.index.add(u);rowUnits.push(u);
+   return true;};
   for(let k=0;k<300;k++){
    const s=start+dir*k*pitch;
    if(s<lo-1e-9||s>hi+1e-9)break;
-   ctx.attempts++;
-   const res=attemptPlacement(g,s,ctx,rowUnits);
-   if(res.ok){
-    const id='V'+String(ctx.units.length+1).padStart(3,'0');
-    const u={id,name:id,center:res.center,view:res.view,
-     points:rect(res.center,res.view,par.width,par.depth),
-     row:g.id,family:g.family,order:rowUnits.length,reference:null,active:true,
-     heading:Number((Math.atan2(res.view[1],res.view[0])*180/Math.PI).toFixed(3)),
-     drop:res.drop&&res.drop.drop!==null?Number(res.drop.drop.toFixed(3)):null,
-     repaired:res.repaired||null,axis:res.axis||'normal'};
-    ctx.units.push(u);ctx.index.add(u);rowUnits.push(u);
-    misses=0;}
-   else{
-    ctx.rejects.byReason[res.reason]=(ctx.rejects.byReason[res.reason]||0)+1;
-    if(ctx.rejects.details.length<60)ctx.rejects.details.push({row:g.id,at:Number(s.toFixed(1)),reason:res.reason});
-    misses++;
-    if(misses>2)break;}
+   placeAt(s);
    if(ctx.units.length>=ctx.maxUnits)break;}
+  /* A short or phase-unlucky guide used to publish 0 villas while still drawing on the map
+     (R04/R06). One midpoint attempt is still row-based, not a scatter fill. */
+  if(par.arrangement!=='staggered'&&!rowUnits.length&&hi-lo>=par.width)placeAt((lo+hi)/2);
   return rowUnits;}
  /* Shared alignment: each row's phase is measured against the family's own axis, not against
     the row's arc origin, so neighbouring rows keep a recognisable shared alignment instead of
@@ -615,7 +842,7 @@ const ParallelPara=(()=>{
  function runVariant(guides,boundary,field,dropField,par,phase,dir,maxUnits){
   const ctx={units:[],index:makeIndex(Math.max(par.alongPitch,par.acrossPitch)),
    rejects:{byReason:{},details:[]},attempts:0,par,boundary,field,dropField,maxUnits};
-  for(const g of guides)placeRow(g,ctx,phase,dir);
+  for(const g of guides)placeRow(g,ctx,g.staggerPhase===undefined?phase:g.staggerPhase,dir);
   return {units:ctx.units,rejects:ctx.rejects,attempts:ctx.attempts,phase,dir};}
  /* Row bookkeeping for the output data: membership and ordering, plus the guide geometry so
     the viewer can overlay it. */
@@ -625,18 +852,340 @@ const ParallelPara=(()=>{
    if(!groups.has(u.row))groups.set(u.row,[]);
    groups.get(u.row).push(u);}
   return guides.map(g=>({
-   id:g.id,family:g.family,level:g.level,offset:g.offset,
+   id:g.id,family:g.family,level:g.level,offset:g.offset,staggerPhase:g.staggerPhase,
    length:Number((g.nodes[g.nodes.length-1].s-g.nodes[0].s).toFixed(2)),
    nodes:g.nodes.map(n=>({x:Number(n.x.toFixed(3)),y:Number(n.y.toFixed(3)),s:Number(n.s.toFixed(3))})),
+   usable:g.usable,usableRaw:g.usableRaw,emptyReason:g.emptyReason||null,
    units:(groups.get(g.id)||[]).slice().sort((a,b)=>a.order-b.order).map(u=>u.id)}));}
+ /* Geometry-only densification of an already-chosen arrangement. The guide family is kept;
+    this pass only changes where centres sit on those rows (and, if a pocket has no guide,
+    may add one parallel sibling). A candidate is committed only when independent validation
+    still passes AND the villa count strictly increases. Construction margin is unchanged. */
+ function cloneUnit(u){
+  return {id:u.id,name:u.name,center:u.center.slice(),view:u.view.slice(),
+   points:u.points.map(p=>p.slice()),row:u.row,family:u.family,order:u.order,
+   reference:u.reference,active:u.active!==false,heading:u.heading,drop:u.drop,
+   repaired:u.repaired,axis:u.axis,recovered:u.recovered,densified:u.densified};}
+ function cloneUnits(units){return (units||[]).map(cloneUnit);}
+ function makePlaceCtx(units,boundary,field,dropField,par){
+  const ctx={units:units,index:makeIndex(Math.max(par.alongPitch,par.acrossPitch)),
+   rejects:{byReason:{},details:[]},attempts:0,par,boundary,field,dropField,
+   maxUnits:(par.maxUnits||300)+80};
+  for(const u of units)ctx.index.add(u);
+  return ctx;}
+ function intervalsOf(g,release){
+  const raw=release&&g.usableRaw&&g.usableRaw.length?g.usableRaw:(g.usable||[]);
+  if(raw.length)return raw;
+  if(!g.nodes||!g.nodes.length)return [];
+  return [{lo:g.nodes[0].s,hi:g.nodes[g.nodes.length-1].s}];}
+ function intervalStarts(iv,pitch){
+  const out=[],seen=new Set();
+  const span=iv.hi-iv.lo;
+  if(span<0)return out;
+  const offs=[0];
+  const third=pitch/3;
+  if(third>0&&third<span)offs.push(third,2*third);
+  const add=(s,dir)=>{
+   const key=dir+':'+s.toFixed(3);
+   if(s<iv.lo-1e-9||s>iv.hi+1e-9||seen.has(key))return;
+   seen.add(key);out.push({s,dir});};
+  for(const o of offs){add(iv.lo+o,1);add(iv.hi-o,-1);}
+  return out;}
+ function commitVilla(g,res,ctx,rowUnits){
+  // Repacking removes rows from the middle; length+1 can reuse a surviving ID.
+  const serial=ctx.units.reduce((n,u)=>{const m=/^V(\d+)$/.exec(u.id);return m?Math.max(n,Number(m[1])):n;},0)+1;
+  const id='V'+String(serial).padStart(3,'0');
+  const u={id,name:id,center:res.center,view:res.view,
+   points:rect(res.center,res.view,ctx.par.width,ctx.par.depth),
+   row:g.id,family:g.family,order:rowUnits.length,reference:null,active:true,
+   heading:Number((Math.atan2(res.view[1],res.view[0])*180/Math.PI).toFixed(3)),
+   drop:res.drop&&res.drop.drop!==null?Number(res.drop.drop.toFixed(3)):null,
+   repaired:res.repaired||null,axis:res.axis||'normal',densified:true};
+  ctx.units.push(u);ctx.index.add(u);rowUnits.push(u);
+  return u;}
+ function dropUnits(ctx,pred){
+  const keep=[];
+  for(const u of ctx.units){
+   if(pred(u))ctx.index.remove(u);
+   else keep.push(u);}
+  ctx.units=keep;}
+ /* Pack one usable centre-interval: try boundary-aware starts from both ends (and a few
+    nearby refinements), walk the adopted along-row pitch, keep the start that places the
+    most geometrically valid villas. A nominal pitch guides the walk; actual rotated
+    footprints still go through attemptPlacement. */
+ function packInterval(g,iv,ctx){
+  const pitch=ctx.par.alongPitch;
+  const cap=Math.floor((iv.hi-iv.lo)/pitch)+1;
+  const run=st=>{
+   const placed=[],added=[];
+   for(let k=0;k<80;k++){
+    const s=st.s+st.dir*k*pitch;
+    if(s<iv.lo-1e-9||s>iv.hi+1e-9)break;
+    ctx.attempts++;
+    const res=attemptPlacement(g,s,ctx,placed);
+    if(!res.ok){
+     ctx.rejects.byReason[res.reason]=(ctx.rejects.byReason[res.reason]||0)+1;
+     continue;}
+    added.push(commitVilla(g,res,ctx,placed));}
+   const snap=placed.map(cloneUnit);
+   for(const u of added)ctx.index.remove(u);
+   ctx.units=ctx.units.filter(u=>added.indexOf(u)<0);
+   return {n:placed.length,units:snap,st};};
+  let best={n:-1,units:[],st:null};
+  let starts=intervalStarts(iv,pitch);
+  if(g.staggerPhase!==undefined){
+   const first=alignStart(g,g.staggerPhase,g.famAxis,ctx.par,1);
+   const lo=first+Math.ceil((iv.lo-first)/pitch)*pitch;
+   const hi=first+Math.floor((iv.hi-first)/pitch)*pitch;
+   starts=lo<=hi?[{s:lo,dir:1},{s:hi,dir:-1}]:[];
+  }
+  for(const st of starts){
+   const got=run(st);
+   if(got.n>best.n)best=got;
+   if(best.n>=cap)break;}
+  if(g.staggerPhase===undefined&&best.st&&best.n<cap){
+   for(const d of [-2,-1,1,2]){
+    const s=best.st.s+d;
+    if(s<iv.lo-1e-9||s>iv.hi+1e-9)continue;
+    const got=run({s,dir:best.st.dir});
+    if(got.n>best.n)best=got;
+    if(best.n>=cap)break;}}
+  const out=[];
+  for(const u of best.units){
+   const nu=cloneUnit(u);
+   nu.order=out.length;nu.row=g.id;
+   ctx.units.push(nu);ctx.index.add(nu);out.push(nu);}
+  return out;}
+ function packRowIntervals(g,ctx,release){
+  const ivs=intervalsOf(g,release);
+  const row=[];
+  for(const iv of ivs){
+   const got=packInterval(g,iv,ctx);
+   for(const u of got){u.order=row.length;row.push(u);}}
+  if(g.staggerPhase===undefined&&!row.length&&g.nodes&&g.nodes.length){
+   const lo=g.nodes[0].s,hi=g.nodes[g.nodes.length-1].s;
+   if(hi-lo>=ctx.par.width){
+    ctx.attempts++;
+    const res=attemptPlacement(g,(lo+hi)/2,ctx,[]);
+    if(res.ok)commitVilla(g,res,ctx,row);}}
+  return row;}
+ function rowCount(units,id){let n=0;for(const u of units)if(u.row===id)n++;return n;}
+ /* Independent per-row interval packing against a frozen remainder. Restore the original
+    row when the replacement does not strictly increase that row's count. */
+ function densifyRows(units,guides,boundary,field,dropField,par,release){
+  const report={tried:0,kept:0,gained:0};
+  let cur=cloneUnits(units);
+  const order=guides.slice().sort((a,b)=>rowCount(cur,a.id)-rowCount(cur,b.id)||a.id.localeCompare(b.id));
+  for(const g of order){
+   const before=rowCount(cur,g.id);
+   const cap=intervalsOf(g,release).reduce((s,iv)=>s+Math.floor(Math.max(0,iv.hi-iv.lo)/par.alongPitch)+1,0);
+   if(before>=cap)continue;
+   report.tried++;
+   const ctx=makePlaceCtx(cur.filter(u=>u.row!==g.id),boundary,field,dropField,par);
+   packRowIntervals(g,ctx,release);
+   const after=rowCount(ctx.units,g.id);
+   if(after>before&&validate({units:ctx.units},boundary,par).ok){
+    report.kept++;report.gained+=after-before;cur=cloneUnits(ctx.units);}
+  }
+  return {units:cur,report};}
+ function enumerateCombos(n,offs){
+  const out=[];
+  const rec=arr=>{
+   if(arr.length===n){out.push(arr.slice());return;}
+   for(const o of offs){arr.push(o);rec(arr);arr.pop();}};
+  rec([]);
+  return out;}
+ function packGroupWithOffsets(group,ctx,release,offsets,fromHi){
+  const pitch=ctx.par.alongPitch;
+  const placed=[];
+  for(let i=0;i<group.length;i++){
+   const g=group[i],ivs=intervalsOf(g,release),row=[];
+   for(const iv of ivs){
+    const s0=fromHi?iv.hi-offsets[i]:iv.lo+offsets[i];
+    if(s0<iv.lo-1e-9||s0>iv.hi+1e-9)continue;
+    const dir=fromHi?-1:1;
+    for(let k=0;k<80;k++){
+     const s=s0+dir*k*pitch;
+     if(s<iv.lo-1e-9||s>iv.hi+1e-9)break;
+     ctx.attempts++;
+     const res=attemptPlacement(g,s,ctx,row);
+     if(!res.ok){
+      ctx.rejects.byReason[res.reason]=(ctx.rejects.byReason[res.reason]||0)+1;
+      continue;}
+     commitVilla(g,res,ctx,row);}}
+   placed.push(row);}
+  return placed;}
+ function neighborGroups(guides,units,par){
+  const list=guides.slice().sort((a,b)=>(a.offset||0)-(b.offset||0)||a.id.localeCompare(b.id));
+  const leftover=g=>{
+   const usable=(g.usable||[]).reduce((s,iv)=>s+(iv.hi-iv.lo),0);
+   const n=rowCount(units,g.id);
+   return usable-n*par.alongPitch;};
+  const groups=[];
+  for(let i=0;i<list.length;i++){
+   if(i+1<list.length)groups.push(list.slice(i,i+2));
+   if(i+2<list.length)groups.push(list.slice(i,i+3));}
+  const ranked=groups.map(g=>{
+   const slack=g.reduce((s,r)=>s+Math.max(0,leftover(r)),0);
+   const sparse=g.reduce((s,r)=>s+(rowCount(units,r.id)<=2?1:0),0);
+   return {g,slack,sparse,n:g.length};})
+   .filter(x=>x.slack>=par.alongPitch*0.8||x.sparse>0)
+   .sort((a,b)=>b.slack-a.slack||b.sparse-a.sparse||a.n-b.n);
+  return ranked.slice(0,8).map(x=>x.g);}
+ /* Unlock two or three neighbouring row segments together. Intermediate counts may drop;
+    only the best valid replacement is kept, and only if it beats the original patch. */
+ function densifyNeighborhoods(units,guides,boundary,field,dropField,par,release){
+  const report={tried:0,kept:0,gained:0};
+  let cur=cloneUnits(units);
+  const ids=g=>g.map(r=>r.id).join('+');
+  const seen=new Set();
+  const offs=[0,par.alongPitch/3,2*par.alongPitch/3];
+  let spent=0;
+  const groups=neighborGroups(guides,cur,par).slice(0,4);
+  for(const group of groups){
+   if(spent>1200)break;
+   const key=ids(group);
+   if(seen.has(key))continue;
+   seen.add(key);
+   report.tried++;
+   const idSet=new Set(group.map(r=>r.id));
+   const original=cur.filter(u=>idSet.has(u.row));
+   const fixed=cur.filter(u=>!idSet.has(u.row));
+   const baseN=original.length;
+   let best=null,bestN=baseN;
+   const combos=enumerateCombos(group.length,offs);
+   const dirs=group.length===2?[false,true]:[false];
+   for(const fromHi of dirs){
+    for(const combo of combos){
+     if(spent>1200)break;
+     const ctx=makePlaceCtx(cloneUnits(fixed),boundary,field,dropField,par);
+     packGroupWithOffsets(group,ctx,release,combo,fromHi);
+     spent+=ctx.attempts;
+     const n=ctx.units.length-fixed.length;
+     if(n>bestN&&validate({units:ctx.units},boundary,par).ok){
+      bestN=n;best=cloneUnits(ctx.units);}}}
+   if(best){report.kept++;report.gained+=bestN-baseN;cur=best;}
+  }
+  return {units:cur,report};}
+ function makeSibling(g,sign,field,boundary,par,nextId){
+  const src=retangent(g.nodes.map(n=>({x:n.x,y:n.y,s:n.s,tx:n.tx,ty:n.ty})));
+  const pieces=offsetStations(src,sign*par.acrossPitch,{boundary,maxFold:par.maxFold});
+  let best=null,bestLen=0;
+  for(const pc of pieces){
+   if(pc.length<3)continue;
+   const nodes=canonicalNodes(retangent(pc.map(p=>({x:p.x,y:p.y,s:p.s,tx:p.tx,ty:p.ty}))));
+   if(nodes.length<3)continue;
+   const len=nodes[nodes.length-1].s-nodes[0].s;
+   if(len>bestLen){bestLen=len;best=nodes;}}
+  if(!best||bestLen<par.alongPitch*0.8)return null;
+  const mid=best[Math.floor(best.length/2)];
+  const fn=field.normalAt(mid.x,mid.y);
+  if(fn){
+   const rn=[-mid.ty,mid.tx];
+   const dot=Math.abs(fn[0]*rn[0]+fn[1]*rn[1]);
+   const ang=Math.acos(Math.max(-1,Math.min(1,dot)))*180/Math.PI;
+   if(ang>40)return null;}
+  const mask=usableIntervals(best,field,boundary,par);
+  if(!mask.intervals.length)return null;
+  let sx=0,sy=0;for(const n of best){sx+=n.tx;sy+=n.ty;}
+  const m=Math.hypot(sx,sy);
+  return {id:nextId,family:g.staggerPhase===undefined?g.family:g.family+sign,staggerPhase:g.staggerPhase===undefined?undefined:(g.staggerPhase+par.alongPitch/2)%par.alongPitch,level:field.zAt(mid.x,mid.y),
+   offset:(g.offset||0)+sign*par.acrossPitch,nodes:best,
+   usable:mask.intervals,usableRaw:mask.intervals.map(iv=>({lo:iv.lo,hi:iv.hi})),
+   length:bestLen,delta:g.delta,spineId:g.spineId,siblingOf:g.id,
+   famAxis:m>1e-9?[sx/m,sy/m]:null,unverified:mask.unverified||0};}
+ /* If a pocket has no guide but a parallel sibling of an existing row can hold villas,
+    add that sibling — still a row, not a scatter. Same net-gain gate. */
+ function densifySiblings(units,guides,boundary,field,dropField,par,release){
+  const report={tried:0,kept:0,gained:0,added:[]};
+  let cur=cloneUnits(units);
+  const live=guides.slice();
+  let serial=guides.reduce((n,g)=>{
+   const m=/^R(\d+)$/.exec(g.id);return m?Math.max(n,Number(m[1])):n;},0);
+  const originals=guides.slice();
+  for(const g of originals){
+   for(const sign of [1,-1]){
+    if(report.added.length>=4)break;
+    report.tried++;
+    const nextId='R'+String(++serial).padStart(2,'0');
+    const sib=makeSibling(g,sign,field,boundary,par,nextId);
+    if(!sib){serial--;continue;}
+    /* Guide proximity is not a footprint conflict. A sibling can approach an empty
+       guide, or converge at one end while retaining a usable pocket at the other.
+       Pack against actual occupied footprints; the independent validator below is
+       the acceptance gate for the complete replacement. */
+    const ctx=makePlaceCtx(cloneUnits(cur),boundary,field,dropField,par);
+    packRowIntervals(sib,ctx,release);
+    const gained=ctx.units.length-cur.length;
+    if(gained>0&&validate({units:ctx.units},boundary,par).ok){
+     report.kept++;report.gained+=gained;report.added.push(sib.id);
+     cur=cloneUnits(ctx.units);live.push(sib);}
+    else serial--;}
+   if(report.added.length>=4)break;}
+  return {units:cur,guides:live,report};}
+ function annotateEmpty(guides,units,boundary,field,dropField,par){
+  for(const g of guides){
+   if(rowCount(units,g.id)){g.emptyReason=null;continue;}
+   const ctx=makePlaceCtx(cloneUnits(units),boundary,field,dropField,par);
+   const reasons={};
+   const lo=g.nodes[0].s,hi=g.nodes[g.nodes.length-1].s;
+   for(let s=lo;s<=hi;s+=Math.max(3,par.stationStep)){
+    if(g.usable&&!inUsable(g.usable,s)){reasons.notUsable=(reasons.notUsable||0)+1;continue;}
+    const r=attemptPlacement(g,s,ctx,[]);
+    reasons[r.ok?'fitsNow':r.reason]=(reasons[r.ok?'fitsNow':r.reason]||0)+1;}
+   let top='unexplored',n=0;
+   for(const k of Object.keys(reasons))if(reasons[k]>n){n=reasons[k];top=k;}
+   g.emptyReason=top;}}
+ function probeFootprint(x,y,field,dropField,boundary,par,units){
+  const face=field.facing(x,y);
+  const info=field.zInfo?field.zInfo(x,y):null;
+  if(!face)return {isolated:false,withNeighbors:false,reason:(info&&info.status)||'no-facing',terrain:info&&info.status};
+  const poly=rect([x,y],face.downhill,par.width,par.depth);
+  if(!polyInsideBoundary(poly,boundary))return {isolated:false,withNeighbors:false,reason:'boundary',view:face.downhill,terrain:info&&info.status};
+  const drop=groundDrop(dropField,[x,y],face.downhill,par.depth,par.width);
+  if(!drop.ok)return {isolated:false,withNeighbors:false,reason:'direction',view:face.downhill,terrain:info&&info.status};
+  const ctx={par,boundary,index:makeIndex(Math.max(par.alongPitch,par.acrossPitch))};
+  for(const u of units||[])ctx.index.add(u);
+  const bad=checkCandidate([x,y],face.downhill,ctx);
+  return {isolated:true,withNeighbors:!bad,reason:bad?bad.reason:null,view:face.downhill,poly,terrain:info&&info.status};}
+ function densifyLayout(layout,guides,boundary,field,dropField,par,opts){
+  const cfg=opts&&opts.densify;
+  const off=cfg===false;
+  const packRows=off?false:(cfg&&cfg.packRows===false?false:true);
+  const repack=off||par.arrangement==='staggered'?false:(cfg&&cfg.repackNeighbors===false?false:true);
+  const siblings=off?false:(cfg&&cfg.siblings===false?false:true);
+  const release=off?false:(cfg&&cfg.releaseUnused===false?false:true);
+  const baseline=cloneUnits(layout.units);
+  const report={baseline:baseline.length,packed:null,repacked:null,siblings:null,
+   pack:{tried:0,kept:0,gained:0},neighborhood:{tried:0,kept:0,gained:0},
+   sibling:{tried:0,kept:0,gained:0,added:[]},released:release,applied:false};
+  let units=baseline,live=guides.slice();
+  if(packRows){
+   const r=densifyRows(units,live,boundary,field,dropField,par,release);
+   report.pack=r.report;units=r.units;report.packed=units.length;}
+  if(repack){
+   const r=densifyNeighborhoods(units,live,boundary,field,dropField,par,release);
+   report.neighborhood=r.report;units=r.units;report.repacked=units.length;}
+  if(siblings){
+   const r=densifySiblings(units,live,boundary,field,dropField,par,release);
+   report.sibling=r.report;units=r.units;live=r.guides;report.siblings=units.length;}
+  const ok=validate({units},boundary,par).ok;
+  if(!ok||units.length<baseline.length){
+   annotateEmpty(guides,baseline,boundary,field,dropField,par);
+   return {units:baseline,guides,report:Object.assign(report,{applied:false,reverted:ok?'no-gain':'invalid'})};}
+  report.applied=units.length>baseline.length;
+  annotateEmpty(live,units,boundary,field,dropField,par);
+  return {units,guides:live,report};}
  /* Generate a full arrangement. Bounded, deterministic search over complete alternatives
-    (along-row phase x traversal direction), then a row-based gap-recovery pass on the winner.
+    (along-row phase x traversal direction), then a row-based gap-recovery pass on the winner,
+    then a geometry-only densify pass that is kept only on a validated net gain.
     Identical inputs and settings always produce identical output: no randomness, no clock. */
  function generateLayout(data,opts){
   const t0=Date.now();
   const st=settings(opts);
   if(!st.ok)return {ok:false,error:st.errors.join('; '),errors:st.errors,units:[],rows:[]};
   const par=st.values;
+  par.arrangement=opts&&opts.arrangement==='staggered'?'staggered':'parallel';
   par.maxUnits=(opts&&Number.isFinite(Number(opts.maxUnits)))?Math.max(1,Number(opts.maxUnits)):300;
   const boundary=(data&&data.boundary)||[];
   if(boundary.length<3)return {ok:false,error:'no site boundary available',units:[],rows:[]};
@@ -645,41 +1194,63 @@ const ParallelPara=(()=>{
   const terrain=(opts&&opts.terrainLines)||smoothed;
   const field=buildField(smoothed,par);
   const dropField=buildField(terrain,par);
-  const built=buildGuides(field,boundary,par,smoothed);
-  if(!built.guides.length)return {ok:false,error:'no row guides could be derived from this terrain',units:[],rows:[]};
+  const families=buildGuideFamilies(field,boundary,par,smoothed);
+  if(!families.length)return {ok:false,error:'no row guides could be derived from this terrain',
+   units:[],rows:[],
+   rejects:{byReason:{unverified:1,direction:1},details:[]},
+   recovery:{added:[],tried:0,failed:[],byClass:{noFit:0,neighborsFixed:0,unverified:1,other:0}}};
   const variants=[];
-  for(const phase of [0,par.alongPitch/3,2*par.alongPitch/3])for(const dir of [1,-1]){
-   const v=runVariant(built.guides,boundary,field,dropField,par,phase,dir,par.maxUnits);
-   const rows=rowsOf(v.units,built.guides,par);
-   const validation=validate({units:v.units,rows},boundary,par);
-   const met=metrics({units:v.units,rows},boundary,field,par,{rejects:v.rejects,attempts:v.attempts,validation});
-   variants.push({units:v.units,rows,rejects:v.rejects,attempts:v.attempts,validation,metrics:met,phase,dir});}
+  for(const fam of families){
+   for(const phase of [0,par.alongPitch/3,2*par.alongPitch/3])for(const dir of [1,-1]){
+    // Keep phase attached to each alternative, including split fragments of the same band.
+    const guides=par.arrangement==='staggered'?fam.guides.map(g=>({...g,
+     staggerPhase:(phase+((g.family%2+2)%2)*par.alongPitch/2)%par.alongPitch})):fam.guides;
+    const v=runVariant(guides,boundary,field,dropField,par,phase,dir,par.maxUnits);
+    const rows=rowsOf(v.units,guides,par);
+    const validation=validate({units:v.units,rows},boundary,par);
+    const met=metrics({units:v.units,rows},boundary,field,par,{rejects:v.rejects,attempts:v.attempts,validation});
+    variants.push({units:v.units,rows,rejects:v.rejects,attempts:v.attempts,validation,metrics:met,
+     phase,dir,delta:fam.delta,guides,spineId:fam.spineId});}}
   const viable=variants.filter(v=>v.validation.ok);
   const pool=viable.length?viable:variants.slice();
   /* priority: hard requirements pass (viable first) -> more villas -> less unnecessary
      spacing -> less heading jitter -> deterministic tie-break. No weighted score, so extra
-     villas can never buy a broken constraint. */
+     villas can never buy a broken constraint. Across-row phase (delta) is a first-class
+     search axis so a 50 m gap can be reorganised to ~31 m packing, not only left empty. */
   pool.sort((a,b)=>b.units.length-a.units.length||
    a.metrics.spacing.extraSpacing-b.metrics.spacing.extraSpacing||
    a.metrics.heading.jitter-b.metrics.heading.jitter||
-   a.phase-b.phase||a.dir-b.dir);
+   a.delta-b.delta||a.phase-b.phase||a.dir-b.dir);
   const winner=pool[0];
   const units=winner.units;
-  const recovery=recover({units},boundary,field,dropField,par,built.guides);
+  const recovery=par.arrangement==='staggered'?{added:[],tried:0,failed:[],byClass:{},note:'Phase-preserving interval packing handles staggered gap recovery'}:recover({units},boundary,field,dropField,par,winner.guides);
+  const densified=densifyLayout({units},winner.guides,boundary,field,dropField,par,opts||{});
   /* Safety net. Placement and repair already enforce every requirement, but the delivered
      layout is judged by the INDEPENDENT validator, so anything it still rejects is removed
      here — and reported, never silently accepted. */
-  const holder={units};
+  const holder={units:densified.units};
   const pruned=prune(holder,boundary,par);
-  const rows=rowsOf(holder.units,built.guides,par);
+  const rows=rowsOf(holder.units,densified.guides,par);
   const layout={units:holder.units,rows,params:par};
   const validation=validate(layout,boundary,par);
   const met=metrics(layout,boundary,field,par,{rejects:winner.rejects,attempts:winner.attempts,validation,gaps:recovery.failed});
-  return {ok:validation.ok,error:validation.ok?null:'generated layout failed independent validation',
+  const okFinal=validation.ok&&layout.units.length>0;
+  const pipeline=(densified.guides||[]).map(g=>{
+   const usable=(g.usable||[]).reduce((s,iv)=>s+(iv.hi-iv.lo),0);
+   const placed=holder.units.filter(u=>u.row===g.id).length;
+   return {id:g.id,length:Number((g.length||0).toFixed(1)),usable:Number(usable.toFixed(1)),
+    placed,emptyReason:g.emptyReason||null};});
+  return {ok:okFinal,
+   error:okFinal?null:(layout.units.length?'generated layout failed independent validation'
+    :'no villa could be placed on this terrain (rejections: '+JSON.stringify(met.rejects.byReason)+')'),
    units:layout.units,rows,params:par,validation,metrics:met,rejects:winner.rejects,recovery,pruned,
+   densify:densified.report,pipeline,
    budget:{variants:variants.length,attempts:winner.attempts,recoveryTries:recovery.tried,
-    viableVariants:viable.length,counts:variants.map(v=>({phase:Number(v.phase.toFixed(1)),dir:v.dir,units:v.units.length,ok:v.validation.ok}))},
-   guides:{count:built.guides.length,dropped:built.dropped.length},
+    viableVariants:viable.length,acrossRowPhases:families.length,
+    densifyApplied:!!(densified.report&&densified.report.applied),
+    counts:variants.map(v=>({phase:Number(v.phase.toFixed(1)),dir:v.dir,delta:Number(v.delta.toFixed(2)),
+     units:v.units.length,ok:v.validation.ok}))},
+   guides:{count:densified.guides.length,dropped:0,delta:winner.delta,usableLength:families.find(f=>f.delta===winner.delta&&f.spineId===winner.spineId)?families.find(f=>f.delta===winner.delta&&f.spineId===winner.spineId).usableLength:null},
    elapsedMs:Date.now()-t0};}
  /* Remove villas the independent validator rejects (safety net, reported by the caller). */
  function prune(layout,boundary,par,maxRounds){
@@ -700,10 +1271,15 @@ const ParallelPara=(()=>{
     where a small collective shift could make another legal villa fit, and rows the initial
     pass abandoned. Every attempt goes through the same repair path as placement. */
  function recover(layout,boundary,field,dropField,par,guides){
-  const out={added:[],tried:0,failed:[]};
+  const out={added:[],tried:0,failed:[],byClass:{noFit:0,neighborsFixed:0,unverified:0,other:0}};
   const ctx={units:layout.units,index:makeIndex(Math.max(par.alongPitch,par.acrossPitch)),
    rejects:{byReason:{},details:[]},attempts:0,par,boundary,field,dropField,maxUnits:par.maxUnits+40};
   for(const u of layout.units)ctx.index.add(u);
+  const classify=reason=>{
+   if(reason==='unverified')return 'unverified';
+   if(reason==='boundary')return 'noFit';
+   if(reason==='overlap'||reason==='side'||reason==='rear')return 'neighborsFixed';
+   return 'other';};
   for(const g of guides){
    const list=layout.units.filter(u=>u.row===g.id).slice().sort((a,b)=>a.order-b.order);
    const lo=g.nodes[0].s,hi=g.nodes[g.nodes.length-1].s;
@@ -711,8 +1287,14 @@ const ParallelPara=(()=>{
    for(let i=0;i+1<marks.length;i++){
     const gap=marks[i+1]-marks[i];
     if(gap<par.alongPitch*1.6)continue;
-    for(const s of [marks[i]+gap/2,marks[i]+par.alongPitch*0.75,marks[i+1]-par.alongPitch*0.75]){
+    const samples=[];
+    for(let s=marks[i]+par.alongPitch;s<=marks[i+1]-par.alongPitch*0.45;s+=par.alongPitch)samples.push(s);
+    if(!samples.length)samples.push(marks[i]+gap/2);
+    for(const s of samples){
      if(s<lo||s>hi)continue;
+     if(g.usable&&!inUsable(g.usable,s)){
+      out.byClass.noFit++;out.failed.push({row:g.id,at:Number(s.toFixed(1)),reason:'boundary',class:'noFit'});
+      continue;}
      out.tried++;
      const before=list.filter(u=>arcOf(g,u)<s);
      const res=attemptPlacement(g,s,ctx,before);
@@ -729,9 +1311,11 @@ const ParallelPara=(()=>{
       list.length=0;
       list.push.apply(list,before.concat([u],after));
       ctx.units.push(u);ctx.index.add(u);
-      out.added.push(u.id);
-      break;}
-     out.failed.push({row:g.id,at:Number(s.toFixed(1)),reason:res.reason});}}}
+      out.added.push(u.id);}
+     else{
+      const cls=classify(res.reason);
+      out.byClass[cls]++;
+      out.failed.push({row:g.id,at:Number(s.toFixed(1)),reason:res.reason,class:cls});}}}}
   return out;}
  /* ---------------- metrics: what "good" means ---------------- */
  /* Spacing statistics use meaningful neighbours only (consecutive villas within a row for the
@@ -887,19 +1471,27 @@ const ParallelPara=(()=>{
   return p;}
  /* Guidance-only smoothing, always recomputed from the source handed in. The caller passes
     the ACCEPTED terrain contours — never a previously smoothed result, and never the shipped
-    contours while the user is looking at an edited terrain. */
+    contours while the user is looking at an edited terrain.
+    Level 0 is a deep copy. Levels 1–60 thin each polyline to step = 2 + 2·level metres
+    (4 m … 122 m). Levels 1–6 stay on one Chaikin pass (same as before); then 2, 3, and at
+    most 4 rounds so the top of the slider rounds more instead of only dropping vertices.
+    Same contour count, same labels, endpoints kept; reference elevations are never touched. */
+ const SMOOTH_MAX=60;
  function smoothContours(contours,level){
-  const lvl=Math.max(0,Math.min(6,Math.round(level||0)));
+  const lvl=Math.max(0,Math.min(SMOOTH_MAX,Math.round(level||0)));
   if(!lvl)return contours.map(c=>({...c,points:c.points.map(p=>p.slice())}));
   const step=2+lvl*2;
-  return contours.map(c=>({...c,points:chaikin(resample(c.points,step),1)}));}
+  const rounds=Math.min(4,1+Math.floor((lvl-1)/7));
+  return contours.map(c=>({...c,points:chaikin(resample(c.points,step),rounds)}));}
 
  return {VILLA,DEFAULTS,settings,
   rect,rectangle,rotatePoints,rotate,pointInPoly,segDist,ptPolyDist,polyDist,polysOverlap,polyInsideBoundary,segCross,
   buildField,groundDrop,rearStrip,stripIntrusion,rearConflict,sideClearance,sideGapOK,
-  stations,curvature,spineNormals,offsetStations,selfCuts,guidePointAt,arcOf,splitByTurn,buildGuides,
+  stations,curvature,smoothPath,spineNormals,offsetStations,selfCuts,guidePointAt,arcOf,inUsable,splitByTurn,
+  buildGuides,buildGuideFamilies,usableIntervals,
   makeIndex,checkCandidate,attemptPlacement,redistribute,placeRow,alignStart,withinTol,
   generate,generateLayout,rowsOf,runVariant,recover,prune,metrics,validate,verify,downhillAt,
-  smoothContours,resample,chaikin};
+  densifyLayout,packRowIntervals,intervalStarts,probeFootprint,
+  SMOOTH_MAX,smoothContours,resample,chaikin};
 })();
 if(typeof module!=='undefined')module.exports=ParallelPara;

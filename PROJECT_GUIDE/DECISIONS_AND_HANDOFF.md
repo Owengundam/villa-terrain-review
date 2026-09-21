@@ -1,5 +1,7 @@
 # Decisions and continuation notes
 
+Designer-facing method (how we place villas, in plain language): [METHOD.md](METHOD.md). This file is the engineering log.
+
 ## Central-view rule replaces broad cone — September 14
 
 User rejected the 120° view rule as unrealistic for the low-relief site and authorized a narrower, more forgiving obstruction test. Current Phase 0 uses ±15° and at least 70% unobstructed angular width, unioning overlaps across all blockers. These chosen design parameters were stated explicitly. A 5.25 m pad drop clears an obstruction vertically; peripheral buildings no longer impose height constraints. Containment, directional side clearance, local contour-normal orientation and ±3 m reference-pad bounds remain mandatory. The current terrain source is the port-2000 live contour/height-label export, with label anchors and smoothing limitations recorded. Legacy reports and Phase 2 scripts still describe their historical broad-cone rule.
@@ -64,6 +66,49 @@ Aiming and sliding now alternate until both settle (aim → slide → aim, bound
 Cost of re-aiming the shipped arrangements (per arrangement, tolerance 15°): free 19 active unchanged, 0 ghosted; parallel 25 → 23 active, 5 ghosted; staggered-2 20 → 19, 4 ghosted; staggered-3 17 unchanged, 4 ghosted. Every arrangement stays geometrically legal (footprint/clearance/boundary) and, at that tolerance, no active villa ends off its normal. Tolerances 0/30/89° trade off differently: 0° aims every axis and costs parallel 8 villas, 30° aims almost nothing (worst residual 18–28°), 89° leaves the axis untouched — the pre-re-aiming behaviour, where staggered-3 shipped a villa 42° off its normal.
 
 A latent crash was fixed in the same pass: a loop variable that had been changed from `let` to `const` in the previous session's hoist made the post-flip repair path throw ("Assignment to constant variable") whenever a flip created a clearance conflict — it was present in the published viewer and only surfaced once the sweep exercised that path.
+
+## parallelPara rebuilt around explicit rows — September 20
+
+`Populate` used to scatter candidate points along every contour level at hard-coded offsets
+(`[0, 33, 66] m` bands, 15 m steps) and keep whichever passed its own conflict test; its rows
+were one-to-three-villa fragments, and the layout it published declared
+`verification: {geometry: {passed: true}}` without ever running a validator. The generator is now
+a row system, and every hard requirement is checked by a pass that rebuilds the geometry from
+the output instead of trusting the placement code.
+
+What the stage does, in order:
+1. **Guidance** — the SMOOTHED contours (the `Terrain response scale` slider; `phase0/smoothing.js`) are
+   the placement surface. The UNSMOOTHED accepted contours stay the physics: which end of a
+   villa is downhill comes from the front-vs-back ground drop over the full 23 m, never from a
+   point gradient, and smoothing never moves a reference elevation.
+2. **Rows** — rows are walked across the site in bands one pitch apart (depth + rear clearance +
+   construction margin), each following the local contour direction with momentum, so they bend
+   with the terrain instead of chasing traced zigzags, and they are cut where they converge on a
+   row that is already placed. Rows carry stable ids and record their villa order.
+3. **Placement** — villas sit on a row at the parameter-derived pitch (width + side clearance +
+   margin along the row) with repairs in order of cheapness: slide along the row, shift across
+   it, re-aim within the perpendicular tolerance, then redistribute the tail of the row. The
+   front is the downhill end; when the terrain is ambiguous the row's own heading is used
+   (documented recovery) and the case is reported.
+4. **Search** — six complete alternatives (three along-row phases × two traversal directions)
+   are generated and compared whole: hard requirements pass first, then more villas, then less
+   unnecessary spacing, then less heading jitter. A row-based gap-recovery pass then revisits the
+   ground the bands left, and reports the samples that could not host a row.
+5. **Independent validation** — footprints, rear strips and every pair relationship are rebuilt
+   from centre/view/width/depth; containment is concave-safe; the clearance predicate is
+   restated independently. Anything the validator still rejects is removed and reported, so a
+   published layout is legal by construction and the removals are visible.
+
+Discrepancies found between the adopted rules and the old code, all fixed: containment by four
+vertices only (an edge can cross a concave boundary between inside corners); the empty-side-gap
+field silently becoming 0 m; `Populate` generating guidance from the SHIPPED contours while the
+user was looking at edited terrain; the reference elevations taken from the shipped terrain for
+the same reason; and the hard-coded "geometry passed" claim. The adopted directional side
+clearance is kept, and its relationship is now documented: a projection gap along any axis is a
+lower bound on the true footprint distance, so the union of the two statements accepts exactly
+the pairs whose footprints are farther apart than the clearance — the directional form is what
+explains WHY a curved-row pair passes (one frame can read 2.5 m while the footprints are 3.4 m
+apart).
 
 ## Catalog maintenance
 

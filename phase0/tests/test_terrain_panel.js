@@ -1,3 +1,4 @@
+(async()=>{
 /* Terrain editing panel tests in the BUILT page (post stage-separation):
    OK = save terrain + close + landmass readout. Nothing else.
    Rotation/reorientation belongs to Planar fitting; view recalculation to 3D view fitting. */
@@ -11,7 +12,7 @@ new vm.Script(script).runInContext(ctx);
 
 // panel starts hidden, opens on Edit terrain
 assert(element('terrainPanel').hidden===true,'panel hidden initially');
-vm.runInContext("$('terrain').onclick()",ctx);
+await vm.runInContext("$('terrain').onclick()",ctx);
 assert(element('terrainPanel').hidden===false,'panel opens');
 assert(element('terrainSvg').innerHTML.includes('<polyline data-tline="'),'contour lines rendered');
 assert(element('terrainSvg').innerHTML.includes('class="ctrl"'),'control points rendered');
@@ -25,7 +26,7 @@ console.log('PASS panel opens, 18 lines rendered within 10-point budget');
 vm.runInContext("terrainLines[0].controls[3][0]+=60; terrainLines[0].controls[3][1]-=40; terrainDraw();",ctx);
 const viewsBefore=vm.runInContext("JSON.stringify(data.layouts[0].units.map(u=>u.view))",ctx);
 const zBefore=vm.runInContext("JSON.stringify(data.layouts[0].units.map(u=>u.z))",ctx);
-vm.runInContext("$('terrainOk').onclick()",ctx);
+await vm.runInContext("$('terrainOk').onclick()",ctx);
 assert(element('terrainPanel').hidden===true,'panel closes on OK');
 assert.equal(element('action-message').textContent,'Terrain saved.','OK reports save only');
 assert(element('landmass').textContent.includes('Landmass change')&&element('landmass').textContent.includes('saved'),'landmass total displayed');
@@ -43,15 +44,17 @@ console.log('PASS OK persists edited control lines');
 vm.runInContext("terrainReset()",ctx);
 const originalControls=vm.runInContext("JSON.stringify(TerrainEdit.buildFromContours(terrainOriginal)[0].controls)",ctx);
 assert.equal(vm.runInContext("JSON.stringify(terrainLines[0].controls)",ctx),originalControls,'Reset lines restores the original shipped terrain');
-vm.runInContext("$('terrainOk').onclick()",ctx);
+await vm.runInContext("$('terrainOk').onclick()",ctx);
 assert.equal(vm.runInContext("JSON.stringify(data.contours[0].points)",ctx),originalControls,'OK after Reset saves the original terrain');
 console.log('PASS Reset lines restores original contours and OK saves them');
 
 // Restore saved plan fully reverts contours
 vm.runInContext("terrainOpen()",ctx);
 vm.runInContext("terrainLines[1].controls[5][0]-=70; terrainLines[1].controls[5][1]+=35; terrainDraw();",ctx);
-vm.runInContext("$('terrainOk').onclick()",ctx);
+await vm.runInContext("$('terrainOk').onclick()",ctx);
 vm.runInContext("reset()",ctx);
 assert.equal(vm.runInContext("JSON.stringify(data.contours)",ctx),vm.runInContext("JSON.stringify(data0.contours)",ctx),'Restore saved plan reverts contours');
 console.log('PASS Restore saved plan reverts terrain to shipped contours');
 console.log('INFO landmass readout:',element('landmass').textContent);
+
+})().catch(e=>{console.error(e);process.exitCode=1;});

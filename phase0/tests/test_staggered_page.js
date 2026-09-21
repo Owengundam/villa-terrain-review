@@ -1,0 +1,23 @@
+(async()=>{
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const html=fs.readFileSync('output/checks/image-flow-3d-20260915/index.html','utf8'),nodes={};
+const element=id=>nodes[id]??={value:'',textContent:'',innerHTML:'',hidden:true,disabled:false,style:{},querySelectorAll:()=>[],dataset:{}};
+const ctx=vm.createContext({Math,Date,document:{getElementById:element,querySelectorAll:()=>[]},console,setTimeout,clearTimeout});
+vm.runInContext(html.match(/<script>([\s\S]*)<\/script>/)[1],ctx);
+const run=s=>vm.runInContext(s,ctx),calls=[];
+const fixtures={parallel:JSON.parse(fs.readFileSync('experiments/2026-09-21-parallel-capacity/checks/after-0.json')),staggered:JSON.parse(fs.readFileSync('experiments/2026-09-21-staggered-population/checks/scale-0.json'))};
+ctx.generateFixture=(data,opts)=>{calls.push(opts.arrangement);return JSON.parse(JSON.stringify(fixtures[opts.arrangement]));};
+run('ParallelPara.generateLayout=generateFixture');
+for(const [id,val] of [['sideGap','3'],['backClear','7'],['perpTol','15']])element(id).value=val;
+await run("$('populate').onclick()");
+const parallel=run('index');assert.equal(run('data.layouts[index].units.length'),47);
+const pending=run("$('populateStaggered').onclick()");assert.equal(element('calculation-overlay').hidden,false);await pending;
+const staggered=run('index');assert.notEqual(staggered,parallel);assert.equal(run('data.layouts[index].name'),'staggeredPara');assert.equal(run('data.layouts[index].units.length'),38);assert(element('calculation-overlay').hidden);
+await run("$('populate').onclick()");assert.equal(run('index'),parallel,'replacing parallel selects parallel, not the last layout');
+element('layout').value=String(staggered);await element('layout').onchange();assert.equal(run('data.layouts[index].name'),'staggeredPara','switching does not restore and erase generated arrangements');
+assert.equal(run('data.layouts.length'),6);
+run("$('guideOverlay').checked=true;$('guideOverlay').onchange();$('rearOverlay').checked=true;$('rearOverlay').onchange()");
+assert(element('map').innerHTML.includes('R01'));
+assert.deepEqual(calls,['parallel','staggered','parallel']);
+console.log('PASS staggered UI: correct mode dispatched, overlay, both results preserved, regenerate/select correct layout, guide and rear overlays available');
+})().catch(e=>{console.error(e);process.exitCode=1;});

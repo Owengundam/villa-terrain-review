@@ -12,6 +12,23 @@ Results and extraction overlays: [image reduction](output/checks/image-reduction
 
 `phase0/terrain_edit.js` adds the terrain editing panel: contour lines simplify to at most 10 draggable control points. OK saves the edited lines and reports the landmass cut/fill only — it does not rotate villas or recalculate anything. Planar fitting then faces every uphill arrow downhill, rotates every long axis further than the perpendicular tolerance (default 15°) off the local contour normal onto that normal, and slides villas to repair the clearance and boundary conflicts the re-aiming disturbs — aiming and sliding alternate to convergence, and the action message reports what is left; 3D view fitting is the worker stage. Uphill is decided by the contour-label vote the user reads (9 distances along the arrow, nearest contour label ahead vs behind); the contour-level scan and the integrated ±40 m drop break ties. Test with `node phase0/tests/test_terrain_edit.js`, `node phase0/tests/test_terrain_panel.js`, `node phase0/tests/test_fit_stages.js` and `node phase0/tests/test_uphill.js`, then rebuild with `node phase0/analyse_3d.js --build-only`.
 
+`phase0/parallel_para.js` is the initial population stage behind **Populate**. It builds explicit
+rows (walked across the site in bands one across-row pitch apart, bending with the local contour
+direction), places villas along them at the parameter-derived pitch, repairs conflicts in order of
+cheapness, compares six complete alternatives, then runs a row-based gap-recovery pass. Guidance
+comes from the smoothed contours (`ParallelPara.smoothContours`: 0–60, 4–122 m thinning + 1–4 Chaikin passes);
+downhill sense and reference elevations come from the UNSMOOTHED ACCEPTED terrain, so smoothing can
+never move a reference elevation.
+Every layout is re-checked by an independent validator that rebuilds footprints, rear strips and
+pair relationships from the output; anything it rejects is removed and reported. Test with
+`node phase0/tests/test_parallel_para.js` (fixtures: analytic straight slope, concave boundary,
+curved contours, same-elevation segments, reversed/shuffled input, flat terrain, planted
+violations, changed settings) and `node phase0/tests/test_parallel_page.js` (the built page:
+populate, determinism, stale handling, invalid input, superseded runs, accepted-terrain edits,
+view-only independence, and a 3D view-fitting run on a copy). One Populate takes roughly 6–9 s on
+the shipped terrain — it evaluates six complete arrangements — so the page shows the result only
+after the whole search finishes.
+
 `phase0/tolerance_cost.js` prints what each perpendicular tolerance costs on the shipped arrangements (axes rotated, ghosts, active villas left, worst deviation) — read it before changing the default. It also stands in for "no re-aiming" at 89°, the behaviour before the rotation was implemented.
 
 `phase0/orientation_report.js` scores the uphill rule against an independent contour-label read on the shipped terrain and on edited terrains (recall on definitely-uphill villas, false positives on villas the labels read downhill — the reported bug class) and lists the arrows each arrangement would flip. Run it from the workspace root after changing the orientation rule.

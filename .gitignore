@@ -10,3 +10,9 @@ __pycache__/
 *.dll
 bin/
 obj/
+
+/output/github/
+/output/sites/
+/output/_backups/
+*.tmp
+/node_modules/

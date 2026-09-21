@@ -1,0 +1,11 @@
+Date: 2026-09-21
+Command: node phase0/tests/test_parallel_para.js
+Result: completed, exit code 0; all emitted checks passed.
+Coverage observed: smoothing/settings; terrain field; rear strips; side clearance;
+straight/curved/concave fixtures; line ordering; flat terrain failure; independent
+validator; parameter sensitivity; extrapolation; contour intervals; row reorganization;
+footprint fit; converging curves; interval packing; terrain plane continuity;
+densify acceptance; real-site densification.
+Final real-site check: baseline 37 -> 47 villas, generation elapsed 55262 ms.
+This is not a controlled performance benchmark and does not test roads.
+This file is a result summary, not a verbatim terminal transcript.
