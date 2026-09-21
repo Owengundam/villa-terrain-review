@@ -6,6 +6,7 @@ const Circulation=(()=>{
  'use strict';
  const C=typeof module!=='undefined'&&module.exports?require('clipper-lib'):ClipperLib;
  const P=typeof module!=='undefined'&&module.exports?require('./parallel_para.js'):ParallelPara;
+ const Terrain=typeof module!=='undefined'&&module.exports?require('./road_terrain.js'):RoadTerrain;
  const SCALE=1000, TOL=0.00001;
  const dist=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]);
  const length=p=>p.slice(1).reduce((n,b,i)=>n+dist(p[i],b),0);
@@ -23,20 +24,13 @@ const Circulation=(()=>{
  }
  function settings(input={}){
   const number=(k,def,min,max,unit='m')=>{const raw=input[k]===undefined?def:input[k];if(raw===null||raw===''||!Number.isFinite(Number(raw))||Number(raw)<min||Number(raw)>max)throw Error('Enter a valid '+k+' ('+min+'–'+max+' '+unit+').');return Number(raw);};
-  return {width:number('width',undefined,0.5,12),edge:number('edge',0,0,3),backClear:number('backClear',7,0,30),entranceWidth:number('entranceWidth',1.5,0.5,5),cell:number('cell',2,1,5),maxSlope:number('maxSlope',8,0,100,'%')};
+  return {checkSlope:input.checkSlope!==false,width:number('width',undefined,0.5,12),edge:number('edge',0,0,3),backClear:number('backClear',7,0,30),entranceWidth:number('entranceWidth',1.5,0.5,5),cell:number('cell',2,1,5),maxSlope:number('maxSlope',8,0,100,'%')};
  }
  const isActive=(input,u,i)=>input.active?input.active[i]!==false:u.active!==false;
  const activeUnits=input=>input.layout.units.filter((u,i)=>isActive(input,u,i));
- // One unsmoothed reference shared by routing, exported profiles and final checks.
- // Use the placement module's labelled-contour interpolation, not smoothed guidance
- // or villa-centre pad heights. Unbracketed/extrapolated terrain cannot certify grade.
- function terrainReference(contours){
-  if(!Array.isArray(contours)||contours.length<2)throw Error('Accepted terrain contours are required for road slope checks.');
-  const field=P.buildField(contours,P.settings({}).values),cache=new Map();
-  return {zAt(x,y){const key=x.toFixed(6)+','+y.toFixed(6);if(cache.has(key))return cache.get(key);
-   const info=field.zInfo(x,y),z=info.status==='interpolated'&&Number.isFinite(info.z)?info.z:null;
-   cache.set(key,z);return z;},source:'Accepted unsmoothed contours; distinct-level interpolation; no extrapolated grades'};
- }
+ // A continuous shared reference for routing, profiles and final validation.
+ function terrainReference(contours){return Terrain.reference(contours);}
+ function assessment(points,terrain,s){return s.checkSlope?profile(points,terrain,s.maxSlope):{ok:true,evaluated:false,maxSlope:null,samples:[]};}
  function profile(points,terrain,maxSlope,step=0.5){
   const samples=[];let station=0,max=0;
   const read=(p,s)=>{const z=terrain.zAt(p[0],p[1]);samples.push({s,x:p[0],y:p[1],z});return z;};
@@ -115,13 +109,13 @@ const Circulation=(()=>{
   if(!units.length)throw Error('No villas to serve.');
   if(units.some(u=>!u.row))throw Error('This arrangement has no row IDs. Populate a parallel or staggered arrangement first.');
   const obstacles=activeUnits(input),env=environment(input.boundary,obstacles),radius=s.width/2+s.edge;
-  const terrain=terrainReference(input.contours),gradeOK=line=>profile(line,terrain,s.maxSlope).ok;
+  const terrain=s.checkSlope?terrainReference(input.contours):null,gradeOK=line=>assessment(line,terrain,s).ok;
   if(2*radius>s.backClear)throw Error('Road width plus edge allowances exceeds the rear reservation.');
   const nodes=[],roads=[],warnings=[],reservations=[],byId=new Map(),groups=new Map();
   const enabled=units.map((u,i)=>isActive(input,u,i));
   const addRoad=(kind,a,b,points,width=s.width)=>{
    const footprint=buffer(points,width/2,kind==='entrance'),envelope=buffer(points,width/2+(kind==='entrance'?0:s.edge),kind==='entrance');
-   const slope=profile(points,terrain,s.maxSlope);
+   const slope=assessment(points,terrain,s);
    if(!slope.ok)throw Error(slope.reason);
    const r={id:'road-'+roads.length,kind,a,b,points,width,footprint:footprint.map(unpath),envelope:envelope.map(unpath),length:length(points),profile:slope};roads.push(r);return r;
   };
@@ -135,7 +129,7 @@ const Circulation=(()=>{
     if(area(op(disc,[ring(strip)],C.ClipType.ctDifference))>TOL){last='Rear reservation too narrow';continue;}
     const arrival=buffer([p,r],s.entranceWidth/2,true),ec=env.check(arrival,u.id);
     if(!ec.ok||area(op(arrival,[ring(strip)],C.ClipType.ctDifference))>TOL){last=ec.reason||'Entrance connection leaves rear reservation';continue;}
-    const slope=profile([p,r],terrain,s.maxSlope);if(!slope.ok){last=slope.reason;continue;}
+    const slope=assessment([p,r],terrain,s);if(!slope.ok){last=slope.reason;continue;}
     selected={id:u.id,point:p,rear:r,row:u.row,order:u.order,connected:false};break;
    }
    if(!selected){warnings.push({villa:u.id,reason:last});return;}
@@ -145,7 +139,7 @@ const Circulation=(()=>{
   // Edges link only explicit portals. XY crossings are not silently declared junctions.
   for(const [row,members] of groups){members.sort((a,b)=>a.order-b.order);
    for(let i=1;i<members.length;i++){const a=members[i-1],b=members[i],line=[a.point,b.point],check=env.check(buffer(line,radius));
-    const slope=profile(line,terrain,s.maxSlope);
+    const slope=assessment(line,terrain,s);
     if(check.ok&&slope.ok)addRoad('row',a.id,b.id,line);else warnings.push({row,a:a.id,b:b.id,reason:'Direct row link: '+(check.reason||slope.reason)});}
   }
   const adjacency=()=>{const m=new Map(nodes.map(n=>[n.id,[]]));if(input.entrance)m.set('site',[]);
@@ -164,7 +158,7 @@ const Circulation=(()=>{
     for(const a of connected)for(const b of remaining)pairs.push({a,b,d:dist(a.point,b.point)});
     pairs.sort((a,b)=>a.d-b.d||a.a.id.localeCompare(b.a.id)||a.b.id.localeCompare(b.b.id));
     let best=null;
-    for(const pair of pairs.slice(0,12)){searchAttempts++;const line=route.route(pair.a.point,pair.b.point);if(!line)continue;
+    for(let candidate=0;candidate<pairs.length;candidate++){if(candidate>0&&candidate%12===0&&best)break;const pair=pairs[candidate];searchAttempts++;const line=route.route(pair.a.point,pair.b.point);if(!line)continue;
      if(!env.check(buffer(line,radius)).ok)continue;const len=length(line);if(!best||len<best.len)best={...pair,line,len};}
     if(!best)break;addRoad('connector',best.a.id,best.b.id,best.line);
    }
@@ -172,14 +166,14 @@ const Circulation=(()=>{
   const {seen,parents}=reachable();
   const served=units.filter((u,i)=>enabled[i]).map(u=>{const node=byId.get(u.id),connected=!!input.entrance&&seen.has(u.id),route=[];
    if(connected){let id=u.id;while(id!=='site'){const p=parents[id];if(!p)break;route.push(p[1]);id=p[0];}}
-   return {id:u.id,connected,status:connected?'Connected in plan; road slope checked':!input.entrance?'Reservation only':'Unresolved',reason:connected?'Ground-following slope within '+s.maxSlope+'%; entrance levels and vehicle turns not evaluated':warnings.find(w=>w.villa===u.id)?.reason||(!input.entrance?'Set an entrance arrival point':'No width- and slope-compliant connection found within the bounded search'),route,rear:node?.rear};});
+   return {id:u.id,connected,status:connected?(s.checkSlope?'Connected in plan; road slope checked':'Connected in plan; slope unchecked'):!input.entrance?'Reservation only':'Unresolved',reason:connected?(s.checkSlope?'Ground-following slope within '+s.maxSlope+'%; entrance levels and vehicle turns not evaluated':'Slope checking disabled; terrain/access not validated'):warnings.find(w=>w.villa===u.id)?.reason||(!input.entrance?'Set an entrance arrival point':(s.checkSlope?'No width- and slope-compliant connection found within the bounded search':'No width-compliant connection found within the bounded search')),route,rear:node?.rear};});
   const unionFootprints=union(roads.flatMap(r=>r.footprint.map(ring)));
   const ghostCrossings=units.filter((u,i)=>!enabled[i]).map(u=>({villa:u.id,roads:roads.filter(r=>area(op(r.envelope.map(ring),[ring(u.points)],C.ClipType.ctIntersection))>TOL).map(r=>r.id)})).filter(g=>g.roads.length);
-  const result={version:2,settings:s,entrance:input.entrance||null,nodes,roads,reservations,warnings,served,ghostCrossings,connected:served.filter(v=>v.connected).length,total:served.length,length:roads.filter(r=>r.kind!=='arrival'&&r.kind!=='entrance').reduce((n,r)=>n+r.length,0),area:area(unionFootprints),searchAttempts,terrain:roads.length?'Sampled longitudinal slope checked':'No accepted roads',slope:{limit:s.maxSlope,maxObserved:roads.length?Math.max(...roads.map(r=>r.profile.maxSlope)):null,sampleStep:0.5,source:terrain.source},vehicle:'Not evaluated',gateTieIn:'Not evaluated',fingerprint:fingerprint(input)};
+  const result={version:3,settings:s,entrance:input.entrance||null,nodes,roads,reservations,warnings,served,ghostCrossings,connected:served.filter(v=>v.connected).length,total:served.length,length:roads.filter(r=>r.kind!=='arrival'&&r.kind!=='entrance').reduce((n,r)=>n+r.length,0),area:area(unionFootprints),searchAttempts,terrain:!s.checkSlope?'Slope checking disabled':roads.length?'Sampled longitudinal slope checked':'No accepted roads',slope:{enabled:s.checkSlope,limit:s.maxSlope,maxObserved:s.checkSlope&&roads.length?Math.max(...roads.map(r=>r.profile.maxSlope)):null,sampleStep:0.5,source:terrain?terrain.source:null},vehicle:'Not evaluated',gateTieIn:'Not evaluated',fingerprint:fingerprint(input)};
   const check=validate(result,input);if(!check.ok)throw Error('Independent road check failed: '+check.issues.join('; '));result.validation=check;return result;
  }
  function validate(result,input){
-  const env=environment(input.boundary,activeUnits(input)),terrain=terrainReference(input.contours),s=settings(input.settings),issues=[],ids=new Set(result.nodes.map(n=>n.id));ids.add('site');
+  const s=settings(input.settings),env=environment(input.boundary,activeUnits(input)),terrain=s.checkSlope?terrainReference(input.contours):null,issues=[],ids=new Set(result.nodes.map(n=>n.id));ids.add('site');
   const graph=new Map([...ids].map(id=>[id,[]]));
   for(const n of result.nodes){
    const u=input.layout.units.find(u=>u.id===n.id),entry=result.roads.find(r=>r.kind==='entrance'&&r.a===n.id);
@@ -191,7 +185,7 @@ const Circulation=(()=>{
   for(const r of result.roads){const envelope=buffer(r.points,r.width/2+(r.kind==='entrance'?0:result.settings.edge),r.kind==='entrance');
    if(r.width!==(r.kind==='entrance'?result.settings.entranceWidth:result.settings.width))issues.push(r.id+': inconsistent width');
    const c=env.check(envelope,r.kind==='entrance'?r.a:undefined);if(!c.ok)issues.push(r.id+': '+c.reason);
-   const slope=profile(r.points,terrain,s.maxSlope);if(!slope.ok)issues.push(r.id+': '+slope.reason);
+   const slope=assessment(r.points,terrain,s);if(!slope.ok)issues.push(r.id+': '+slope.reason);
    if(!ids.has(r.a)||!ids.has(r.b))issues.push(r.id+': unknown endpoint');
    if(r.a!==r.b){const a=r.a==='site'?result.entrance:result.nodes.find(n=>n.id===r.a)?.point,b=result.nodes.find(n=>n.id===r.b)?.point;
     if(!a||!b||dist(r.points[0],a)>0.002||dist(r.points.at(-1),b)>0.002)issues.push(r.id+': disconnected geometry');

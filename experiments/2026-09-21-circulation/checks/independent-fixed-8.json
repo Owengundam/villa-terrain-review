@@ -1,0 +1,15 @@
+{
+  "connected": 13,
+  "total": 18,
+  "testEntrance": [
+    3292.0896106193954,
+    2146.616862203421
+  ],
+  "roads": 39,
+  "shapelyRebuiltEnvelopeViolations": [],
+  "areaToleranceSquareMetres": 0.005,
+  "exportedProfileSlopeViolations": [],
+  "maximumRecomputedGrade": 7.745409496191746,
+  "terrainAndVehicleChecks": "sampled ground-following longitudinal grade only",
+  "note": "Saved user study entrance."
+}

@@ -1,6 +1,47 @@
 # Circulation — fixed-layout planning
 
-## Current update: ghost access and maximum road slope
+## Current update: repair false terrain rejections
+
+The supplied `inputs/user-rejected-network.json` reproduces the failure: the old
+nearest-contour-pair reference reports unsupported holes and discontinuities
+inside the site, and routing stops after only 12 candidate connections fail.
+Raising the slope limit does not remove either failure.
+
+Roads now use a continuous, piecewise-linear triangle surface built from the
+accepted contour vertices and samples at <=2 m. Delaunator 4.0.1 is pinned and
+embedded with its ISC license in the standalone viewer and worker. Outside the
+sample hull remains unresolved. This sampled surface is a planning approximation,
+not a constrained contour triangulation or surveyed grading design.
+
+Connection search tries subsequent batches when the nearest 12 cannot connect.
+**Check road slope** defaults on, with the existing **8%** default. Switching it
+off explicitly restores XY-only checking, requires no terrain, and labels results
+as slope-unchecked. A numeric 100% still means a 45-degree incline.
+
+Exact saved-layout regression results (18 active villas, width 3 m):
+
+| Setting | Connected | Maximum sampled grade |
+| --- | --- | --- |
+| 100% | 16/18 | 17.06% |
+| Slope checking off | 16/18 | Not evaluated |
+| 8% | 13/18 | 7.75% |
+
+The 100% and unchecked runs produce identical route geometry. V041 and V079
+remain unresolved by rear-access reservation checks in both runs. Results are
+saved in `checks/fixed-100.json`, `checks/fixed-xy.json`, and `checks/fixed-8.json`.
+`npm test` covers the exact user snapshot, interpolation continuity on a plane,
+unknown terrain, source immutability, checked/unchecked UI and independent
+resampling against a changed slope limit.
+
+Rebuild the separate review page preserving the supplied layout and entrance:
+`node experiments/2026-09-21-circulation/build-user-review.js` after `npm run build`.
+Open `checks/user-layout-review.html`; it starts at 100% for reproducing the report.
+The normal viewer continues to default to 8%.
+
+## Historical milestone 2: ghost access and maximum road slope
+
+The nearest-pair terrain reference and connectivity counts below are historical
+and superseded by the repair above.
 
 The latest version allows roads across ghost footprints. Only active villas are
 obstacles, using the viewer's current activation mask. Crossed ghosts are listed

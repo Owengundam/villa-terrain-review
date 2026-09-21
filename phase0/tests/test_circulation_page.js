@@ -23,3 +23,8 @@ element('roadMaxSlope').value='6';element('roadMaxSlope').onchange();assert(elem
 element('generateRoads').onclick();assert.equal(workers.at(-1).input.settings.maxSlope,'6');element('cancelRoads').onclick();
 assert(html.includes('id="roadMaxSlope" type="number" min="0" max="100" step="0.5" value="8"'));
 console.log('PASS slope control defaults to 8%, enters worker snapshot, and invalidates results');
+element('roadSlopeCheck').checked=false;element('roadSlopeCheck').onchange();assert(element('roadStatus').textContent.includes('OUT OF DATE'));
+element('generateRoads').onclick();const unchecked=workers.at(-1);assert.equal(unchecked.input.settings.checkSlope,false);
+messages.length=0;workerCtx.onmessage({data:unchecked.input});assert(!messages.at(-1).error,messages.at(-1).error);unchecked.onmessage({data:messages.at(-1)});
+assert(element('roadStatus').textContent.includes('PLAN ONLY'));assert(!element('roadStatus').textContent.includes('road slope checked'));
+console.log('PASS explicit slope-off toggle routes without a false slope-pass claim');

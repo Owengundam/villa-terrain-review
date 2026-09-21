@@ -28,7 +28,8 @@ for road in d['roads']:
             violations.append([road['id'], unit['id'], overlap])
 slope_violations=[]
 max_grade=0
-if d.get('version',1)>=2:
+slope_checked=d.get('version',1)>=2 and d['settings'].get('checkSlope',True)
+if slope_checked:
     for road in d['roads']:
         samples=road['profile']['samples']
         for a,b in zip(samples,samples[1:]):
@@ -41,10 +42,10 @@ if d.get('version',1)>=2:
 summary = dict(connected=d['connected'], total=d['total'], testEntrance=snapshot['entrance'],
                roads=len(d['roads']), shapelyRebuiltEnvelopeViolations=violations,
                areaToleranceSquareMetres=0.005, exportedProfileSlopeViolations=slope_violations,
-               maximumRecomputedGrade=max_grade if d.get('version',1)>=2 else None,
-               terrainAndVehicleChecks='sampled ground-following longitudinal grade only' if d.get('version',1)>=2 else 'not evaluated',
-               note='Temporary browser-test interior arrival point, not an approved project entrance.')
-(root/'checks'/('independent-slope-geometry.json' if d.get('version',1)>=2 else 'independent-geometry.json')).write_text(json.dumps(summary,indent=2),encoding='utf-8')
+               maximumRecomputedGrade=max_grade if slope_checked else None,
+               terrainAndVehicleChecks='sampled ground-following longitudinal grade only' if slope_checked else 'not evaluated',
+               note='Saved user study entrance.' if name.startswith('fixed-') else 'Temporary browser-test interior arrival point, not an approved project entrance.')
+(root/'checks'/('independent-'+Path(name).stem+'.json' if name.startswith('fixed-') else 'independent-slope-geometry.json' if d.get('version',1)>=2 else 'independent-geometry.json')).write_text(json.dumps(summary,indent=2),encoding='utf-8')
 print(json.dumps(summary,indent=2))
 assert not violations
 assert not slope_violations
