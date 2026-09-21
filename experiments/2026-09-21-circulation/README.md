@@ -1,6 +1,45 @@
 # Circulation — fixed-layout planning
 
-## Current update: shared interior junctions
+## Current update: arrangement-independent whole-network comparison
+
+The prior method is preserved on branch `archive/shared-junction-method-20260921`
+at b5240e0 and remains selectable as **Previous incremental method**. Its exact
+saved road geometry and profiles are covered by a regression. Omitted method in
+older inputs retains incremental behavior. New viewer sessions default to
+**Whole-network comparison**.
+
+The new method ignores row labels and order, does not preconnect rows, and accepts
+rowless villa layouts. It uses the same footprint, terrain, slope and rear-access
+checks. It compares a shared-length baseline, a travel-aware growth alternative,
+and up to four starts selected for spatial spread. These are alternative search
+initializations, not villa groups or prescribed road classes. Each complete
+network is scored; greater connected-villa count always takes priority.
+
+Among equally connected networks the score is unique shared-road footprint area
+/ road width + 0.25 times summed entrance-to-villa journey length + junction
+proximity penalty. Each villa has equal importance. The weight 0.25 is an initial
+planning assumption, not measured traffic or an engineering standard. Construction
+area counts overlap once; journeys follow explicit graph edges and include the
+private entrance link. The new method also uses existing entrance travel in
+attachment scoring. Source input is normalized by geometry to avoid order bias.
+
+Latest 14-villa fixture: six alternatives, all connect 13 villas. Selected start
+via V036: shared area 2374.62 m², summed travel 1927.98 m, longest journey 250.70 m.
+The shared-length baseline has area 2133.81 m², travel 2834.72 m, longest 460.46 m.
+The selected network therefore trades approximately 11% additional shared area
+for 32% lower average journey. These compare alternatives within the new method,
+not a promise that all layouts will improve by those amounts. Saved output:
+`checks/fixed-whole-network.json` and independent geometry/profile checks in
+`checks/independent-fixed-whole-network.json`.
+
+Tests preserve old geometry, compare rowless and relabelled/reversed inputs,
+validate chosen objective and coverage, execute the actual browser worker for both
+methods and check slope. This is a bounded multi-start heuristic, not the exact
+Cost-Distance algorithm or a global optimum. Arrival selection still takes the
+first feasible rear approach; branch relocation/replacement and vehicle turning
+checks are not yet included. No central point or mandatory cluster is introduced.
+
+## Previous update: shared interior junctions
 
 Checkpoint: 98308ff. Version 4 adds independent `junctions` and attaches new
 branches to sampled stations inside existing connected shared roads. Selected

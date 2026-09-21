@@ -39,7 +39,8 @@ const Circulation=(()=>{
  }
  function settings(input={}){
   const number=(k,def,min,max,unit='m')=>{const raw=input[k]===undefined?def:input[k];if(raw===null||raw===''||!Number.isFinite(Number(raw))||Number(raw)<min||Number(raw)>max)throw Error('Enter a valid '+k+' ('+min+'–'+max+' '+unit+').');return Number(raw);};
-  return {junctionClearance:number('junctionClearance',8,0,30),checkSlope:input.checkSlope!==false,width:number('width',undefined,0.5,12),edge:number('edge',0,0,3),backClear:number('backClear',7,0,30),entranceWidth:number('entranceWidth',1.5,0.5,5),cell:number('cell',2,1,5),maxSlope:number('maxSlope',8,0,100,'%')};
+  const method=input.method||'incremental';if(!['incremental','network'].includes(method))throw Error('Unknown circulation method.');
+  return {method,junctionClearance:number('junctionClearance',8,0,30),checkSlope:input.checkSlope!==false,width:number('width',undefined,0.5,12),edge:number('edge',0,0,3),backClear:number('backClear',7,0,30),entranceWidth:number('entranceWidth',1.5,0.5,5),cell:number('cell',2,1,5),maxSlope:number('maxSlope',8,0,100,'%')};
  }
  const isActive=(input,u,i)=>input.active?input.active[i]!==false:u.active!==false;
  const activeUnits=input=>input.layout.units.filter((u,i)=>isActive(input,u,i));
@@ -123,11 +124,11 @@ const Circulation=(()=>{
   }
   return {route};
  }
- function generate(input,progress=()=>{}){
+ function grow(input,progress=()=>{},trial=null){
   const s=settings(input.settings),layout=input.layout,units=layout.units;
   if(!Array.isArray(input.boundary)||input.boundary.length<3)throw Error('Site boundary is missing.');
   if(!units.length)throw Error('No villas to serve.');
-  if(units.some(u=>!u.row))throw Error('This arrangement has no row IDs. Populate a parallel or staggered arrangement first.');
+  if(!trial&&units.some(u=>!u.row))throw Error('This arrangement has no row IDs. Populate a parallel or staggered arrangement first.');
   const obstacles=activeUnits(input),env=environment(input.boundary,obstacles),radius=s.width/2+s.edge;
   const terrain=s.checkSlope?terrainReference(input.contours):null,gradeOK=line=>assessment(line,terrain,s).ok;
   if(2*radius>s.backClear)throw Error('Road width plus edge allowances exceeds the rear reservation.');
@@ -162,7 +163,7 @@ const Circulation=(()=>{
    addRoad('arrival',selected.id,selected.id,[selected.point]);addRoad('entrance',selected.id,selected.id,[selected.point,r],s.entranceWidth);
   });
   // Edges link only explicit portals. XY crossings are not silently declared junctions.
-  for(const [row,members] of groups){members.sort((a,b)=>a.order-b.order);
+  for(const [row,members] of trial?[]:groups){members.sort((a,b)=>a.order-b.order);
    for(let i=1;i<members.length;i++){const a=members[i-1],b=members[i],line=[a.point,b.point],check=env.check(buffer(line,radius));
     const slope=assessment(line,terrain,s);
     if(check.ok&&slope.ok)addRoad('row',a.id,b.id,line);else warnings.push({row,a:a.id,b:b.id,reason:'Direct row link: '+(check.reason||slope.reason)});}
@@ -177,26 +178,29 @@ const Circulation=(()=>{
    if(!gradeOK([input.entrance]))throw Error('Reference terrain at the entrance is unresolved; select a point within supported contour levels.');
    const route=router(input.boundary,obstacles,radius,s.cell,gradeOK);
    for(let step=0;step<nodes.length;step++){
-    const {seen}=reachable(),remaining=nodes.filter(n=>!seen.has(n.id));if(!remaining.length)break;
+    const {seen,parents}=reachable();let remaining=nodes.filter(n=>!seen.has(n.id));
+    if(trial?.seed&&step===0&&remaining.some(n=>n.id===trial.seed))remaining=remaining.filter(n=>n.id===trial.seed);if(!remaining.length)break;
     progress({stage:'Connecting rear lanes',completed:nodes.length-remaining.length,total:nodes.length});
+    const journey=new Map([['site',0]]);
+    function distanceTo(id){if(journey.has(id))return journey.get(id);const p=parents[id];if(!p)return Infinity;const value=distanceTo(p[0])+roads.find(r=>r.id===p[1]).length;journey.set(id,value);return value;}
     const connected=[{id:'site',point:input.entrance},...nodes.filter(n=>seen.has(n.id)),...junctions.filter(n=>seen.has(n.id))],pairs=[];
     // Search the interior of connected shared roads, not private entrance links.
     for(const road of roads){if(road.a===road.b||!seen.has(road.a)||!seen.has(road.b))continue;
      let station=0;const total=length(road.points);
      for(let k=1;k<road.points.length;k++){const a=road.points[k-1],b=road.points[k],len=dist(a,b),count=Math.ceil(len/4);
       for(let j=1;j<=count;j++){const t=j/count,at=station+t*len;if(at<2||total-at<2)continue;
-       connected.push({id:'station-'+road.id+'-'+k+'-'+j,point:[a[0]+t*(b[0]-a[0]),a[1]+t*(b[1]-a[1])],host:road,segment:k});}
+       connected.push({id:'station-'+road.id+'-'+k+'-'+j,point:[a[0]+t*(b[0]-a[0]),a[1]+t*(b[1]-a[1])],host:road,segment:k,journey:Math.min(distanceTo(road.a)+at,distanceTo(road.b)+total-at)});}
       station+=len;}
     }
     const clearance=p=>Math.min(...nodes.map(n=>dist(p,n.rear)));
     for(const a of connected){const penalty= a.id==='site'?0: 6*Math.max(0,s.junctionClearance+radius-clearance(a.point));
-     for(const b of remaining)pairs.push({a,b,d:dist(a.point,b.point),penalty});}
-    pairs.sort((a,b)=>(a.d+a.penalty)-(b.d+b.penalty)||a.a.id.localeCompare(b.a.id)||a.b.id.localeCompare(b.b.id));
+     for(const b of remaining)pairs.push({a,b,d:dist(a.point,b.point),penalty,travel:trial?trial.weight*(a.journey??distanceTo(a.id)):0});}
+    pairs.sort((a,b)=>((1+(trial?.weight||0))*a.d+a.penalty+a.travel)-((1+(trial?.weight||0))*b.d+b.penalty+b.travel)||a.a.id.localeCompare(b.a.id)||a.b.id.localeCompare(b.b.id));
     let best=null;
     for(let candidate=0;candidate<pairs.length;candidate++){
-     const pair=pairs[candidate];if(best&&pair.d+pair.penalty>=best.score)break;
+     const pair=pairs[candidate];if(best&&(1+(trial?.weight||0))*pair.d+pair.penalty+pair.travel>=best.score)break;
      searchAttempts++;const line=route.route(pair.a.point,pair.b.point);if(!line||!env.check(buffer(line,radius)).ok)continue;
-     const len=length(line),score=len+pair.penalty;if(!best||score<best.score)best={...pair,line,len,score};}
+     const len=length(line),score=(1+(trial?.weight||0))*len+pair.penalty+pair.travel;if(!best||score<best.score)best={...pair,line,len,score};}
     if(!best)break;
     let source=best.a.id;
     if(best.a.host){const old=best.a.host,k=best.a.segment,p=best.a.point;
@@ -218,6 +222,39 @@ const Circulation=(()=>{
   const ghostCrossings=units.filter((u,i)=>!enabled[i]).map(u=>({villa:u.id,roads:roads.filter(r=>area(op(r.envelope.map(ring),[ring(u.points)],C.ClipType.ctIntersection))>TOL).map(r=>r.id)})).filter(g=>g.roads.length);
   const result={version:4,settings:s,entrance:input.entrance||null,nodes,junctions,roads,reservations,warnings,served,ghostCrossings,connected:served.filter(v=>v.connected).length,total:served.length,length:roads.filter(r=>r.kind!=='arrival'&&r.kind!=='entrance').reduce((n,r)=>n+r.length,0),area:area(unionFootprints),searchAttempts,terrain:!s.checkSlope?'Slope checking disabled':roads.length?'Sampled longitudinal slope checked':'No accepted roads',slope:{enabled:s.checkSlope,limit:s.maxSlope,maxObserved:s.checkSlope&&roads.length?Math.max(...roads.map(r=>r.profile.maxSlope)):null,sampleStep:0.5,source:terrain?terrain.source:null},vehicle:'Not evaluated',gateTieIn:'Not evaluated',fingerprint:fingerprint(input)};
   const check=validate(result,input);if(!check.ok)throw Error('Independent road check failed: '+check.issues.join('; '));result.validation=check;return result;
+ }
+ // Whole-network comparison: no clusters, row IDs or prescribed central point.
+ function networkMetrics(result){
+  const byRoad=new Map(result.roads.map(r=>[r.id,r]));
+  const journeys=result.served.filter(v=>v.connected).map(v=>v.route.reduce((n,id)=>n+byRoad.get(id).length,0)+result.roads.filter(r=>r.kind==='entrance'&&r.a===v.id).reduce((n,r)=>n+r.length,0));
+  const shared=result.roads.filter(r=>r.a!==r.b),uniqueArea=area(union(shared.flatMap(r=>r.footprint.map(ring))));
+  const degrees=new Map();for(const r of shared)for(const id of [r.a,r.b])degrees.set(id,(degrees.get(id)||0)+1);
+  let junctionPenalty=0;
+  for(const n of [...result.nodes,...result.junctions])if(degrees.get(n.id)>=3){const clearance=Math.min(...result.nodes.map(v=>dist(n.point,v.rear)));junctionPenalty+=6*Math.max(0,result.settings.junctionClearance+result.settings.width/2+result.settings.edge-clearance);}
+  const totalTravel=journeys.reduce((a,b)=>a+b,0),constructionEquivalent=uniqueArea/result.settings.width;
+  return {uniqueRoadArea:uniqueArea,totalTravel,maxTravel:Math.max(0,...journeys),junctionPenalty,score:constructionEquivalent+0.25*totalTravel+junctionPenalty};
+ }
+ function generate(input,progress=()=>{}){
+  const s=settings(input.settings);if(s.method!=='network')return grow(input,progress);
+  const order=input.layout.units.map((u,i)=>({u,i})).sort((a,b)=>a.u.center[0]-b.u.center[0]||a.u.center[1]-b.u.center[1]||a.u.id.localeCompare(b.u.id));
+  const canonical={...input,layout:{...input.layout,units:order.map(({u})=>u)},active:order.map(({u,i})=>isActive(input,u,i)),z:input.z?order.map(({i})=>input.z[i]):undefined};
+  const candidates=[],record=(result,label)=>{const metrics=networkMetrics(result);candidates.push({result,label,metrics});};
+  const run=(seed,weight,label)=>{progress({stage:'Comparing whole networks: '+label,unit:'alternatives evaluated',completed:candidates.length,total:6});return grow(canonical,()=>{}, {seed,weight});};
+  const base=run(null,0,'shared length');record(base,'shared length');
+  if(input.entrance&&base.nodes.length){
+   record(run(null,0.25,'travel balance'),'travel balance');
+   const chosen=[],pool=base.nodes.slice();
+   // Spatially spread trial destinations, not persistent villa groups.
+   while(chosen.length<4&&pool.length){pool.sort((a,b)=>{
+     const measure=n=>chosen.length?Math.min(...chosen.map(c=>dist(c.point,n.point))):dist(input.entrance,n.point);
+     return measure(b)-measure(a)||a.point[0]-b.point[0]||a.point[1]-b.point[1]||a.id.localeCompare(b.id);});chosen.push(pool.shift());}
+   for(const n of chosen)record(run(n.id,0.25,'alternative '+(candidates.length-1)),'start via '+n.id);
+  }
+  candidates.sort((a,b)=>b.result.connected-a.result.connected||a.metrics.score-b.metrics.score||a.label.localeCompare(b.label));
+  const best=candidates[0],result=best.result;
+  result.fingerprint=fingerprint(input);result.networkComparison={selected:best.label,objective:'Maximize served villas, then unique shared-road area / width + 0.25 * total entrance travel + junction proximity penalty',metrics:best.metrics,alternatives:candidates.map(c=>({label:c.label,connected:c.result.connected,...c.metrics}))};
+  const checked=validate(result,input);if(!checked.ok)throw Error('Whole-network validation failed: '+checked.issues.join('; '));result.validation=checked;
+  return result;
  }
  function validate(result,input){
   const s=settings(input.settings),env=environment(input.boundary,activeUnits(input)),terrain=s.checkSlope?terrainReference(input.contours):null,issues=[],ids=new Set([...result.nodes,...(result.junctions||[])].map(n=>n.id));ids.add('site');

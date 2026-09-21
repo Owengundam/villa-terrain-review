@@ -1,7 +1,7 @@
 /* Explicit road action, independent worker and per-layout results. */
 const roadResults=new WeakMap();
 let roadEntrance=null,roadPicking=false,roadWorker=null,roadJob=0;
-function roadInput(){return {layout:data.layouts[index],boundary:data.boundary,contours:data.contours,active:active.slice(),z:state.z.slice(),entrance:roadEntrance,settings:{junctionClearance:$('junctionClearance').value,checkSlope:$('roadSlopeCheck').checked!==false,maxSlope:$('roadMaxSlope').value,width:$('roadWidth').value,edge:$('roadEdge').value,backClear:$('backClear').value,entranceWidth:$('arrivalWidth').value},guidance:smoothLevel};}
+function roadInput(){return {layout:data.layouts[index],boundary:data.boundary,contours:data.contours,active:active.slice(),z:state.z.slice(),entrance:roadEntrance,settings:{method:$('roadMethod').value,junctionClearance:$('junctionClearance').value,checkSlope:$('roadSlopeCheck').checked!==false,maxSlope:$('roadMaxSlope').value,width:$('roadWidth').value,edge:$('roadEdge').value,backClear:$('backClear').value,entranceWidth:$('arrivalWidth').value},guidance:smoothLevel};}
 function roadMessage(text){$('roadStatus').textContent=text;}
 function roadOverlay(pts,scale){
  const result=roadResults.get(data.layouts[index]),input=roadInput();let svg='';
@@ -42,7 +42,7 @@ $('generateRoads').onclick=()=>{
   $('generateRoads').disabled=true;$('cancelRoads').disabled=false;roadMessage('Checking rear access and connecting lanes…');
   roadWorker.onmessage=e=>{
    if(job!==roadJob)return;
-   if(e.data.progress){const p=e.data.progress;roadMessage(`${p.stage} · ${p.completed}/${p.total} arrival points connected`);return;}
+   if(e.data.progress){const p=e.data.progress;roadMessage(`${p.stage} · ${p.completed}/${p.total} ${p.unit||'arrival points connected'}`);return;}
    const response=e.data;cancelRoad();
    if(response.error){roadMessage('Circulation failed: '+response.error+' Previous result kept.');return;}
    if(key!==data.layouts[index]||fingerprint!==Circulation.fingerprint(roadInput())){roadMessage('Inputs changed during calculation; result discarded.');return;}
@@ -53,7 +53,7 @@ $('generateRoads').onclick=()=>{
  }catch(e){if(url)URL.revokeObjectURL(url);cancelRoad();roadMessage(e.message+' Previous result kept.');}
 };
 $('cancelRoads').onclick=()=>{cancelRoad();roadMessage('Circulation cancelled. Previous result kept.');};
-for(const id of ['junctionClearance','roadWidth','roadSlopeCheck','roadMaxSlope','roadEdge','arrivalWidth'])$(id).onchange=()=>{cancelRoad();draw();};
+for(const id of ['roadMethod','junctionClearance','roadWidth','roadSlopeCheck','roadMaxSlope','roadEdge','arrivalWidth'])$(id).onchange=()=>{cancelRoad();draw();};
 for(const id of ['roadOverlay','roadReservations'])$(id).onchange=()=>draw();
 $('exportRoads').onclick=()=>{
  const result=roadResults.get(data.layouts[index]);if(!result){roadMessage('Generate circulation before exporting.');return;}

@@ -1,0 +1,22 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),C=require('../circulation');
+const input=JSON.parse(JSON.parse(fs.readFileSync('experiments/2026-09-21-circulation/inputs/user-detour-request.json','utf8')).fingerprint);
+const previous=JSON.parse(fs.readFileSync('experiments/2026-09-21-circulation/checks/fixed-junctions.json','utf8'));
+const legacy=C.generate(input);
+assert.deepEqual(legacy.roads,previous.roads,'previous method preserves exact road geometry and profiles');
+input.settings={...input.settings,method:'network'};
+const result=C.generate(input),comparison=result.networkComparison;
+assert.equal(result.connected,13);assert.equal(comparison.alternatives.length,6);
+assert(C.validate(result,input).ok);assert(result.slope.maxObserved<=8);
+for(const a of comparison.alternatives)assert(a.connected<result.connected||a.score>=comparison.metrics.score-1e-7);
+const shuffled={...input,layout:{...input.layout,units:input.layout.units.slice().reverse().map((u,i)=>({...u,row:'random-'+i,order:999-i}))},active:input.active.slice().reverse(),z:input.z.slice().reverse()};
+assert.deepEqual(C.generate(shuffled).roads,result.roads,'input order and arbitrary row labels do not change network');
+const rowless={...input,layout:{...input.layout,units:input.layout.units.map(({row,order,...u})=>u)}};
+assert.deepEqual(C.generate(rowless).roads,result.roads,'arbitrary arrangements need no row IDs');
+const preview=C.generate({...rowless,entrance:null});assert.equal(preview.connected,0);assert(preview.roads.every(r=>r.a===r.b));
+console.log('PASS legacy geometry preserved; whole-network selection, rowless input, permutation/row-label invariance, slope and no-entrance preview');
+
+const P=require('../parallel_para');
+const scattered=[[30,35,.2],[90,40,-.3],[57,93,.7],[125,108,-.5]].map(([x,y,a],i)=>{const view=[Math.sin(a),-Math.cos(a)];return {id:'S'+i,center:[x,y],view,points:P.rect([x,y],view,11,23),active:true};});
+const irregular={layout:{units:scattered},boundary:[[0,0],[160,0],[160,150],[0,150]],contours:[{z:1,points:[[0,0],[160,0]]},{z:2,points:[[0,150],[160,150]]}],entrance:[15,15],settings:{method:'network',width:4}};
+const tested=C.generate(irregular);assert.equal(tested.connected,4);assert(C.validate(tested,irregular).ok);
+console.log('PASS scattered rotated rowless villas');

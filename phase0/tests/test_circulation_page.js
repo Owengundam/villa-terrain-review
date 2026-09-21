@@ -5,7 +5,7 @@ class Worker{constructor(){workers.push(this);}postMessage(input){this.input=inp
 const ctx=vm.createContext({document:{getElementById:element,querySelectorAll:()=>Object.values(nodes)},console,setTimeout,clearTimeout,Worker,Blob,URL:{createObjectURL:()=>'',revokeObjectURL:()=>{}}});
 new vm.Script(script).runInContext(ctx);
 vm.runInContext(`data.contours=[{z:10,points:[[-20,-20],[120,-20]]},{z:11.4,points:[[-20,120],[120,120]]}];data.boundary=[[0,0],[90,0],[90,100],[0,100]];data.layouts=[{name:'parallelPara',conflicts:[],outside:[],units:[{id:'A',center:[25,30],view:[0,-1],row:'R1',order:0,points:ParallelPara.rect([25,30],[0,-1],11,23),reference:10,z:10,active:true},{id:'B',center:[45,30],view:[0,-1],row:'R1',order:1,points:ParallelPara.rect([45,30],[0,-1],11,23),reference:10,z:10,active:true}]}];index=0;active=[true,true];state=View3D.inspect(data.layouts[0],active,[10,10],rules);`,ctx);
-element('junctionClearance').value='8';element('roadMaxSlope').value='8';element('roadWidth').value='4';element('roadEdge').value='0';element('backClear').value='7';element('arrivalWidth').value='1.5';
+element('roadMethod').value='incremental';element('junctionClearance').value='8';element('roadMaxSlope').value='8';element('roadWidth').value='4';element('roadEdge').value='0';element('backClear').value='7';element('arrivalWidth').value='1.5';
 element('generateRoads').onclick();assert.equal(workers.length,1);
 const source=vm.runInContext('roadWorkerSource',ctx),messages=[],workerCtx=vm.createContext({postMessage:m=>messages.push(m)});new vm.Script(source).runInContext(workerCtx);workerCtx.onmessage({data:workers[0].input});
 assert(!messages.at(-1).error,messages.at(-1).error);workers[0].onmessage({data:messages.at(-1)});
@@ -31,3 +31,7 @@ console.log('PASS explicit slope-off toggle routes without a false slope-pass cl
 
 assert.equal(workers[0].input.settings.junctionClearance,'8');
 element('junctionClearance').value='12';element('junctionClearance').onchange();assert(element('roadStatus').textContent.includes('OUT OF DATE'));
+
+element('roadMethod').value='network';element('roadMethod').onchange();assert(element('roadStatus').textContent.includes('OUT OF DATE'));
+element('generateRoads').onclick();assert.equal(workers.at(-1).input.settings.method,'network');
+messages.length=0;workerCtx.onmessage({data:workers.at(-1).input});assert(!messages.at(-1).error,messages.at(-1).error);assert(messages.at(-1).result.networkComparison);
