@@ -8,12 +8,12 @@ const ctx=vm.createContext({Math,Date,document:{getElementById:element,querySele
 vm.runInContext(html.match(/<script>([\s\S]*)<\/script>/)[1],ctx);
 const run=s=>vm.runInContext(s,ctx);
 // Actual Populate handler: overlay visible and page inert BEFORE work is scheduled.
-const pending=run("$('populate').onclick()");
+const pending=run("$('populateOptimized').onclick()");
 assert.equal(element('calculation-overlay').hidden,false);
 assert.equal(element('app-content').inert,true);
 assert.equal(element('app-content')['aria-busy'],'true');
 assert.equal(frames.length,1);
-await run("$('populate').onclick()");assert.equal(frames.length,1,'duplicate clicks cannot launch more work');
+await run("$('populateOptimized').onclick()");assert.equal(frames.length,1,'duplicate clicks cannot launch more work');
 frames.shift()();await pending;
 assert(element('action-message').textContent.includes('Cannot populate'),'validation still runs');
 assert.equal(element('calculation-overlay').hidden,true);assert.equal(element('app-content').inert,false);

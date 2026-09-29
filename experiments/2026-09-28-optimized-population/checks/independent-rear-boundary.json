@@ -1,0 +1,10 @@
+{
+  "count": 58,
+  "boundary": true,
+  "overlap": true,
+  "sideClearance": true,
+  "rearStrips": true,
+  "uniqueIds": true,
+  "rearBoundary": true,
+  "backClear": 7
+}

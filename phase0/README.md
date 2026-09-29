@@ -1,5 +1,11 @@
 # Phase 0 — terrain-led villa-only layouts
 
+## Current population method — September 29
+
+Use **Optimize population** for candidate placement and local rearrangement without prescribed rows. It is the sole viewer population method; the viewer opens and restores the audited 58-villa optimized initial layout. Parallel generation remains an internal optimizer initializer only. The corrected saved-site initial count is 58 at terrain response scale 0, with the full rear-clearance strip contained inside the site. Earlier 60/59-villa studies allowed the strip outside the boundary and are historical. The optimizer runs in a cancellable background worker and reports best found, not a proven maximum. Views and circulation are checked separately.
+
+Old parallel/free/staggered choices have been removed from the active viewer; the earlier studies below are historical. [Method, comparison and independent audits](../experiments/2026-09-28-optimized-population/README.md).
+
 ## Current browser population update — September 21
 
 The current JavaScript `parallelPara` generator now retains **47 villas** on the saved site at terrain response scale 0 (previously 42), and **47 at terrain response scale 2** (previously 43), with the existing dimensions, clearances and orientation tolerance. Additional parallel rows are checked against actual occupied footprints rather than rejected because any part approaches another guide. Repacked villa IDs are also unique. [Comparison, preserved baseline and validation](../experiments/2026-09-21-parallel-capacity/README.md).

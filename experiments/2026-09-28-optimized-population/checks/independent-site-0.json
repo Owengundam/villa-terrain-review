@@ -1,0 +1,8 @@
+{
+  "count": 60,
+  "boundary": true,
+  "overlap": true,
+  "sideClearance": true,
+  "rearStrips": true,
+  "uniqueIds": true
+}

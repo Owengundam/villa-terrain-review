@@ -243,14 +243,14 @@ const TerrainEdit=(()=>{
   for(let k=0;k<p2.length;k++)best=Math.min(best,ptPolyDist(p2[k],p1));
   return best;}
  const SIDE_GAP=3;
- function geomCheck(l,boundary,active=null,sideGap=SIDE_GAP){
+ function geomCheck(l,boundary,active=null,sideGap=SIDE_GAP,insideBoundary=null){
   const act=active||l.units.map(()=>true);
   const issues=[],conflicts=[];
   for(let i=0;i<l.units.length;i++)for(let j=i+1;j<l.units.length;j++){
    if(act[i]&&act[j]&&polyDist(l.units[i].points,l.units[j].points)<sideGap-1e-6){conflicts.push([i,j]);issues.push({type:'clearance',i,j});}}
   if(boundary)for(let i=0;i<l.units.length;i++){
    if(!act[i])continue;
-   const out=l.units[i].points.some(p=>!pointInPoly(p,boundary));
+   const out=insideBoundary?!insideBoundary(l.units[i],boundary):l.units[i].points.some(p=>!pointInPoly(p,boundary));
    if(out){issues.push({type:'boundary',i});}}
   return {conflicts,issues,ok:!issues.length};}
  /* Orientation deviation of a footprint's view from the local downhill, in degrees:
@@ -277,7 +277,7 @@ const TerrainEdit=(()=>{
   const units=l.units.map(u=>({...u,points:u.points.map(p=>p.slice()),center:u.center.slice()}));
   const moves=units.map(()=>({dx:0,dy:0,rot:0}));
   const centre=u=>u.points.reduce((a,p)=>[a[0]+p[0],a[1]+p[1]],[0,0]).map(v=>v/u.points.length);
-  const live=()=>geomCheck({units},boundary,units.map(()=>true),sideGap);
+  const live=()=>geomCheck({units},boundary,units.map(()=>true),sideGap,cfg.insideBoundary);
   // Conflict + boundary repair in one loop: every accepted move must strictly
   // reduce the total issue count, so fitting never makes the layout worse.
   const slideRepair=()=>{
@@ -306,7 +306,7 @@ const TerrainEdit=(()=>{
       const total=Math.hypot(moves[a].dx+dx,moves[a].dy+dy);
       if(total>maxMove)continue;
       const trial=units.map((q,k)=>k===a?{...u,center:[u.center[0]+dx,u.center[1]+dy],points:u.points.map(p=>[p[0]+dx,p[1]+dy])}:q);
-      const tg=geomCheck({units:trial},boundary,trial.map(()=>true),sideGap);
+      const tg=geomCheck({units:trial},boundary,trial.map(()=>true),sideGap,cfg.insideBoundary);
       if(tg.conflicts.length+tg.issues.length<before){
        units[a]=trial[a];moves[a].dx+=dx;moves[a].dy+=dy;repaired=true;fixed=true;break;
       }
@@ -329,7 +329,7 @@ const TerrainEdit=(()=>{
        const total=Math.hypot(moves[a].dx+dx,moves[a].dy+dy);
        if(total>maxMove)continue;
        const trial=units.map((q,k)=>k===a?{...u,center:[u.center[0]+dx,u.center[1]+dy],points:u.points.map(p=>[p[0]+dx,p[1]+dy])}:q);
-       const tc=geomCheck({units:trial},boundary,trial.map(()=>true),sideGap);
+       const tc=geomCheck({units:trial},boundary,trial.map(()=>true),sideGap,cfg.insideBoundary);
        if(tc.conflicts.length+tc.issues.length<before){
         units[a]=trial[a];moves[a].dx+=dx;moves[a].dy+=dy;repaired=true;break;
        }
@@ -365,11 +365,11 @@ const TerrainEdit=(()=>{
     if(r){units[i]=r.unit;moves[i].rot+=r.delta;moved=true;}
     if(!moved)return;
     changed++;
-    const tg=geomCheck({units},boundary,units.map(()=>true),sideGap);
+    const tg=geomCheck({units},boundary,units.map(()=>true),sideGap,cfg.insideBoundary);
     if(tg.conflicts.length||tg.issues.length){
      // the flip/rotation created conflicts: run one more slide-repair round immediately
      for(let pass=0;pass<40;pass++){
-      const gg=geomCheck({units},boundary,units.map(()=>true),sideGap);
+      const gg=geomCheck({units},boundary,units.map(()=>true),sideGap,cfg.insideBoundary);
       if(!gg.conflicts.length&&!gg.issues.length)break;
       let fixedOne=false;
       // per-pass baseline, not per candidate: `units` is unchanged until a move is accepted
@@ -384,7 +384,7 @@ const TerrainEdit=(()=>{
           const dx2=ux*step,dy2=uy*step;
           if(Math.hypot(moves[aa].dx+dx2,moves[aa].dy+dy2)>maxMove)continue;
           const tr2=units.map((q,k)=>k===aa?{...uu,center:[uu.center[0]+dx2,uu.center[1]+dy2],points:uu.points.map(p=>[p[0]+dx2,p[1]+dy2])}:q);
-          const tg2=geomCheck({units:tr2},boundary,tr2.map(()=>true),sideGap);
+          const tg2=geomCheck({units:tr2},boundary,tr2.map(()=>true),sideGap,cfg.insideBoundary);
           if(tg2.conflicts.length+tg2.issues.length<b2){
            units[aa]=tr2[aa];moves[aa].dx+=dx2;moves[aa].dy+=dy2;fixedOne=true;break;
           }
@@ -423,7 +423,7 @@ const TerrainEdit=(()=>{
     const m=moves[i];if(Math.hypot(m.dx,m.dy)<.05)return;
     const dx=m.dx/2,dy=m.dy/2;
     const trial=units.map((q,k)=>k===i?{...q,center:[q.center[0]-dx,q.center[1]-dy],points:q.points.map(p=>[p[0]-dx,p[1]-dy])}:q);
-    const gg=geomCheck({units:trial},boundary,trial.map(()=>true),sideGap);
+    const gg=geomCheck({units:trial},boundary,trial.map(()=>true),sideGap,cfg.insideBoundary);
     if(!gg.conflicts.length&&!gg.issues.length){units[i]=trial[i];m.dx-=dx;m.dy-=dy;any=true;}
    });
    if(!any)break;

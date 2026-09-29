@@ -14,6 +14,7 @@ const nodes={};
 function element(id){return nodes[id]??={value:'',textContent:'',innerHTML:'',onclick:null,onchange:null,querySelectorAll:()=>[],style:{},hidden:true,dataset:{}};}
 const ctx=vm.createContext({document:{getElementById:element,querySelectorAll:()=>Object.values(nodes)},console,setTimeout,clearTimeout,window:{addEventListener:()=>{},removeEventListener:()=>{}},URL:{createObjectURL:()=>'blob:test',revokeObjectURL:()=>{}},Blob:class{},Worker:class{postMessage(){}terminate(){}set onmessage(f){}set onerror(f){}}});
 new vm.Script(script).runInContext(ctx);
+ctx.savedLayouts=JSON.parse(fs.readFileSync('output/checks/image-flow-3d-20260915/report.json','utf8')).layouts;vm.runInContext('data.layouts=savedLayouts;data0.layouts=JSON.parse(JSON.stringify(savedLayouts))',ctx);
 const run=s=>vm.runInContext(s,ctx);
 const noWorker=()=>assert(element('status').textContent!=='Calculating 3D views…','no worker launch');
 

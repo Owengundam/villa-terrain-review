@@ -284,7 +284,7 @@ const ParallelPara=(()=>{
     checked. Returns 'A' when the FIRST villa's strip was entered, 'B' when the second's was,
     or null (the value is positional: it names which strip, not which villa intruded). Rear
     strips MAY overlap each other; this is not a 14 m separation and not an all-round setback,
-    and each strip must remain inside the site. */
+    and the strip is not required to lie inside the site. */
  function rearConflict(a,b,clear){
   if(stripIntrusion(rearStrip(a,clear),b.points))return 'A';
   if(stripIntrusion(rearStrip(b,clear),a.points))return 'B';
@@ -665,7 +665,6 @@ const ParallelPara=(()=>{
   const par=ctx.par,poly=rect(center,view,par.width,par.depth);
   if(!polyInsideBoundary(poly,ctx.boundary))return {reason:'boundary',poly};
   const me={center:center.slice(),view:view.slice(),points:poly,width:par.width,depth:par.depth};
-  if(par.backClear>0&&!polyInsideBoundary(rearStrip(me,par.backClear),ctx.boundary))return {reason:'boundary',poly};
   const near=ctx.index.near(center[0],center[1],par.acrossPitch+par.depth+par.width);
   for(const o of near){
    if(polysOverlap(poly,o.points))return {reason:'overlap',other:o};
@@ -692,7 +691,7 @@ const ParallelPara=(()=>{
    return {ok:false,reason:unverified?'unverified':'direction'};}
   const tol=par.perpTol*Math.PI/180;
   const turns=[0,tol/3,-tol/3,2*tol/3,-2*tol/3,tol,-tol];
-  const slides=[0,0.75,-0.75,1.5,-1.5,2.5,-2.5,par.alongPitch/3,-par.alongPitch/3];
+  const slides=par.arrangement==='staggered'?[0,0.75,-0.75,1.5,-1.5]:[0,0.75,-0.75,1.5,-1.5,2.5,-2.5,par.alongPitch/3,-par.alongPitch/3];
   const across=[0,0.75,-0.75,1.5,-1.5];
   /* candidates in order of increasing intervention: the undisturbed position first, then
      small slides, shifts and re-aims — so an ordinary villa is placed with no adjustment at
@@ -736,7 +735,7 @@ const ParallelPara=(()=>{
     if(at&&!withinTol(useView,at,par.perpTol)){note('direction');continue;}
     if(useView[0]*face.downhill[0]+useView[1]*face.downhill[1]<0){note('direction');continue;}}
    return {ok:true,center,view:useView,drop,turn,turnDeg:Number((turn*180/Math.PI).toFixed(2)),ds,da,axis:face?'normal':'row'};}
-  const grouped=redistribute(g,s,ctx,rowUnits,axis);
+  const grouped=par.arrangement==='staggered'?null:redistribute(g,s,ctx,rowUnits,axis);
   if(grouped)return grouped;
   return {ok:false,reason:dominantReason(tally),tally};}
  const REASON_ORDER=['boundary','overlap','side','rear','direction','unverified','unexplored','geometry'];
@@ -819,7 +818,7 @@ const ParallelPara=(()=>{
    if(ctx.units.length>=ctx.maxUnits)break;}
   /* A short or phase-unlucky guide used to publish 0 villas while still drawing on the map
      (R04/R06). One midpoint attempt is still row-based, not a scatter fill. */
-  if(!rowUnits.length&&hi-lo>=par.width)placeAt((lo+hi)/2);
+  if(par.arrangement!=='staggered'&&!rowUnits.length&&hi-lo>=par.width)placeAt((lo+hi)/2);
   return rowUnits;}
  /* Shared alignment: each row's phase is measured against the family's own axis, not against
     the row's arc origin, so neighbouring rows keep a recognisable shared alignment instead of
@@ -843,7 +842,7 @@ const ParallelPara=(()=>{
  function runVariant(guides,boundary,field,dropField,par,phase,dir,maxUnits){
   const ctx={units:[],index:makeIndex(Math.max(par.alongPitch,par.acrossPitch)),
    rejects:{byReason:{},details:[]},attempts:0,par,boundary,field,dropField,maxUnits};
-  for(const g of guides)placeRow(g,ctx,phase,dir);
+  for(const g of guides)placeRow(g,ctx,g.staggerPhase===undefined?phase:g.staggerPhase,dir);
   return {units:ctx.units,rejects:ctx.rejects,attempts:ctx.attempts,phase,dir};}
  /* Row bookkeeping for the output data: membership and ordering, plus the guide geometry so
     the viewer can overlay it. */
@@ -853,7 +852,7 @@ const ParallelPara=(()=>{
    if(!groups.has(u.row))groups.set(u.row,[]);
    groups.get(u.row).push(u);}
   return guides.map(g=>({
-   id:g.id,family:g.family,level:g.level,offset:g.offset,
+   id:g.id,family:g.family,level:g.level,offset:g.offset,staggerPhase:g.staggerPhase,
    length:Number((g.nodes[g.nodes.length-1].s-g.nodes[0].s).toFixed(2)),
    nodes:g.nodes.map(n=>({x:Number(n.x.toFixed(3)),y:Number(n.y.toFixed(3)),s:Number(n.s.toFixed(3))})),
    usable:g.usable,usableRaw:g.usableRaw,emptyReason:g.emptyReason||null,
@@ -933,12 +932,18 @@ const ParallelPara=(()=>{
    ctx.units=ctx.units.filter(u=>added.indexOf(u)<0);
    return {n:placed.length,units:snap,st};};
   let best={n:-1,units:[],st:null};
-  const starts=intervalStarts(iv,pitch);
+  let starts=intervalStarts(iv,pitch);
+  if(g.staggerPhase!==undefined){
+   const first=alignStart(g,g.staggerPhase,g.famAxis,ctx.par,1);
+   const lo=first+Math.ceil((iv.lo-first)/pitch)*pitch;
+   const hi=first+Math.floor((iv.hi-first)/pitch)*pitch;
+   starts=lo<=hi?[{s:lo,dir:1},{s:hi,dir:-1}]:[];
+  }
   for(const st of starts){
    const got=run(st);
    if(got.n>best.n)best=got;
    if(best.n>=cap)break;}
-  if(best.st&&best.n<cap){
+  if(g.staggerPhase===undefined&&best.st&&best.n<cap){
    for(const d of [-2,-1,1,2]){
     const s=best.st.s+d;
     if(s<iv.lo-1e-9||s>iv.hi+1e-9)continue;
@@ -957,7 +962,7 @@ const ParallelPara=(()=>{
   for(const iv of ivs){
    const got=packInterval(g,iv,ctx);
    for(const u of got){u.order=row.length;row.push(u);}}
-  if(!row.length&&g.nodes&&g.nodes.length){
+  if(g.staggerPhase===undefined&&!row.length&&g.nodes&&g.nodes.length){
    const lo=g.nodes[0].s,hi=g.nodes[g.nodes.length-1].s;
    if(hi-lo>=ctx.par.width){
     ctx.attempts++;
@@ -1084,7 +1089,7 @@ const ParallelPara=(()=>{
   if(!mask.intervals.length)return null;
   let sx=0,sy=0;for(const n of best){sx+=n.tx;sy+=n.ty;}
   const m=Math.hypot(sx,sy);
-  return {id:nextId,family:g.family,level:field.zAt(mid.x,mid.y),
+  return {id:nextId,family:g.staggerPhase===undefined?g.family:g.family+sign,staggerPhase:g.staggerPhase===undefined?undefined:(g.staggerPhase+par.alongPitch/2)%par.alongPitch,level:field.zAt(mid.x,mid.y),
    offset:(g.offset||0)+sign*par.acrossPitch,nodes:best,
    usable:mask.intervals,usableRaw:mask.intervals.map(iv=>({lo:iv.lo,hi:iv.hi})),
    length:bestLen,delta:g.delta,spineId:g.spineId,siblingOf:g.id,
@@ -1147,7 +1152,7 @@ const ParallelPara=(()=>{
   const cfg=opts&&opts.densify;
   const off=cfg===false;
   const packRows=off?false:(cfg&&cfg.packRows===false?false:true);
-  const repack=off?false:(cfg&&cfg.repackNeighbors===false?false:true);
+  const repack=off||par.arrangement==='staggered'?false:(cfg&&cfg.repackNeighbors===false?false:true);
   const siblings=off?false:(cfg&&cfg.siblings===false?false:true);
   const release=off?false:(cfg&&cfg.releaseUnused===false?false:true);
   const baseline=cloneUnits(layout.units);
@@ -1180,7 +1185,7 @@ const ParallelPara=(()=>{
   const st=settings(opts);
   if(!st.ok)return {ok:false,error:st.errors.join('; '),errors:st.errors,units:[],rows:[]};
   const par=st.values;
-  par.arrangement='parallel';
+  par.arrangement=opts&&opts.arrangement==='staggered'?'staggered':'parallel';
   par.maxUnits=(opts&&Number.isFinite(Number(opts.maxUnits)))?Math.max(1,Number(opts.maxUnits)):300;
   const boundary=(data&&data.boundary)||[];
   if(boundary.length<3)return {ok:false,error:'no site boundary available',units:[],rows:[]};
@@ -1197,7 +1202,9 @@ const ParallelPara=(()=>{
   const variants=[];
   for(const fam of families){
    for(const phase of [0,par.alongPitch/3,2*par.alongPitch/3])for(const dir of [1,-1]){
-    const guides=fam.guides;
+    // Keep phase attached to each alternative, including split fragments of the same band.
+    const guides=par.arrangement==='staggered'?fam.guides.map(g=>({...g,
+     staggerPhase:(phase+((g.family%2+2)%2)*par.alongPitch/2)%par.alongPitch})):fam.guides;
     const v=runVariant(guides,boundary,field,dropField,par,phase,dir,par.maxUnits);
     const rows=rowsOf(v.units,guides,par);
     const validation=validate({units:v.units,rows},boundary,par);
@@ -1216,7 +1223,7 @@ const ParallelPara=(()=>{
    a.delta-b.delta||a.phase-b.phase||a.dir-b.dir);
   const winner=pool[0];
   const units=winner.units;
-  const recovery=recover({units},boundary,field,dropField,par,winner.guides);
+  const recovery=par.arrangement==='staggered'?{added:[],tried:0,failed:[],byClass:{},note:'Phase-preserving interval packing handles staggered gap recovery'}:recover({units},boundary,field,dropField,par,winner.guides);
   const densified=densifyLayout({units},winner.guides,boundary,field,dropField,par,opts||{});
   /* Safety net. Placement and repair already enforce every requirement, but the delivered
      layout is judged by the INDEPENDENT validator, so anything it still rejects is removed
@@ -1394,10 +1401,7 @@ const ParallelPara=(()=>{
       break;}}}
    const m=Math.hypot(u.view[0],u.view[1]);
    if(Math.abs(m-1)>1e-6)issues.push({type:'view-not-unit',id:u.id});
-   if(boundary&&boundary.length>=3){
-    if(!polyInsideBoundary(polies[i],boundary))issues.push({type:'boundary',id:u.id});
-    if(par.backClear>0&&!polyInsideBoundary(rearStrip({...u,width:par.width,depth:par.depth},par.backClear),boundary))issues.push({type:'rear-boundary',id:u.id});
-   }});
+   if(boundary&&boundary.length>=3&&!polyInsideBoundary(polies[i],boundary))issues.push({type:'boundary',id:u.id});});
   for(let i=0;i<units.length;i++)for(let j=i+1;j<units.length;j++){
    const a=units[i],b=units[j];
    if(polysOverlap(polies[i],polies[j])){issues.push({type:'overlap',a:a.id,b:b.id});continue;}
